@@ -1,0 +1,45 @@
+#I know there's a better way to track issues...
+
+FINISH SRS ALREADY!!!
+
+ScheduleParsing... check that path is correct
+
+Make sure that all docx files are in the same format.
+(regression testing to see the py scripts are still working)
+(Convention for special weeks; thought: never modify the template, leave cells blank for special weeks)
+
+some of the sql populate files were moved. (I think that py scripts make those, so I need to make sure that the py scripts are writing the populate scripts in the correct place)
+
+Separate the DataAccess project from the AssignmentPlanner
+
+refactor:
+	assignee -> publisher
+	works_on.assignment_id -> type_id
+	person.id_person -> person.id
+
+add back ticks to sql where 'section' appears or use a different word (classroom)
+
+rather than a active column
+	just use the works_on table.
+if a student need to be 'deactivated' just remove the works_on table entries.
+
+
+
+
+
+
+
+Creating and maintaining the code responsible for implementing the object-relational mapping can be difficult. 
+There tends to be a great deal of code supporting ORM. 
+The ORM code is tightly coupled to the database schema.
+
+The Data Access Object design pattern describes a class whose responsibility is to encapsulate a class’s ORM code. 
+There is a DAO defined for every persistent entity class. 
+The Customer entity is maintained by the class CustomerDAO. 
+
+A DAO provides all the operations needed to CRUD instances of its entity class including specialized Selects. 
+
+
+Data-Tier Services may not be needed. Since their primary purpose is to make transactions. The operation needed is simple so the service layer may not be necessary and direct access to the DAO is allowed.
+Data-Tier is requiered when several DAOs are ussed to create ('assemble') an entity.
+
