@@ -1,5 +1,5 @@
 # AYFM-Scheduling
-## A database project to aid in assigning tasks.
+## Tool to aid in scheduling assignments for mid-week meeting "Apply Yourself to the Field Ministry."
 
 ### Assignment Planner
 An Eclipse project in Java that packages the whole application.
