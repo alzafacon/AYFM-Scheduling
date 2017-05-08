@@ -10,6 +10,9 @@ This "subsystem" handles the input processing and preparation for processing.
 ### Software Engineering
 Documentation and design for the project.
 
+### database
+The MySQL workbench model and sql scripts for setting up the database are in this folder.
+
 ### Description of Problem Domain for AYFM Scheduling
 
 Apply Yourself to the Field Ministry (AYFM) is the section of the Jehovah's Witness midweek meeting that is meant to prepare those enrolled for the Field Ministry (door to door preaching).
