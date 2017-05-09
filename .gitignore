@@ -9,6 +9,9 @@ ScheduleParsing/sql/
 # MySQL workbench backup file for model
 *.mwb.bak
 
+# script for inserting student data into database
+populatePerson+WorksOn.sql
+
 # the following is copied directly from:
 #https://github.com/github/gitignore/blob/master/Python.gitignore
 
