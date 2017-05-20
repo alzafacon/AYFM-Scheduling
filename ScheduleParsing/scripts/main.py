@@ -19,6 +19,9 @@ def docx_to_sql(path, year, month):
     
     print('\nWriting sql insert statment script.')
     schedule.csv.to_sql(year, month)
+    
+    #update to convert docx->csv->sql (skip txt and diacritics)
+    
 
 
 def dateInput():
