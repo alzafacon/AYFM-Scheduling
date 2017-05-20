@@ -18,6 +18,28 @@
 
 from docx import Document
 
+class Assignment:
+    '''Class for managing assignments'''
+    def __init__(self):
+        '''each assignment in csv contains the following fields'''
+        self.date = ''
+        self.type = ''
+        self.assignee = ''
+        self.hholder = ''
+        self.lesson = ''
+        self.section = ''
+        
+    def makeCSV(self):
+        return ','.join([self.date, self.type, self.assignee, self.hholder, self.lesson, self.section])
+    
+    def clear(self):
+        self.date = ''
+        self.type = ''
+        self.assignee = ''
+        self.hholder = ''
+        self.lesson = ''
+        self.section = ''
+
 READING = '1'
 INIT_CALL = '2'
 RET_VISIT = '3'
@@ -59,6 +81,7 @@ def to_txt(path, year, month):
     with open(txtDir + txtfilename, 'w') as txt_f:
         txt_f.write(txtsched)
 
+
 def to_csv(path, year, month):
     #docxsched = Document(docxDir + docxfilename)
     docxsched = Document(path)
@@ -83,35 +106,45 @@ def to_csv(path, year, month):
     # if no name is found continue looking for date or type (which ever appears first)
 
     csvSched = ''
-    # each assignment in csv contains the following fields
-    date = ''
-    type = ''
-    assignee = ''
-    hholder = ''
-    lesson = ''
-    section = ''
     
-    rows = table.rows[1:]#skipping the first row (header)
-    r_ix = 0
+    a = Assignment()
     
-    # the first week of every month is special:
+    rows = table.rows
+    r_ix = 1 # row index #skipping the first row (header)
+    
+    # The first week of every month is different (has only 1 assgn):
     raw_date = rows[r_ix].cells[0].text
-    # ... convert to nice date format
-    #date = 
+    # convert to nice date format
+    day = raw_date[ : raw_date.find(' ')] # extract day of the month
+    date = '{:%Y-%m-%d}'.format( datetime.date(int(year), int(month), int(day)) )
     
     #advance to only part for first week (Reading)
-    r_ix = r_ix + 1
+    r_ix += 1
     
-    type = READING
-    section = SECTION_A
-    assignee = rows[r_ix].cells[1].text
-    lesson = rows[r_ix].cells[2].text
+    a.type = READING
+    a.section = SECTION_A
+    a.assignee = rows[r_ix].cells[1].text
+    a.lesson = rows[r_ix].cells[2].text
     
-    print('name in first week', assignee)
+    print('name in first week', a.assignee)
     
-    if assignee != '':
-        csvSched += ','.join([date, type, assignee, hholder, lesson, section])
+    if a.assignee != '':
+        csvSched += a.makeCSV()
         csvSched += '\n'
+        
+    r_ix += 1 # move to next week
+    
+    # Now continue with the remaining 4 weeks
+    a.clear()
+    for week in range(4):
+        # Extract date for this week
+        raw_date = rows[r_ix].cells[0].text
+        # convert to nice date format
+        day = raw_date[ : raw_date.find(' ')] # extract day of the month
+        date = '{:%Y-%m-%d}'.format( datetime.date(int(year), int(month), int(day)) )
+        
+        #TODO: go through the four assignments and both sections
+        
     
         
 if __name__ == '__main__':
