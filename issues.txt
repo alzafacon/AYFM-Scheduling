@@ -1,12 +1,9 @@
 #I know there's a better way to track issues...
 
-FINISH SRS ALREADY!!!
-
 ScheduleParsing... check that path is correct
 
 Make sure that all docx files are in the same format.
 (regression testing to see the py scripts are still working)
-(Convention for special weeks; thought: never modify the template, leave cells blank for special weeks)
 
 some of the sql populate files were moved. (I think that py scripts make those, so I need to make sure that the py scripts are writing the populate scripts in the correct place)
 
