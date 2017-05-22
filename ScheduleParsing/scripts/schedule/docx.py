@@ -28,7 +28,10 @@ class Assignment:
         self.hholder = ''
         self.lesson = ''
         self.section = ''
-        
+            
+    def __str__(self):
+        return self.makeCSV()
+    
     def makeCSV(self):
         return ','.join([self.date, self.type, self.assignee, self.hholder, self.lesson, self.section])
     
@@ -40,57 +43,83 @@ class Assignment:
         self.lesson = ''
         self.section = ''
 
+#Assignment Types
 READING = '1'
 INIT_CALL = '2'
 RET_VISIT = '3'
 BIB_STUDY = '4' #this may also happen to be a talk by a brother
+TYPES = (READING, INIT_CALL, RET_VISIT, BIB_STUDY)
 
+# The Classrooms
 SECTION_A = 'a'
 SECTION_B = 'b'
 
-parsingDir = r'C:\Users\FidelCoria\git\AYFM-Scheduling\ScheduleParsing\\'
-txtDir = parsingDir + r'TXT Schedules\\'
+#indices for row cells in the template table
+DATE = 0
+SECTION_A_PARTICIPANTS = 1
+SECTION_A_LESSON = 2
+SECTION_B_PARTICIPANTS = 3
+SECTION_B_LESSON = 4
 
-def to_txt(path, year, month):
+def getWeekDate(weekHeaderRow, year, month):
+    raw_date = weekHeaderRow.cells[DATE].text.strip()
+    # convert to nice date format
+    date_parts = raw_date.split()
+    numericParts = [part for part in date_parts if part.isnumeric()] # assume there will only be one
+    day = int( numericParts[0] )
+    date = '{:%Y-%m-%d}'.format( datetime.date(year, month, day) )
     
-    #docxsched = Document(docxDir + docxfilename)
-    docxsched = Document(path)
+    return date
     
-    #find tables in the doc
-    tables = docxsched.tables
-
-    if len(tables) != 1:
-        #throw a fit!
-        print('uh oh, there should be exactly one table in the document')
+def parseAssignmentRow(row, date, aType):
+    '''parse a assignment row from table, returns an array with the assignments'''
+    assignments = []
+    
+    participants = row.cells[SECTION_A_PARTICIPANTS].text.strip()
+    if participants != '':
+        assignments.append( Assignment() )
         
-    #select the first table
-    table = tables[0]
-
-    #save table as formatted string
-    # from cell to cell there is a tab,
-    # from row to row there is a newline.
-
-    txtsched = ''
-
-    for row in table.rows:
-        for colindex in range(len(row.cells)):
-            txtsched += row.cells[colindex].text + '\t'
-        txtsched += '\n'
-
-    txtfilename = '%d-%d.txt' % (year, month)
-    with open(txtDir + txtfilename, 'w') as txt_f:
-        txt_f.write(txtsched)
-
+        assignments[0].date = date
+        assignments[0].type = aType
+        
+        # I am not sure if \n is correct for splitting
+        students = participants.split('\n') # at most 2 elements, and at least one
+        
+        assignments[0].assignee = students[0].strip()
+        if len(students) == 2:
+            assignments[0].hholder = students[1].strip()
+        
+        assignments[0].lesson = row.cells[SECTION_A_LESSON].text.strip()
+        assignments[0].section = SECTION_A
+        
+    participants = row.cells[SECTION_B_PARTICIPANTS].text.strip()
+    if participants != '':
+        assignments.append( Assignment() )
+        
+        assignments[1].date = date
+        assignments[1].type = aType
+        
+        students = participants.split('\n')
+        
+        assignments[1].assignee = students[0].strip()
+        if len(students) == 2:
+            assignments[1].hholder = students[1].strip()
+        
+        assignments[1].lesson = row.cells[SECTION_B_LESSON].text.strip()
+        assignments[1].section = SECTION_B
+    
+    return assignments
 
 def to_csv(path, year, month):
-    #docxsched = Document(docxDir + docxfilename)
+    '''path to docx file, year and month as int, will convert into a csv file'''
+    
     docxsched = Document(path)
     
     #find tables in the doc
     tables = docxsched.tables
 
     if len(tables) != 1:
-        #throw a fit!
+        #should be raising an exception...
         print('uh oh, there should be exactly one table in the document')
         
     #select the first table
@@ -104,48 +133,47 @@ def to_csv(path, year, month):
     # if a name and a lesson are found write the csv String
     # if only a name is found write the csv string
     # if no name is found continue looking for date or type (which ever appears first)
-
-    csvSched = ''
     
-    a = Assignment()
+    csvSched = [] #this is an array of strings for the csv file
     
-    rows = table.rows
-    r_ix = 1 # row index #skipping the first row (header)
+    row_iter = iter(table.rows[1:]) #skipping the first row (header)
+    row = next(row_iter)
     
-    # The first week of every month is different (has only 1 assgn):
-    raw_date = rows[r_ix].cells[0].text
-    # convert to nice date format
-    day = raw_date[ : raw_date.find(' ')] # extract day of the month
-    date = '{:%Y-%m-%d}'.format( datetime.date(int(year), int(month), int(day)) )
+    # The first week of every month is different (has only 1 assgn)
     
-    #advance to only part for first week (Reading)
-    r_ix += 1
+    date = getWeekDate(row, year, month)
     
-    a.type = READING
-    a.section = SECTION_A
-    a.assignee = rows[r_ix].cells[1].text
-    a.lesson = rows[r_ix].cells[2].text
+    #advance to the only participation for first week (Reading)
+    row = next(row_iter)
     
-    print('name in first week', a.assignee)
+     assgnRow = parseAssignmentRow(row, date, READING)
+    
+    print('name in first week', assgnRow[0].assignee) # just for checking in testing
     
     if a.assignee != '':
-        csvSched += a.makeCSV()
-        csvSched += '\n'
+        csvSched.append(assgnRow[0].makeCSV() + '\n')
         
-    r_ix += 1 # move to next week
-    
+        
     # Now continue with the remaining 4 weeks
-    a.clear()
     for week in range(4):
+        row = next(row_iter)
+        
         # Extract date for this week
-        raw_date = rows[r_ix].cells[0].text
-        # convert to nice date format
-        day = raw_date[ : raw_date.find(' ')] # extract day of the month
-        date = '{:%Y-%m-%d}'.format( datetime.date(int(year), int(month), int(day)) )
+        date = getWeekDate(row, year, month)
         
-        #TODO: go through the four assignments and both sections
-        
+        #TODO: go through the four assignments
+        for assgnType in TYPES:
+            row = next(row_iter)
+            assgnRow = parseAssignmentRow(row, date, assgnType)
+            
+            for assgn in assgnRow:
+                csvSched.append( assgn.makeCSV() + '\n' )
+    #I am not sure that the path will only work when docx.py called from main.py        
+    csvfilename = '../csv/%d-%d.csv' % (year, month)
+    with open(csvfilename, 'w') as parsed:
+        for line in csvSched:
+            parsed.write(line)
     
         
 if __name__ == '__main__':
-    print('run as main. doing nothing.')
+    print('Running as main. Doing nothing.')
