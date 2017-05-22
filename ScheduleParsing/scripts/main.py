@@ -1,28 +1,14 @@
 
-import diacritics
-import enrollment
-
 import schedule.docx
-import schedule.txt
 import schedule.csv
 
 def docx_to_sql(path, year, month):
     
-    print('Converting docx to txt.\n')
+    print('Converting docx to csv.\n')
     schedule.docx.to_txt(path, year, month)
-
-    print('Looking for diacritics to remove...')
-    diacritics.removeDiacritics(year, month)
-    
-    print('Writing csv schedules from txt files.')
-    schedule.txt.to_csv(year, month)
     
     print('\nWriting sql insert statment script.')
     schedule.csv.to_sql(year, month)
-    
-    #update to convert docx->csv->sql (skip txt and diacritics)
-    
-
 
 def dateInput():
 
@@ -50,7 +36,7 @@ def dateInput():
 
 if __name__ == '__main__':
 
-    selection = 0
+    selection = '0'
     
     while selection != '2':
 
