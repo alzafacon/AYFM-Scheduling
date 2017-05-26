@@ -161,10 +161,8 @@ def to_csv(path, year, month):
     
     assgnRow = parseAssignmentRow(row, date, READING)
     
-    print('name in first week', assgnRow[0].assignee) # TODO just for checking in testing
-    
-    if assgnRow[0].assignee != '':
-        csvSched.append(assgnRow[0].makeCSV() + '\n')
+    for assgn in assgnRow:
+        csvSched.append(assgn.makeCSV() + '\n')
         
         
     # Now continue with the remaining 4 weeks
