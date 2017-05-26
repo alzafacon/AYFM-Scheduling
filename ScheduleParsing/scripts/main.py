@@ -1,14 +1,14 @@
 
-import schedule.docx
-import schedule.csv
+import schedule.convert_docx
+import schedule.convert_csv
 
 def docx_to_sql(path, year, month):
     
     print('Converting docx to csv.\n')
-    schedule.docx.to_txt(path, year, month)
+    schedule.convert_docx.to_csv(path, year, month)
     
     print('\nWriting sql insert statment script.')
-    schedule.csv.to_sql(year, month)
+    schedule.convert_csv.to_sql(year, month)
 
 def dateInput():
 
@@ -32,7 +32,6 @@ def dateInput():
             print('Please enter an integer for the month.')
 
     return (year, month)
-
 
 if __name__ == '__main__':
 
@@ -70,4 +69,3 @@ if __name__ == '__main__':
         input('enter to continue...')
     
     print('leaving main.py')
-        
