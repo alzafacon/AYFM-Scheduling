@@ -10,8 +10,6 @@ refactor:
 	works_on.assignment_id -> type_id  # name does not make sense
 	person.id_person -> person.id	   # cleaner syntax, no loss of meaning
 
-	add back ticks to sql where `section` appears # conflict: sql keyword
-
 
 Separate the DataAccess project from the AssignmentPlanner
 
