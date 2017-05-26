@@ -5,6 +5,7 @@ prepIns_person = "INSERT IGNORE INTO person (full_name, gender, isactive) VALUES
 prepIns_workson = "INSERT IGNORE INTO works_on (person_id, assignment_id) VALUES "
 value = '(LAST_INSERT_ID(), %d)'
 
+
 class Student:
     
     def __init__(self, csv):
@@ -40,10 +41,10 @@ class Student:
             else:
                 self.eligibleType.append( False )
             
-def enrollmentCSV_to_SQL():
+def enrollmentCSV_to_SQL(csvPath):
     insertSQL = []
-    absolutePath = r'C:\Users\FidelCoria\git\AYFM-Scheduling\Apply Yourself to the Field Ministry\enrollment\\'
-    with open(absolutePath + 'enrollment.csv', 'r') as enrolled:
+    absolutePath = csvPath
+    with open(absolutePath, 'r') as enrolled:
 
         for record in enrolled:
 
@@ -60,7 +61,7 @@ def enrollmentCSV_to_SQL():
             works_on = []
             
             # assignment types are numbered 1 through 4
-            for typeNum in range(1, 5):
+            for typeNum in range(1, 4 +1):
                 if student.eligibleType[typeNum] == True:
                      works_on.append( value % typeNum ) 
             
