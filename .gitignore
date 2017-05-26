@@ -5,6 +5,8 @@
 ScheduleParsing/txt/
 ScheduleParsing/csv/
 ScheduleParsing/sql/
+ScheduleParsing/scripts/schedules.txt
+
 
 # MySQL workbench backup file for model
 *.mwb.bak
