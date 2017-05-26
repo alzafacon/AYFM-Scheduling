@@ -1,27 +1,21 @@
 #I know there's a better way to track issues...
 
+.csv and .sql are not in UTF-8 (instead in ANSI)
+work on convert_csv.py (remove enrollment stuff; improve sql)
 
 some of the sql populate files were moved. (I think that py scripts make those, so I need to make sure that the py scripts are writing the populate scripts in the correct place)
 
+refactor:
+	assignee -> publisher		   # not sure...
+	works_on.assignment_id -> type_id  # name does not make sense
+	person.id_person -> person.id	   # cleaner syntax, no loss of meaning
+
+	add back ticks to sql where `section` appears # conflict: sql keyword
+
+
 Separate the DataAccess project from the AssignmentPlanner
 
-refactor:
-	assignee -> publisher
-	works_on.assignment_id -> type_id
-	person.id_person -> person.id
-
-add back ticks to sql where 'section' appears or use a different word (classroom)
-
-rather than a active column
-	just use the works_on table.
-if a student need to be 'deactivated' just remove the works_on table entries.
-
-
-
-
-
-
-
+==============================================
 Creating and maintaining the code responsible for implementing the object-relational mapping can be difficult. 
 There tends to be a great deal of code supporting ORM. 
 The ORM code is tightly coupled to the database schema.
