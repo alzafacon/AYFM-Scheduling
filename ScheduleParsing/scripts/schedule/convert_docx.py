@@ -17,6 +17,7 @@
 #python-docx depends on the lxml package. Both pip and easy_install will take care of satisfying those dependencies for you, but if you use this last method you will need to install those yourself.
 
 from docx import Document
+import datetime
 
 class Assignment:
     '''Class for managing assignments'''
@@ -53,6 +54,7 @@ TYPES = (READING, INIT_CALL, RET_VISIT, BIB_STUDY)
 # The Classrooms
 SECTION_A = 'a'
 SECTION_B = 'b'
+CLASSROOMS = (SECTION_A, SECTION_B)
 
 #indices for row cells in the template table
 DATE = 0
@@ -63,50 +65,61 @@ SECTION_B_LESSON = 4
 
 def getWeekDate(weekHeaderRow, year, month):
     raw_date = weekHeaderRow.cells[DATE].text.strip()
+    
+    if raw_date == '':
+        return raw_date
+    
     # convert to nice date format
     date_parts = raw_date.split()
-    numericParts = [part for part in date_parts if part.isnumeric()] # assume there will only be one
+
+    numericParts = [part for part in date_parts if part.isnumeric()]
+    
+    # assume there will only be one
     day = int( numericParts[0] )
     date = '{:%Y-%m-%d}'.format( datetime.date(year, month, day) )
     
     return date
     
 def parseAssignmentRow(row, date, aType):
-    '''parse a assignment row from table, returns an array with the assignments'''
+    '''parse an assignment row from table, returns an array with the assignments'''
     assignments = []
     
-    participants = row.cells[SECTION_A_PARTICIPANTS].text.strip()
-    if participants != '':
-        assignments.append( Assignment() )
+    participants = row.cells[SECTION_A_PARTICIPANTS].text.strip() # participants for first assgn
+    if participants != '': # if there are participants
+        assgn = Assignment() # new empty assignment
         
-        assignments[0].date = date
-        assignments[0].type = aType
+        assgn.date = date
+        assgn.type = aType
         
-        # I am not sure if \n is correct for splitting
+        # TODO: I am not sure if \n is correct for splitting
         students = participants.split('\n') # at most 2 elements, and at least one
         
-        assignments[0].assignee = students[0].strip()
+        assgn.assignee = students[0].strip()
         if len(students) == 2:
-            assignments[0].hholder = students[1].strip()
+            assgn.hholder = students[1].strip()
         
-        assignments[0].lesson = row.cells[SECTION_A_LESSON].text.strip()
-        assignments[0].section = SECTION_A
+        assgn.lesson = row.cells[SECTION_A_LESSON].text.strip()
+        assgn.section = SECTION_A
         
-    participants = row.cells[SECTION_B_PARTICIPANTS].text.strip()
+        assignments.append( assgn )
+        
+    participants = row.cells[SECTION_B_PARTICIPANTS].text.strip() # participants for second assgn
     if participants != '':
-        assignments.append( Assignment() )
+        assgn = Assignment()
         
-        assignments[1].date = date
-        assignments[1].type = aType
+        assgn.date = date
+        assgn.type = aType
         
         students = participants.split('\n')
         
-        assignments[1].assignee = students[0].strip()
+        assgn.assignee = students[0].strip()
         if len(students) == 2:
-            assignments[1].hholder = students[1].strip()
+            assgn.hholder = students[1].strip()
         
-        assignments[1].lesson = row.cells[SECTION_B_LESSON].text.strip()
-        assignments[1].section = SECTION_B
+        assgn.lesson = row.cells[SECTION_B_LESSON].text.strip()
+        assgn.section = SECTION_B
+        
+        assignments.append( assgn )
     
     return assignments
 
@@ -146,11 +159,11 @@ def to_csv(path, year, month):
     #advance to the only participation for first week (Reading)
     row = next(row_iter)
     
-     assgnRow = parseAssignmentRow(row, date, READING)
+    assgnRow = parseAssignmentRow(row, date, READING)
     
-    print('name in first week', assgnRow[0].assignee) # just for checking in testing
+    print('name in first week', assgnRow[0].assignee) # TODO just for checking in testing
     
-    if a.assignee != '':
+    if assgnRow[0].assignee != '':
         csvSched.append(assgnRow[0].makeCSV() + '\n')
         
         
@@ -161,19 +174,22 @@ def to_csv(path, year, month):
         # Extract date for this week
         date = getWeekDate(row, year, month)
         
-        #TODO: go through the four assignments
+        if date == '': # no date will be available for assignments
+            continue
+            
         for assgnType in TYPES:
             row = next(row_iter)
             assgnRow = parseAssignmentRow(row, date, assgnType)
             
             for assgn in assgnRow:
+                print(assgn)
                 csvSched.append( assgn.makeCSV() + '\n' )
-    #I am not sure that the path will only work when docx.py called from main.py        
+                
+    #path will only work when called from main.py      
     csvfilename = '../csv/%d-%d.csv' % (year, month)
     with open(csvfilename, 'w') as parsed:
         for line in csvSched:
             parsed.write(line)
     
-        
 if __name__ == '__main__':
     print('Running as main. Doing nothing.')
