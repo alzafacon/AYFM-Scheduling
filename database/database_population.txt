@@ -20,10 +20,9 @@ then run the scripts in this order:
 
 
 3. The assignment table is populated from .docx schedules.
-The format is converted in four steps
-	schedule.docx -> schedule.txt -> clean.txt -> assignments.csv -> yyyy-mm.sql
-The clean.txt is needed to remove accents and other diacritics from the schedule.
-Later the application should be able to handle these normally, but for now its just to make it easier.
+The format is converted in 2 steps
+	schedule.docx -> assignments.csv -> yyyy-mm.sql
+
 Run the script
 *********************************
 *	main.py			*
