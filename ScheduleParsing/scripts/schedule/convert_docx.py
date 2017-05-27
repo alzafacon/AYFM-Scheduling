@@ -19,42 +19,9 @@
 from docx import Document
 import datetime
 
-class Assignment:
-    '''Class for managing assignments'''
-    def __init__(self):
-        '''each assignment in csv contains the following fields'''
-        self.date = ''
-        self.type = ''
-        self.assignee = ''
-        self.hholder = ''
-        self.lesson = ''
-        self.section = ''
-            
-    def __str__(self):
-        return self.makeCSV()
-    
-    def makeCSV(self):
-        return ','.join([self.date, self.type, self.assignee, self.hholder, self.lesson, self.section])
-    
-    def clear(self):
-        self.date = ''
-        self.type = ''
-        self.assignee = ''
-        self.hholder = ''
-        self.lesson = ''
-        self.section = ''
+from schedule.Assignment import *
 
-#Assignment Types
-READING = '1'
-INIT_CALL = '2'
-RET_VISIT = '3'
-BIB_STUDY = '4' #this may also happen to be a talk by a brother
-TYPES = (READING, INIT_CALL, RET_VISIT, BIB_STUDY)
 
-# The Classrooms
-SECTION_A = 'a'
-SECTION_B = 'b'
-CLASSROOMS = (SECTION_A, SECTION_B)
 
 #indices for row cells in the template table
 DATE = 0
@@ -180,7 +147,7 @@ def to_csv(path, year, month):
             assgnRow = parseAssignmentRow(row, date, assgnType)
             
             for assgn in assgnRow:
-                print(assgn)
+                # print(assgn)
                 csvSched.append( assgn.makeCSV() + '\n' )
                 
     #path will only work when called from main.py      
