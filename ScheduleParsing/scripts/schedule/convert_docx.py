@@ -1,18 +1,15 @@
 #https://python-docx.readthedocs.io/en/latest/user/install.html
 
 #python-docx may be installed with pip if you have it available:
-
-#pip install python-docx
+# pip install python-docx
 
 #python-docx can also be installed using easy_install, although this is #discouraged:
-
-#easy_install python-docx
+# easy_install python-docx
 
 #If neither pip nor easy_install is available, it can be installed manually by downloading the distribution from PyPI, unpacking the tarball, and running setup.py:
-
-#tar xvzf python-docx-{version}.tar.gz
-#cd python-docx-{version}
-#python setup.py install
+# tar xvzf python-docx-{version}.tar.gz
+# cd python-docx-{version}
+# python setup.py install
 
 #python-docx depends on the lxml package. Both pip and easy_install will take care of satisfying those dependencies for you, but if you use this last method you will need to install those yourself.
 
@@ -20,8 +17,6 @@ from docx import Document
 import datetime
 
 from schedule.Assignment import *
-
-
 
 #indices for row cells in the template table
 DATE = 0
@@ -31,6 +26,7 @@ SECTION_B_PARTICIPANTS = 3
 SECTION_B_LESSON = 4
 
 def getWeekDate(weekHeaderRow, year, month):
+    '''extract the date from the date row from table'''
     raw_date = weekHeaderRow.cells[DATE].text.strip()
     
     if raw_date == '':
