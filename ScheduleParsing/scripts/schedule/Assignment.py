@@ -36,8 +36,8 @@ class Assignment:
                 
         self.date = record[DATE]
         self.type = record[TYPE]
-        self.name = record[NAME]
-        self.householder = record[HHLD]
+        self.assignee = record[NAME]
+        self.hholder = record[HHLD]
         self.lesson = record[LSSN]
         self.section = record[SECT]
         

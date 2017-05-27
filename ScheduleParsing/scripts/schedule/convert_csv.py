@@ -3,24 +3,20 @@ from schedule.Assignment import *
         
         
 prepInsertNoHHold = """INSERT INTO assignment (date_assgn, assignee, lesson, `section`, assgn_type)
-    SELECT '%s', id_person, %s, '%s', %s
+    SELECT '{a.date}', id_person, {a.lesson}, '{a.section}', {a.type}
     FROM person
-    WHERE full_name = '%s';"""
+    WHERE full_name = '{a.assignee}';"""
 
     
-prepInsertWithHHold = 
-    """
-    INSERT INTO assignment (date_assgn, assignee, householder, lesson, `section`, assgn_type)
-        SELECT '%s', publisher.id_person, hholder.id_person, %s, '%s', %s
-        FROM person as publisher 
-        JOIN person as hholder
-        WHERE publisher.full_name = '%s' and hholder.full_name = '%s'
-    """
+prepInsertWithHHold = """INSERT INTO assignment (date_assgn, assignee, householder, lesson, `section`, assgn_type)
+    SELECT '{a.date}', publisher.id_person, hholder.id_person, {a.lesson}, '{a.section}', {a.type}
+    FROM person as publisher
+    JOIN person as hholder
+    WHERE publisher.full_name = '{a.assignee}' and hholder.full_name = '{a.hholder}'"""
 
 prepUpdate = """UPDATE assignment
     SET householder = (SELECT id_person FROM person WHERE full_name = '%s')
     WHERE date_assgn = '%s' and assignee = (SELECT id_person FROM person WHERE full_name = '%s');"""
-
 
 def to_sql(year, month):
     
@@ -40,12 +36,12 @@ def to_sql(year, month):
                 
             # hhold will be automatically set to null by ommision in prepInsertNoHHold
             
-            if assgn.householder == '':
-                stmt = prepInsertNoHHold % (assgn.date, assgn.lesson, assgn.section, assgn.type, assgn.name)
+            if assgn.hholder == '':
+                stmt = prepInsertNoHHold.format(a = assgn)
                 sqlStatements.append(stmt)
             
             else:
-                stmt = prepInsertWithHHold % (assgn.householder, assgn.date, assgn.name)
+                stmt = prepInsertWithHHold.format(a = assgn)
                 sqlStatements.append(stmt)
             
 
