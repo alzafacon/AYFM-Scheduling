@@ -2,14 +2,16 @@
 from schedule.Assignment import *
 
 # prepared statement for assignment with only one participant (assignee)
-prepInsertNoHHold = """INSERT INTO assignment (date_assgn, assignee, lesson, `section`, assgn_type)
-    SELECT '{a.date}', id_person, {a.lesson}, '{a.section}', {a.type}
+prepInsertNoHHold = \
+    """INSERT INTO assignment (date, assignee, lesson, `section`, `type`)
+    SELECT '{a.date}', id, {a.lesson}, '{a.section}', {a.type}
     FROM person
     WHERE full_name = '{a.assignee}';"""
 
 # prepated statement for assignment with two participants (assignee, householder)
-prepInsertWithHHold = """INSERT INTO assignment (date_assgn, assignee, householder, lesson, `section`, assgn_type)
-    SELECT '{a.date}', publisher.id_person, hholder.id_person, {a.lesson}, '{a.section}', {a.type}
+prepInsertWithHHold = \
+    """INSERT INTO assignment (date, assignee, householder, lesson, `section`, `type`)
+    SELECT '{a.date}', publisher.id, hholder.id, {a.lesson}, '{a.section}', {a.type}
     FROM person as publisher
     JOIN person as hholder
     WHERE publisher.full_name = '{a.assignee}' and hholder.full_name = '{a.hholder}';"""

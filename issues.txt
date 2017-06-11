@@ -2,12 +2,6 @@
 
 some of the sql populate files were moved. (I think that py scripts make those, so I need to make sure that the py scripts are writing the populate scripts in the correct place)
 
-refactor:
-	assignee -> publisher		   # not sure...
-	works_on.assignment_id -> type_id  # name does not make sense
-	person.id_person -> person.id	   # cleaner syntax, no loss of meaning
-
-
 Separate the DataAccess project from the AssignmentPlanner
 
 ==============================================
