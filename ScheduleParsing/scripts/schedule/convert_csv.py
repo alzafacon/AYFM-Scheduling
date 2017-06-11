@@ -12,7 +12,7 @@ prepInsertWithHHold = """INSERT INTO assignment (date_assgn, assignee, household
     SELECT '{a.date}', publisher.id_person, hholder.id_person, {a.lesson}, '{a.section}', {a.type}
     FROM person as publisher
     JOIN person as hholder
-    WHERE publisher.full_name = '{a.assignee}' and hholder.full_name = '{a.hholder}'"""
+    WHERE publisher.full_name = '{a.assignee}' and hholder.full_name = '{a.hholder}';"""
 
 prepUpdate = """UPDATE assignment
     SET householder = (SELECT id_person FROM person WHERE full_name = '%s')

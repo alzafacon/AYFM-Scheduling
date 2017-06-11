@@ -148,7 +148,7 @@ def to_csv(path, year, month):
                 
     #path will only work when called from main.py      
     csvfilename = '../csv/%d-%d.csv' % (year, month)
-    with open(csvfilename, 'w') as parsed:
+    with open(csvfilename, encoding='utf-8', mode='w') as parsed:
         for line in csvSched:
             parsed.write(line)
     

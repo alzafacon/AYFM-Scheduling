@@ -1,8 +1,5 @@
 #I know there's a better way to track issues...
 
-.csv and .sql are not in UTF-8 (instead in ANSI)
-work on convert_csv.py (remove enrollment stuff; improve sql)
-
 some of the sql populate files were moved. (I think that py scripts make those, so I need to make sure that the py scripts are writing the populate scripts in the correct place)
 
 refactor:
