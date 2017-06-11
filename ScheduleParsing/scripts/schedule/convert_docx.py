@@ -33,12 +33,15 @@ def getWeekDate(weekHeaderRow, year, month):
         return raw_date
     
     # convert to nice date format
+    
+    # split up to look for a number for the day of the month
     date_parts = raw_date.split()
-
+    # list comprehension to select numbeic strings
     numericParts = [part for part in date_parts if part.isnumeric()]
     
     # assume there will only be one
     day = int( numericParts[0] )
+    # this is the format for MySQL date
     date = '{:%Y-%m-%d}'.format( datetime.date(year, month, day) )
     
     return date
@@ -47,40 +50,44 @@ def parseAssignmentRow(row, date, aType):
     '''parse an assignment row from table, returns an array with the assignments'''
     assignments = []
     
-    participants = row.cells[SECTION_A_PARTICIPANTS].text.strip() # participants for first assgn
+    # participants for first assgn
+    participants = row.cells[SECTION_A_PARTICIPANTS].text.strip() 
+    
     if participants != '': # if there are participants
+        assgn = Assignment() # new empty assignment
+        
+        # begin populating fields
+        assgn.date = date
+        assgn.type = aType
+        assgn.lesson = row.cells[SECTION_A_LESSON].text.strip()
+        assgn.section = SECTION_A
+        
+        # be sure to strip each element of the array `students` in case split leaves white space
+        students = participants.split('\n') # assume at most 2 elements, and at least one
+        
+        # the assignee should come 1st
+        assgn.assignee = students[0].strip()
+        if len(students) > 1: # the householder second
+            # '> 1' in case there is an additinal helper (will be ignored)
+            assgn.hholder = students[1].strip()
+            
+        assignments.append( assgn )
+        
+    # the same for the second 
+    participants = row.cells[SECTION_B_PARTICIPANTS].text.strip() # participants for second assgn
+    if participants != '':
         assgn = Assignment() # new empty assignment
         
         assgn.date = date
         assgn.type = aType
-        
-        # TODO: I am not sure if \n is correct for splitting
-        students = participants.split('\n') # at most 2 elements, and at least one
-        
-        assgn.assignee = students[0].strip()
-        if len(students) == 2:
-            assgn.hholder = students[1].strip()
-        
-        assgn.lesson = row.cells[SECTION_A_LESSON].text.strip()
-        assgn.section = SECTION_A
-        
-        assignments.append( assgn )
-        
-    participants = row.cells[SECTION_B_PARTICIPANTS].text.strip() # participants for second assgn
-    if participants != '':
-        assgn = Assignment()
-        
-        assgn.date = date
-        assgn.type = aType
+        assgn.lesson = row.cells[SECTION_B_LESSON].text.strip()
+        assgn.section = SECTION_B
         
         students = participants.split('\n')
         
         assgn.assignee = students[0].strip()
-        if len(students) == 2:
+        if len(students) > 1:
             assgn.hholder = students[1].strip()
-        
-        assgn.lesson = row.cells[SECTION_B_LESSON].text.strip()
-        assgn.section = SECTION_B
         
         assignments.append( assgn )
     

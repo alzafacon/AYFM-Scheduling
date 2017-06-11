@@ -1,4 +1,4 @@
-
+# for a command line feel run this script as __main__
 import schedule.convert_docx
 import schedule.convert_csv
 
@@ -7,7 +7,7 @@ def docx_to_sql(path, year, month):
     print('Converting docx to csv.\n')
     schedule.convert_docx.to_csv(path, year, month)
     
-    print('\nWriting sql insert statment script.')
+    print('Writing sql insert statment script.')
     schedule.convert_csv.to_sql(year, month)
 
 def dateInput():

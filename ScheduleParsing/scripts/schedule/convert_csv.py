@@ -1,25 +1,22 @@
 
 from schedule.Assignment import *
-        
-        
+
+# prepared statement for assignment with only one participant (assignee)
 prepInsertNoHHold = """INSERT INTO assignment (date_assgn, assignee, lesson, `section`, assgn_type)
     SELECT '{a.date}', id_person, {a.lesson}, '{a.section}', {a.type}
     FROM person
     WHERE full_name = '{a.assignee}';"""
 
-    
+# prepated statement for assignment with two participants (assignee, householder)
 prepInsertWithHHold = """INSERT INTO assignment (date_assgn, assignee, householder, lesson, `section`, assgn_type)
     SELECT '{a.date}', publisher.id_person, hholder.id_person, {a.lesson}, '{a.section}', {a.type}
     FROM person as publisher
     JOIN person as hholder
     WHERE publisher.full_name = '{a.assignee}' and hholder.full_name = '{a.hholder}';"""
 
-prepUpdate = """UPDATE assignment
-    SET householder = (SELECT id_person FROM person WHERE full_name = '%s')
-    WHERE date_assgn = '%s' and assignee = (SELECT id_person FROM person WHERE full_name = '%s');"""
 
 def to_sql(year, month):
-    
+    '''Convert csv to sql'''
     sqlStatements = []
     
     # open csv schedule for parsing (this path only works when script is called from main.py)
@@ -27,20 +24,23 @@ def to_sql(year, month):
     with open(csvfilename, 'r') as assignments:
         assgn = Assignment() # object used for holding an assignment
         
+        # each line is an assignment
         for assignment in assignments:
             
-            assgn.setFromCSV( assignment.strip() )
+            assgn.setFromCSV( assignment.strip() ) # strip newline stuff
             
             if assgn.lesson == '':
                 assgn.lesson = 'null'
                 
-            # hhold will be automatically set to null by ommision in prepInsertNoHHold
+            # hhold will be automatically set to null, by ommision in prepInsertNoHHold
             
-            if assgn.hholder == '':
+            if assgn.hholder == '': # there is only one participant
+            
                 stmt = prepInsertNoHHold.format(a = assgn)
                 sqlStatements.append(stmt)
             
-            else:
+            else: # there is a householder
+            
                 stmt = prepInsertWithHHold.format(a = assgn)
                 sqlStatements.append(stmt)
             
