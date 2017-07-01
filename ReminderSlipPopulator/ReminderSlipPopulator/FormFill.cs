@@ -13,7 +13,8 @@ namespace ReminderSlipPopulator
     class FormFill
     {
         // pdf form template
-        public const string SRC = "S-89-S 8.pdf";
+        public const string PDF_1_ASSGN_SLIP = "S-89-S.pdf"; // Spanish, 1 Reminder slip for the first week of every month
+        public const string PDF_8_ASSGN_SLIPS = "S-89-S 8.pdf"; // Spanish, 8 reminder slips for 8 assignments in one week
 
         // The following values are for concatinating to make the keys to the form fields
         public const string ASSIGNEE = "Assignee";
@@ -44,53 +45,59 @@ namespace ReminderSlipPopulator
 
         public static void PopulatePdf(String scheduleDocx, String destinationPdfForm)
         {
-            // Jagged 3-D Array to store assignments used to fill pdf
-            Assignment[][][] weeks = new Assignment[NUM_WEEKS_PER_SCHEDULE][][];
-            // alternatively an array of Maps could be used
-            // IDictionary<string, Assignment>[] weeks = new Dictionary<>[NUM_WEEKS_PER_SCHEDULE];
+            // each week of assignments is stored as a map. 
+            // The keys in `weeks` are the suffixes for the pdf form keys.
+            IDictionary<string, Assignment>[] weeks = new Dictionary<string, Assignment>[NUM_WEEKS_PER_SCHEDULE];
 
-            // start a Microsoft.Office.Interop.Word Application to open .docx files
-            Application WordApplication = new Application();
+            // An MS Word app instance is needed to open .docx files.
+            Application WordApplication = null;
 
             // Object Revert; Optional Object. 
             // Controls what happens if FileName is the name of an open document. 
             //  True to discard any unsaved changes to the open document and reopen the file. 
             //  False to activate the open document.
-
-            // open the schedule as a MS Word Doc
-            Document document = WordApplication
-                                    .Documents
-                                    .Open(FileName: scheduleDocx, ReadOnly: true,
-                                        AddToRecentFiles: false, Revert: false, Visible: false);
+            Document document = null;
 
             // tables are indexed from 1... can you believe it! (I think all other document collection objects are as well)
             // how to handle tables: https://msdn.microsoft.com/en-us/library/w1702h4a.aspx
-            Table schedule = document.Tables[1];
+            Table schedule = null;
 
             try
-            {
+            {   // Assuming the template has not been tampered with
+                // start a Microsoft.Office.Interop.Word Application to open .docx files
+                WordApplication = new Application();
+
+                // open the schedule as a MS Word Doc
+                document = WordApplication
+                                    .Documents
+                                    .Open(FileName: scheduleDocx, ReadOnly: true,
+                                        AddToRecentFiles: false, Revert: false, Visible: false);
+                
+                // take first table (should be the only one)
+                schedule = document.Tables[1];
+
                 // proceed through the table row-wise
 
                 int week = 0;
-                int row = date_row(week);
+                int rowNum;
                 string dateText;
 
-                // Week one is a special case with only one assignment (reading)
-                weeks[week] = new Assignment[1][];
+                week = 0;
+                rowNum = rowNumForDateOnWeekNumber(week);
+                dateText = getRowCellText(schedule.Rows[rowNum], COL_DATE);
+                rowNum++; // advance to next row
 
-                dateText = getCellText(schedule, row, COL_DATE);
-                row = date_row(week) + (int)AssignmentType.READING;
-
-                weeks[week][0] = parseAssignmentRow(schedule, row, dateText, AssignmentType.READING);
-                week++; // done with first week
+                weeks[week] = new Dictionary<string, Assignment>();
+                parseAssignmentRow(schedule.Rows[rowNum], dateText, AssignmentType.READING, weeks[week]);
+                week++; // advance to next week
 
                 // continue with remaining 4 weeks
                 for (; week < NUM_WEEKS_PER_SCHEDULE; week++)
                 {
-                    row = date_row(week);
-                    dateText = getCellText(schedule, row, COL_DATE);
+                    rowNum = rowNumForDateOnWeekNumber(week);
+                    dateText = getRowCellText(schedule.Rows[rowNum], COL_DATE);
 
-                    weeks[week] = new Assignment[NUM_ASSGN_TYPES][];
+                    weeks[week] = new Dictionary<string, Assignment>();
 
                     foreach (AssignmentType assignmentType in Enum.GetValues(typeof(AssignmentType)))
                     {
@@ -100,12 +107,13 @@ namespace ReminderSlipPopulator
                             continue;
                         }
 
-                        row = date_row(week) + (int)assignmentType;
-                        int typeIndex = (int)assignmentType - 1; // -1 to make zero indexed
-                        weeks[week][typeIndex] = parseAssignmentRow(schedule, row, dateText, assignmentType);
+                        // row number for each assgn is offset from the date-row 
+                        //  by the number (caridnality) assigned to the assignment type
+                        // (the int value in the enum is this cardinality)
+                        rowNum = rowNumForDateOnWeekNumber(week) + (int)assignmentType; 
+                        parseAssignmentRow(schedule.Rows[rowNum], dateText, assignmentType, weeks[week]);
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -113,7 +121,12 @@ namespace ReminderSlipPopulator
             }
             finally
             {
-                document.Close();
+                if (document != null)
+                {
+                    document.Close();
+                    //document.Close(); // will this cause an exception??? yes it does how to catch if the document was not open...
+
+                }
                 WordApplication.Quit();
             }
 
@@ -126,54 +139,29 @@ namespace ReminderSlipPopulator
 
             IDictionary<string, PdfFormField> fields = null;
 
-            string key;
-            string value;
             try
             {
-                string[] sectionName = new string[] { CLASS_A_S, CLASS_B_S };
                 // skipping week 0 (the first)
                 for (int week = 1; week < NUM_WEEKS_PER_SCHEDULE; week++)
                 {
-                    reminders = new PdfDocument(new PdfReader(SRC), new PdfWriter(destinationPdfForm + $"week{week}.pdf"));
+                    reminders = new PdfDocument(new PdfReader(PDF_8_ASSGN_SLIPS), new PdfWriter(destinationPdfForm + $"week{week}.pdf"));
                     acroForm = PdfAcroForm.GetAcroForm(document: reminders, createIfNotExist: true);
                     fields = acroForm.GetFormFields();
 
-                    for (int assgnType = 0; assgnType < 4; assgnType++)
+                    foreach (string baseKey in weeks[week].Keys)
                     {
-                        for (int section = 0; section < NUM_SECTIONS; section++)
+                        fields[DATE + baseKey].SetValue(weeks[week][baseKey].date);
+                        
+                        fields[ASSIGNEE + baseKey].SetValue(weeks[week][baseKey].assignee);
+
+                        if (weeks[week][baseKey].householder != null)
                         {
-                            if (weeks[week][assgnType][section] != null)
-                            {
-                                key = buildKey(DATE, (assgnType + 1).ToString(), sectionName[section]);
-                                value = weeks[week][assgnType][section].date;
-                                if (value != null)
-                                {
-                                    fields[key].SetValue(value);
-                                }
-
-                                key = buildKey(LESSON, (assgnType + 1).ToString(), sectionName[section]);
-                                value = weeks[week][assgnType][section].lesson;
-                                if (value != null)
-                                {
-                                    fields[key].SetValue(value);
-                                }
-
-                                key = buildKey(ASSIGNEE, (assgnType + 1).ToString(), sectionName[section]);
-                                value = weeks[week][assgnType][section].assignee;
-                                if (value != null)
-                                {
-                                    fields[key].SetValue(value);
-                                }
-
-                                key = buildKey(HOUSEHOLDER, (assgnType + 1).ToString(), sectionName[section]);
-                                value = weeks[week][assgnType][section].householder;
-                                if (value != null)
-                                {
-                                    fields[key].SetValue(value);
-                                }
-                            }
+                            fields[HOUSEHOLDER + baseKey].SetValue(weeks[week][baseKey].householder);
                         }
+
+                        fields[LESSON + baseKey].SetValue(weeks[week][baseKey].lesson);
                     }
+
                     reminders.Close();
                 }
             }
@@ -211,54 +199,58 @@ namespace ReminderSlipPopulator
         {
             string rawText = table.Cell(row, col).Range.Text;
 
-            return rawText.Trim(new char[] { '\r', '\a' }); ;
+            return rawText.Trim(new char[] { '\r', '\a' });
         }
 
-        /// <summary>
-        /// Parses the table row passed into assignments and then inserts into the given map `assignments`.
-        /// </summary>
-        /// <param name="date">The date for the assignments in the given row.</param>
-        /// <param name="row">Row from the schedule MS Word Table.</param>
-        /// <param name="assignmentType">Type of the assignments on the given row.</param>
-        /// <returns>An array with two elements. First is the section a and second is section b. If one in not assigned, will be left null.</returns>
-        private static Assignment[] parseAssignmentRow(Table schedule, int row, string date, AssignmentType assignmentType)
+        private static string getRowCellText(Row row, int col)
         {
-            Assignment[] assgn = new Assignment[NUM_SECTIONS];
+            string rawText = row.Cells[col].Range.Text;
+
+            return rawText.Trim(new char[] { '\r', '\a' });
+        }
+        
+        private static void parseAssignmentRow(Row row, string date, AssignmentType assignmentType, IDictionary<string, Assignment> assgns)
+        {
+            Assignment assgn = null;
             string participants;
+
+            String key = null;
 
             // conviniece arrays for easier iteration
             int[] participantsCol = new int[] { COL_SEC_A_PARTICIPANTS, COL_SEC_B_PARTICIPANTS };
             int[] lessonCol = new int[] { COL_SEC_A_LESSON, COL_SEC_B_LESSON };
-            string[] sectionName = new string[] { CLASS_A_S, CLASS_B_S };
 
             for (int section = 0; section < NUM_SECTIONS; section++)
             {
-                participants = getCellText(schedule, row, participantsCol[section]);
+                participants = getRowCellText(row, participantsCol[section]);
 
-                if (participants.Equals(""))
+                if (participants == null || participants.Equals(""))
                 {
-                    assgn[section] = null;
+                    assgn = null;
                 }
                 else
                 {
-                    assgn[section] = new Assignment();
+                    assgn = new Assignment();
 
-                    assgn[section].date = date;
-                    assgn[section].section = sectionName[section];
-                    assgn[section].type = ((int)assignmentType).ToString();
-                    assgn[section].lesson = getCellText(schedule, row, lessonCol[section]);
+                    assgn.date = date;
+                    assgn.type = ((int)assignmentType).ToString();
 
                     string[] names = participants.Split('\r'); // MS Word uses \r for newline
 
-                    assgn[section].assignee = names[0].Trim();
+                    assgn.assignee = names[0].Trim();
                     if (names.Length > 1)
                     {
-                        assgn[section].householder = names[1].Trim();
+                        assgn.householder = names[1].Trim();
                     }
+
+                    assgn.lesson = getRowCellText(row, lessonCol[section]);
+                    assgn.section = sectionName(section);
+                    
+                    // role is left empty on purpose, this key will be used to map each value to the pdf
+                    key = buildKey(string.Empty, assgn.type, assgn.section);
+                    assgns.Add(key.ToString(), assgn);
                 }
             }
-
-            return assgn;
         }
 
         /// <summary>
@@ -266,7 +258,7 @@ namespace ReminderSlipPopulator
         /// </summary>
         /// <param name="week">Number of the week (0 to 4) for which the date is needed.</param>
         /// <returns>If the week number is not 0 to 4, the result returned is 2.</returns>
-        public static int date_row(int week)
+        public static int rowNumForDateOnWeekNumber(int week)
         {
             switch (week)
             {
@@ -282,6 +274,21 @@ namespace ReminderSlipPopulator
                     return 19;
                 default:
                     return 2;
+            }
+        }
+
+        public static string sectionName(int sec)
+        {
+            switch (sec)
+            {
+                case 0:
+                    return CLASS_A_S;
+                case 1:
+                    return CLASS_B_S;
+
+                default:
+                    return null;
+                    
             }
         }
 
