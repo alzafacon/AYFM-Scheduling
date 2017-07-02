@@ -10,20 +10,12 @@
  */
 
 using System;
-using System.IO;
 
 namespace ReminderSlipPopulator
 {
     public class Program
     {
-        // pdf files for the reminder slips (both files are exactly the same, except for the names)
-        // This file will have text form fields named.
-        public const string PREP_DEST = "S-89-S 8.pdf";
-        // This file has its text form fields populated with the future names for the fields in `PREP_DEST`.
-        public const string PREP_SRC = "filledForm.pdf";
 
-        // after initialization this pdf file will be used as a the source
-        public const string SRC = "S-89-S 8.pdf";
 
         /// <summary>
         /// Command Line Interface to initialize and to populate pdf files.
@@ -31,8 +23,9 @@ namespace ReminderSlipPopulator
         /// <param name="args">
         /// --init-form
         ///     initializes form by renaming text form fields for latter mapping
-        ///     only need to be ran once
+        ///     only needs to be run once
         /// -p <schedule.csv> <output.pdf>
+        ///     --populate is an equivalent flag
         ///     use <schedule.docx> to populate <output_directory>
         ///     both arguments should be absolute paths
         /// </param>
@@ -40,11 +33,12 @@ namespace ReminderSlipPopulator
         {
             // args do not include the program name... just the arguments
 
-            if (args.Length == 3 && args[0].Equals("-p"))
+            if (args.Length == 3 && 
+                (args[0].Equals("-p") || args[0].Equals("--populate")))
             {
                 // file to read data from
                 string scheduleCsv = args[1];
-                // file to be populated with data
+                // folder where filled .pdf files will be placed
                 string outputPdf = args[2];
 
                 FormFill.PopulatePdf(scheduleCsv, outputPdf);
@@ -52,11 +46,12 @@ namespace ReminderSlipPopulator
             else if (args.Length == 1 && args[0].Equals("--init-form"))
             {
                 // make sure the file Directory exists
-                FileInfo file = new FileInfo(PREP_DEST);
-                file.Directory.Create();
+                //FileInfo file = new FileInfo(PREP_DEST);
+                //file.Directory.Create();
 
                 // update the text fields
-                FormFill.NameTextFields(PREP_SRC, PREP_DEST);
+                FormFill.NameTextFields(FormFill.NAMED_FIELDS_1, FormFill.FIRST_WEEK_SPANISH_PDF);
+                FormFill.NameTextFields(FormFill.NAMED_FIELDS_8, FormFill.MID_MONTH_SPANISH_PDF);
             }
             else
             {

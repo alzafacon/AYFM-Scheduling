@@ -12,9 +12,13 @@ namespace ReminderSlipPopulator
 {
     class FormFill
     {
-        // pdf form template
-        public const string PDF_1_ASSGN_SLIP = "S-89-S.pdf"; // Spanish, 1 Reminder slip for the first week of every month
-        public const string PDF_8_ASSGN_SLIPS = "S-89-S 8.pdf"; // Spanish, 8 reminder slips for 8 assignments in one week
+        // These are the file names of the .pdfs used for --init-form
+        public const string NAMED_FIELDS_1 = "namedFields1.pdf";
+        public const string NAMED_FIELDS_8 = "namedFields8.pdf";
+
+        // after initialization these .pdfs will be used as the templates
+        public const string FIRST_WEEK_SPANISH_PDF = "S-89-S_1.pdf";
+        public const string MID_MONTH_SPANISH_PDF = "S-89-S_8.pdf";
 
         // The following values are for concatinating to make the keys to the form fields
         public const string ASSIGNEE = "Assignee";
@@ -46,8 +50,8 @@ namespace ReminderSlipPopulator
         public static void PopulatePdf(String scheduleDocx, String destinationPdfForm)
         {
             // each week of assignments is stored as a map. 
-            // The keys in `weeks` are the suffixes for the pdf form keys.
-            IDictionary<string, Assignment>[] weeks = new Dictionary<string, Assignment>[NUM_WEEKS_PER_SCHEDULE];
+            // The keys in `weeks[i]` are the suffixes for the pdf form keys.
+            IDictionary<string, Assignment>[] weeks = new Dictionary<string, Assignment>[NUM_WEEKS_PER_SCHEDULE+1]; // +1 to allow 1-indexing
 
             // An MS Word app instance is needed to open .docx files.
             Application WordApplication = null;
@@ -59,8 +63,12 @@ namespace ReminderSlipPopulator
             Document document = null;
 
             // tables are indexed from 1... can you believe it! (I think all other document collection objects are as well)
+            // Any objects created in this method that reflect the documnet will also be 1-indexed
             // how to handle tables: https://msdn.microsoft.com/en-us/library/w1702h4a.aspx
             Table schedule = null;
+
+            List<string> dates = new List<string>();
+            dates.Add(null); // dummy placed at index zero so list can be used 1-indexed
 
             try
             {   // Assuming the template has not been tampered with
@@ -78,13 +86,14 @@ namespace ReminderSlipPopulator
 
                 // proceed through the table row-wise
 
-                int week = 0;
+                int week;
                 int rowNum;
                 string dateText;
 
-                week = 0;
+                week = 1;
                 rowNum = rowNumForDateOnWeekNumber(week);
                 dateText = getRowCellText(schedule.Rows[rowNum], COL_DATE);
+                dates.Add(dateText);
                 rowNum++; // advance to next row
 
                 weeks[week] = new Dictionary<string, Assignment>();
@@ -92,11 +101,11 @@ namespace ReminderSlipPopulator
                 week++; // advance to next week
 
                 // continue with remaining 4 weeks
-                for (; week < NUM_WEEKS_PER_SCHEDULE; week++)
+                for (; week <= NUM_WEEKS_PER_SCHEDULE; week++)
                 {
                     rowNum = rowNumForDateOnWeekNumber(week);
                     dateText = getRowCellText(schedule.Rows[rowNum], COL_DATE);
-
+                    dates.Add(dateText);
                     weeks[week] = new Dictionary<string, Assignment>();
 
                     foreach (AssignmentType assignmentType in Enum.GetValues(typeof(AssignmentType)))
@@ -141,10 +150,21 @@ namespace ReminderSlipPopulator
 
             try
             {
-                // skipping week 0 (the first)
-                for (int week = 1; week < NUM_WEEKS_PER_SCHEDULE; week++)
+                for (int week = 1; week <= NUM_WEEKS_PER_SCHEDULE; week++)
                 {
-                    reminders = new PdfDocument(new PdfReader(PDF_8_ASSGN_SLIPS), new PdfWriter(destinationPdfForm + $"week{week}.pdf"));
+                    if (weeks[week].Count == 0)
+                    {
+                        continue;
+                    }
+
+                    if (week == 1)
+                    {
+                        reminders = new PdfDocument(new PdfReader(FIRST_WEEK_SPANISH_PDF), new PdfWriter(destinationPdfForm + $"{dates[week]}.pdf"));
+                    } else
+                    {
+                        reminders = new PdfDocument(new PdfReader(MID_MONTH_SPANISH_PDF), new PdfWriter(destinationPdfForm + $"{dates[week]}.pdf"));
+                    }
+
                     acroForm = PdfAcroForm.GetAcroForm(document: reminders, createIfNotExist: true);
                     fields = acroForm.GetFormFields();
 
@@ -161,21 +181,22 @@ namespace ReminderSlipPopulator
 
                         fields[LESSON + baseKey].SetValue(weeks[week][baseKey].lesson);
                     }
-
-                    reminders.Close();
+                    
+                    if (!reminders.IsClosed())
+                    {
+                        reminders.Close();
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"null not allowed?{ex}");
-            }
-            finally
-            {
-                if (reminders != null)
+                if (reminders != null && !reminders.IsClosed())
                 {
                     reminders.Close();
                 }
             }
+            
             Console.WriteLine("press key to exit.....");
             Console.ReadKey();
         }
@@ -183,23 +204,6 @@ namespace ReminderSlipPopulator
         private static string buildKey(string role, string type, string section)
         {
             return new StringBuilder().Append(role).Append(TYPE).Append(type).Append(SECTION).Append(section).ToString();
-        }
-
-        /// <summary>
-        /// Convinience method for reading text from a table. 
-        /// Removes two control characters discovered to be inserted by MS Word 2016. Namely '/r' and '/a'.
-        /// May throw an exception if index is out of bounds or table is null.
-        /// </summary>
-        /// <param name="table">MS Word document table object to read data from. Expected to be a schedule template. 
-        /// Note: Table objects are indexed from 1, not 0.</param>
-        /// <param name="row">Row in the table to read text from. No check is made that the index is vaid.</param>
-        /// <param name="col">Column in the table to read text from. No check is made that the index is vaid.</param>
-        /// <returns>Cleaned text at row and col parameters.</returns>
-        private static string getCellText(Table table, int row, int col)
-        {
-            string rawText = table.Cell(row, col).Range.Text;
-
-            return rawText.Trim(new char[] { '\r', '\a' });
         }
 
         private static string getRowCellText(Row row, int col)
@@ -216,13 +220,9 @@ namespace ReminderSlipPopulator
 
             String key = null;
 
-            // conviniece arrays for easier iteration
-            int[] participantsCol = new int[] { COL_SEC_A_PARTICIPANTS, COL_SEC_B_PARTICIPANTS };
-            int[] lessonCol = new int[] { COL_SEC_A_LESSON, COL_SEC_B_LESSON };
-
-            for (int section = 0; section < NUM_SECTIONS; section++)
+            for (int section = 1; section <= NUM_SECTIONS; section++)
             {
-                participants = getRowCellText(row, participantsCol[section]);
+                participants = getRowCellText(row, participantsColumn(section));
 
                 if (participants == null || participants.Equals(""))
                 {
@@ -243,10 +243,10 @@ namespace ReminderSlipPopulator
                         assgn.householder = names[1].Trim();
                     }
 
-                    assgn.lesson = getRowCellText(row, lessonCol[section]);
+                    assgn.lesson = getRowCellText(row, lessonColumn(section));
                     assgn.section = sectionName(section);
                     
-                    // role is left empty on purpose, this key will be used to map each value to the pdf
+                    // role is left empty on purpose, this key will be used as a suffix to map each value to the pdf
                     key = buildKey(string.Empty, assgn.type, assgn.section);
                     assgns.Add(key.ToString(), assgn);
                 }
@@ -254,49 +254,95 @@ namespace ReminderSlipPopulator
         }
 
         /// <summary>
-        /// Find the row number in the schedule template of the row containing the date for a week.
+        /// Finds the row number in the schedule template of the row containing the date for a week.
+        /// Throws exception if week is not between 1 and 5 inclusive
         /// </summary>
-        /// <param name="week">Number of the week (0 to 4) for which the date is needed.</param>
-        /// <returns>If the week number is not 0 to 4, the result returned is 2.</returns>
+        /// <param name="week">Number of the week (1 to 5) for which the date is needed.</param>
+        /// <returns>Row number where the date can be found for week number given in argument.</returns>
         public static int rowNumForDateOnWeekNumber(int week)
         {
             switch (week)
             {
-                case 0:
-                    return 2;
                 case 1:
-                    return 4;
+                    return 2;
                 case 2:
-                    return 9;
+                    return 4;
                 case 3:
-                    return 14;
+                    return 9;
                 case 4:
+                    return 14;
+                case 5:
                     return 19;
-                default:
-                    return 2;
-            }
-        }
-
-        public static string sectionName(int sec)
-        {
-            switch (sec)
-            {
-                case 0:
-                    return CLASS_A_S;
-                case 1:
-                    return CLASS_B_S;
 
                 default:
-                    return null;
-                    
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         /// <summary>
-        /// Renames the text form fields for easier manipulation.  
+        /// Function to simulate the section name strings being in an array.
         /// </summary>
-        /// <param name="src">Text in the 'text form fields' will become the name of the text field in the `dest` param.</param>
-        /// <param name="dest">This file will have nicely named 'text form fields'.</param>
+        /// <param name="sec">Integer between 1 and 2 inclusive.</param>
+        /// <returns>Name of the section as a string. (e.x. the name of section a is "a")</returns>
+        public static string sectionName(int sec)
+        {
+            switch (sec)
+            {
+                case 1:
+                    return CLASS_A_S;
+                case 2:
+                    return CLASS_B_S;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        /// <summary>
+        /// Function to simulate the column numbers for participant names being in an array.
+        /// </summary>
+        /// <param name="sec">Integer between 1 and 2 inclusive.</param>
+        /// <returns>Column number containing the participant names for the given section.</returns>
+        public static int participantsColumn(int sec)
+        {
+            switch (sec)
+            {
+                case 1:
+                    return COL_SEC_A_PARTICIPANTS;
+                case 2:
+                    return COL_SEC_B_PARTICIPANTS;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        /// <summary>
+        /// Function to simulate the column numbers for lessons being in an array.
+        /// </summary>
+        /// <param name="sec">Integer between 1 and 2 inclusive.</param>
+        /// <returns>Column number containing the lesson for the given section.</returns>
+        public static int lessonColumn(int sec)
+        {
+            switch (sec)
+            {
+                case 1:
+                    return COL_SEC_A_LESSON;
+                case 2:
+                    return COL_SEC_B_LESSON;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        /// <summary>
+        /// Form fields have names in .pdf files. The names are not meaningful. This mehtod will give the form fields meaningful names.
+        /// The desired name of the fields will be entered manually into a copy of the .pdf itself.
+        /// The name of these manually filled .pdfs must be 'namedFields1.pdf' or 'namedFields8.pdf'
+        /// </summary>
+        /// <param name="src">Name of the .pdf file with its text fields manually filled..</param>
+        /// <param name="dest">Name of the file to have its form fields named meaningfully.</param>
         public static void NameTextFields(String src, String dest)
         {
             // open pdf document to read from `src` and to write to `dest`
@@ -304,7 +350,7 @@ namespace ReminderSlipPopulator
             PdfDocument reminders = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
             // PdfAcroForm represents the static form technology AcroForm on a PDF file.
-            PdfAcroForm form = PdfAcroForm.GetAcroForm(reminders, /*createIfNotExists = */ true); // retrieve AcroForm from the document
+            PdfAcroForm form = PdfAcroForm.GetAcroForm(reminders, createIfNotExist: true); // retrieve AcroForm from the document
 
             // Get IDictionary map of form fields
             IDictionary<String, PdfFormField> fields = form.GetFormFields();
