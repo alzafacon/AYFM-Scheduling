@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace ReminderSlipPopulator {
     
+    /// <summary>
+    /// Simple wrapper for the attributes of an Assignment.
+    /// </summary>
     class Assignment {
-        // these fields describe an assignment
         public string date;
         public string type;
         public string assignee;

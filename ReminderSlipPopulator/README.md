@@ -3,7 +3,7 @@
 ## Starting this Visual Studio Project
 
 In this project, C# is used to read a .docx (Microsoft Word) file and fill the form fields of a .pdf file.
-This project is more like a document level customization not a VSTO (Visual Studio Tools for Office) add-in or Office Add-in. Still it may be necessary to have the [appropriate version of VS](https://msdn.microsoft.com/en-us/library/bb398242.aspx) installed.
+This project is more like a document level customization not a VSTO (Visual Studio Tools for Office) add-in or Office Add-in. Still it may be necessary to have the [appropriate version of VS](https://msdn.microsoft.com/en-us/library/bb398242.aspx) installed. Your installed version of Microsoft Word should be 2013 or 2016.
 
 ## Dependencies
 

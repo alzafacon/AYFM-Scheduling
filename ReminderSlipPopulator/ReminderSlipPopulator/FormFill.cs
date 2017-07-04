@@ -47,6 +47,11 @@ namespace ReminderSlipPopulator
         public const int NUM_ASSGN_TYPES = 4;
         public const int NUM_SECTIONS = 2;
 
+        /// <summary>
+        /// Generates pdf files filled using a MS Word document. The pdf files will be named by the week on the schedule.
+        /// </summary>
+        /// <param name="scheduleDocx">MS Word document to read schedule from.</param>
+        /// <param name="destinationPdfForm">Folder to place generated and populated pdf files.</param>
         public static void PopulatePdf(String scheduleDocx, String destinationPdfForm)
         {
             // each week of assignments is stored as a map. 
@@ -126,15 +131,15 @@ namespace ReminderSlipPopulator
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception caught");
+                Console.WriteLine(ex);
+                Console.WriteLine("Press any key to proceed...");
+                Console.ReadKey();
             }
             finally
             {
-                if (document != null)
+                if (document != null) // an aditional condition is needed to check if the document has actually been opened
                 {
                     document.Close();
-                    //document.Close(); // will this cause an exception??? yes it does how to catch if the document was not open...
-
                 }
                 WordApplication.Quit();
             }
@@ -190,22 +195,35 @@ namespace ReminderSlipPopulator
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"null not allowed?{ex}");
+                Console.WriteLine(ex);
+                Console.WriteLine("Press any key to proceed...");
+                Console.ReadKey();
                 if (reminders != null && !reminders.IsClosed())
                 {
                     reminders.Close();
                 }
             }
             
-            Console.WriteLine("press key to exit.....");
-            Console.ReadKey();
         }
 
-        private static string buildKey(string role, string type, string section)
+        /// <summary>
+        /// Uses a string builder to create a key describing an attribute of an assignment. Please use the const strings in this class meant for concatenation.
+        /// </summary>
+        /// <param name="attribute">The attribute of the assignment, i.e. Assignee, date, lesson, etc.</param>
+        /// <param name="type">The type of assignment as a string.</param>
+        /// <param name="section">The section of the assignment as a string.</param>
+        /// <returns></returns>
+        private static string buildKey(string attribute, string type, string section)
         {
-            return new StringBuilder().Append(role).Append(TYPE).Append(type).Append(SECTION).Append(section).ToString();
+            return new StringBuilder().Append(attribute).Append(TYPE).Append(type).Append(SECTION).Append(section).ToString();
         }
 
+        /// <summary>
+        /// Retrieves text from a table row and removes escape characters used by MS Word.
+        /// </summary>
+        /// <param name="row">Use Table#Rows[int r] to access a given row of the table.</param>
+        /// <param name="col">Column of the row to extract text from.</param>
+        /// <returns></returns>
         private static string getRowCellText(Row row, int col)
         {
             string rawText = row.Cells[col].Range.Text;
@@ -213,6 +231,13 @@ namespace ReminderSlipPopulator
             return rawText.Trim(new char[] { '\r', '\a' });
         }
         
+        /// <summary>
+        /// Creates Assignment objects from a given table row and adds object to Dictionary.
+        /// </summary>
+        /// <param name="row">Table row to be processed and added to Dictionary</param>
+        /// <param name="date">Table row has limited context, week date of the assignment must be specified explicitly.</param>
+        /// <param name="assignmentType">Table row has limited context, assignment type for the row must be specified explicitly.</param>
+        /// <param name="assgns">Dictionary that stores weekly assignments.</param>
         private static void parseAssignmentRow(Row row, string date, AssignmentType assignmentType, IDictionary<string, Assignment> assgns)
         {
             Assignment assgn = null;

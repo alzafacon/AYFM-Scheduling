@@ -13,18 +13,19 @@ using System;
 
 namespace ReminderSlipPopulator
 {
+    /// <summary>
+    /// Command line entry to executing ReminderSlipPopulator tasks.
+    /// </summary>
     public class Program
     {
-
-
         /// <summary>
         /// Command Line Interface to initialize and to populate pdf files.
         /// </summary>
         /// <param name="args">
         /// --init-form
-        ///     initializes form by renaming text form fields for latter mapping
+        ///     initializes forms by renaming text form fields for later mapping
         ///     only needs to be run once
-        /// -p <schedule.csv> <output.pdf>
+        /// -p <schedule.csv> <output_directory>
         ///     --populate is an equivalent flag
         ///     use <schedule.docx> to populate <output_directory>
         ///     both arguments should be absolute paths
@@ -49,15 +50,17 @@ namespace ReminderSlipPopulator
                 //FileInfo file = new FileInfo(PREP_DEST);
                 //file.Directory.Create();
 
+                // The two .pdfs (NAMED_FIELDS_1 and NAMED_FIELDS_8) are assumed to be in the working directory
+
                 // update the text fields
                 FormFill.NameTextFields(FormFill.NAMED_FIELDS_1, FormFill.FIRST_WEEK_SPANISH_PDF);
                 FormFill.NameTextFields(FormFill.NAMED_FIELDS_8, FormFill.MID_MONTH_SPANISH_PDF);
             }
             else
             {
-                Console.WriteLine("usage: program [--init-form] [-p <schedule.docx> <output.pdf>]");
+                Console.WriteLine("usage: program [--init-form] [-p <schedule.docx> <output_directory>]");
                 Console.WriteLine("  --init-form    renames the text form fields");
-                Console.WriteLine("  -p             use <schedule.docx> to populate <output.pdf>");
+                Console.WriteLine("  -p             use <schedule.docx> to create pdfs at <output_directory>");
             }
         }
     }
