@@ -2,9 +2,11 @@
 
 prepIns_person = "INSERT IGNORE INTO person (full_name, gender, isactive) VALUES ('%s', '%s', %s);"
 #always end with a semicolon
-prepIns_workson = "INSERT IGNORE INTO works_on (person_id, assignment_id) VALUES "
+prepIns_workson = "INSERT IGNORE INTO works_on (person_id, type_id) VALUES "
 value = '(LAST_INSERT_ID(), %d)'
 
+# better alternative to using LAST_INSERT_ID
+"SELECT id, %d FROM person WHERE person.full_name = '%s'"
 
 class Student:
     
@@ -67,7 +69,7 @@ def enrollmentCSV_to_SQL(csvPath):
             
             insertSQL.append(prepIns_workson + ', '.join(works_on) + ';')
     
-    with open('../sql/populatePerson+WorksOn.sql', 'w') as populateTables:
+    with open('populatePersonAndWorksOn.sql', 'w') as populateTables:
 
         for line in insertSQL:
             populateTables.write(line+'\n');
