@@ -3,14 +3,14 @@ from schedule.Assignment import *
 
 # prepared statement for assignment with only one participant (assignee)
 prepInsertNoHHold = \
-    """INSERT INTO assignment (date, assignee, lesson, `section`, `type`)
+    """INSERT INTO assignment (`week`, assignee, lesson, `classroom`, `type`)
     SELECT '{a.date}', id, {a.lesson}, '{a.section}', {a.type}
     FROM person
     WHERE full_name = '{a.assignee}';"""
 
 # prepated statement for assignment with two participants (assignee, householder)
 prepInsertWithHHold = \
-    """INSERT INTO assignment (date, assignee, householder, lesson, `section`, `type`)
+    """INSERT INTO assignment (`week`, assignee, householder, lesson, `classroom`, `type`)
     SELECT '{a.date}', publisher.id, hholder.id, {a.lesson}, '{a.section}', {a.type}
     FROM person as publisher
     JOIN person as hholder
@@ -21,7 +21,7 @@ def to_sql(year, month):
     '''Convert csv to sql'''
     sqlStatements = []
     
-    # open csv schedule for parsing (this path only works when script is called from main.py)
+    # open csv schedule for parsing (this path only works when script is called from convert.py)
     csvfilename = '../csv/%d-%d.csv' % (year, month)
     with open(csvfilename, 'r') as assignments:
         assgn = Assignment() # object used for holding an assignment
