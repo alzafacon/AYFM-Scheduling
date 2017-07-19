@@ -1,4 +1,4 @@
-package entities;
+package util;
 
 public enum Role {
 	ASSIGNEE("assignee"), HOUSEHOLDER("householder");

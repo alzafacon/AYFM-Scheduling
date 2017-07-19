@@ -1,7 +1,5 @@
 #I know there's a better way to track issues...
 
-some of the sql populate files were moved. (I think that py scripts make those, so I need to make sure that the py scripts are writing the populate scripts in the correct place)
-
 Separate the DataAccess project from the AssignmentPlanner
 
 ==============================================
@@ -17,5 +15,5 @@ A DAO provides all the operations needed to CRUD instances of its entity class i
 
 
 Data-Tier Services may not be needed. Since their primary purpose is to make transactions. The operation needed is simple so the service layer may not be necessary and direct access to the DAO is allowed.
-Data-Tier is requiered when several DAOs are ussed to create ('assemble') an entity.
+Data-Tier is requiered when several DAOs are used to create ('assemble') an entity.
 

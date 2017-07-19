@@ -1,4 +1,4 @@
-package entities;
+package util;
 
 public enum Assgn_t {
 	UNKNOWN(0),
@@ -14,7 +14,7 @@ public enum Assgn_t {
 		return value;
 	}
 	
-	static public Assgn_t toAssgn_t(int i){
+	static public Assgn_t get(int i){
 		switch (i) {
 		case 1:
 			return READING;
