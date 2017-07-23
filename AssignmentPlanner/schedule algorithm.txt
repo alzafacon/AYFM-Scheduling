@@ -1,0 +1,58 @@
+# Algorithm for schedule generation
+
+input:
+    Month & Year: used to build skeleton dates
+    
+    Queue of most recent participations: (comprised of a STUDENT and an ASSIGNMENT)
+     ordered by assending date. Hence the person who has participated least recently
+     comes first. Person who has participated most recently comes last.
+     
+output:
+    Schedule: first week only contains 1 reading in classroom `a`
+     Following weeks have all 4 types and in both sections
+     The demonstration parts are completed by students of the same sex
+     
+algorithm:
+
+    pull first person from the queue
+    create a custom progression for the person to generate the params of the suggestion
+    
+    apply the progression on the last assignment
+
+    place new assignment in schedule:
+        try to place in first applicable week. if that fails try next week
+         if all weeks fail then apply the progression again and try all weeks again
+         stop repeating when assigned, or applying progression completes a full cycle
+         
+         - when assigned update participation and append to list
+         - otherwise simply drop from the list (this is to avoid infinite loops, since if a user 
+            is not assigned in a full progression cycle then the user won't be assigned later.)
+          
+    start over: pull first person from the queue
+        but stop when queue is out of people or all assignments have been filled
+ 
+ 
+ 
+ 
+DEFINE THE PROGRESION:
+    1. role (except for reading [and discourse])
+    2. type
+    3. section
+filter based on works_on
+
+
+ROLE    TYPE        SECTION
+pub     reading     a
+pub     init call   a
+hhold   init call   a
+pub     ret vis     a
+hhold   ret vis     a
+pub     bib stud    a
+hhold   bib stud    a
+pub     reading     b
+pub     init call   b
+hhold   init call   b
+pub     ret vis     b
+hhold   ret vis     b
+pub     bib stud    b
+hhold   bib stud    b

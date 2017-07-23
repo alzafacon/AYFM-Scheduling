@@ -25,25 +25,17 @@ DROP TABLE IF EXISTS `ayfm`.`person` ;
 
 CREATE TABLE IF NOT EXISTS `ayfm`.`person` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `full_name` VARCHAR(45) NOT NULL,
-  `isactive` TINYINT(1) NOT NULL DEFAULT '1',
+  `is_active` TINYINT(1) NOT NULL DEFAULT '1',
   `gender` CHAR(1) NOT NULL,
+  `first_name` VARCHAR(45) NOT NULL,
+  `last_name` VARCHAR(45) NOT NULL,
+  `is_eligible_reading` TINYINT(1) NOT NULL DEFAULT 0,
+  `is_eligible_init_call` TINYINT(1) NOT NULL DEFAULT 0,
+  `is_eligible_ret_visit` TINYINT(1) NOT NULL DEFAULT 0,
+  `is_eligible_bib_study` TINYINT(1) NOT NULL DEFAULT 0,
+  `is_eligible_talk` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `full_name_UNIQUE` (`full_name` ASC))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `ayfm`.`assignment_type`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `ayfm`.`assignment_type` ;
-
-CREATE TABLE IF NOT EXISTS `ayfm`.`assignment_type` (
-  `id` INT(11) NOT NULL,
-  `description` VARCHAR(45) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `description_UNIQUE` (`description` ASC))
+  UNIQUE INDEX `full_name_UNIQUE` (`last_name` ASC, `first_name` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -59,47 +51,20 @@ CREATE TABLE IF NOT EXISTS `ayfm`.`assignment` (
   `assignee` INT(11) NOT NULL,
   `householder` INT(11) NULL DEFAULT NULL,
   `lesson` INT(11) NULL DEFAULT NULL,
-  `classroom` CHAR(1) NOT NULL,
+  `classroom` INT(11) NOT NULL,
   `type` INT(11) NOT NULL,
-  `completed` TINYINT(1) NULL DEFAULT '0',
-  `passed` TINYINT(1) NULL DEFAULT NULL,
+  `is_completed` TINYINT(1) NULL DEFAULT '0',
+  `is_passed` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `week_ix` (`week` ASC),
   INDEX `assgn_fk_person_id_idx` (`assignee` ASC),
   INDEX `assgn_fk_person_householder_idx` (`householder` ASC),
-  INDEX `assgn_fk_assgnment_type_type_idx` (`type` ASC),
   CONSTRAINT `assignment_fk_person_assignee`
     FOREIGN KEY (`assignee`)
     REFERENCES `ayfm`.`person` (`id`)
     ON DELETE CASCADE,
   CONSTRAINT `assignment_fk_person_householder`
     FOREIGN KEY (`householder`)
-    REFERENCES `ayfm`.`person` (`id`)
-    ON DELETE CASCADE,
-  CONSTRAINT `assignment_fk_assignment_type_type`
-    FOREIGN KEY (`type`)
-    REFERENCES `ayfm`.`assignment_type` (`id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `ayfm`.`works_on`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `ayfm`.`works_on` ;
-
-CREATE TABLE IF NOT EXISTS `ayfm`.`works_on` (
-  `person_id` INT(11) NOT NULL,
-  `type_id` INT(11) NOT NULL,
-  INDEX `works_on_fk_assgn_idx` (`type_id` ASC),
-  INDEX `works_on_fk_person_idx` (`person_id` ASC),
-  CONSTRAINT `works_on_fk_type`
-    FOREIGN KEY (`type_id`)
-    REFERENCES `ayfm`.`assignment_type` (`id`)
-    ON DELETE CASCADE,
-  CONSTRAINT `works_on_fk_person`
-    FOREIGN KEY (`person_id`)
     REFERENCES `ayfm`.`person` (`id`)
     ON DELETE CASCADE)
 ENGINE = InnoDB
@@ -109,16 +74,3 @@ DEFAULT CHARACTER SET = utf8;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
--- -----------------------------------------------------
--- Data for table `ayfm`.`assignment_type`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `ayfm`;
-INSERT INTO `ayfm`.`assignment_type` (`id`, `description`) VALUES (1, 'Bible Reading');
-INSERT INTO `ayfm`.`assignment_type` (`id`, `description`) VALUES (2, 'Initial Call');
-INSERT INTO `ayfm`.`assignment_type` (`id`, `description`) VALUES (3, 'Return Visit');
-INSERT INTO `ayfm`.`assignment_type` (`id`, `description`) VALUES (4, 'Bible Study');
-
-COMMIT;
-

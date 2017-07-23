@@ -1,12 +1,12 @@
 package util;
 
-public enum Assgn_t {
+public enum Assignment_t {
 	UNKNOWN(0),
-	READING(1), INITIAL_CALL(2), RETURN_VISIT(3), BIBLE_STUDY(4);
+	READING(1), INITIAL_CALL(2), RETURN_VISIT(3), BIBLE_STUDY(4), TALK(5);
 	
 	private final int value;
 	
-	private Assgn_t(int v) {
+	private Assignment_t(int v) {
 		this.value = v;
 	}
 	
@@ -14,7 +14,7 @@ public enum Assgn_t {
 		return value;
 	}
 	
-	static public Assgn_t get(int i){
+	static public Assignment_t get(int i){
 		switch (i) {
 		case 1:
 			return READING;
@@ -27,6 +27,9 @@ public enum Assgn_t {
 		
 		case 4:
 			return BIBLE_STUDY;
+			
+		case 5:
+			return TALK;
 			
 		default:
 			return UNKNOWN;

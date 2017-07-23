@@ -4,14 +4,14 @@ from schedule.Assignment import *
 # prepared statement for assignment with only one participant (assignee)
 prepInsertNoHHold = \
     """INSERT INTO assignment (`week`, assignee, lesson, `classroom`, `type`)
-    SELECT '{a.date}', id, {a.lesson}, '{a.section}', {a.type}
-    FROM person
+    SELECT '{a.date}', p.id, {a.lesson}, {a.section}, {a.type}
+    FROM person p
     WHERE full_name = '{a.assignee}';"""
 
 # prepated statement for assignment with two participants (assignee, householder)
 prepInsertWithHHold = \
     """INSERT INTO assignment (`week`, assignee, householder, lesson, `classroom`, `type`)
-    SELECT '{a.date}', publisher.id, hholder.id, {a.lesson}, '{a.section}', {a.type}
+    SELECT '{a.date}', publisher.id, hholder.id, {a.lesson}, {a.section}, {a.type}
     FROM person as publisher
     JOIN person as hholder
     WHERE publisher.full_name = '{a.assignee}' and hholder.full_name = '{a.hholder}';"""
@@ -23,9 +23,9 @@ def to_sql(year, month):
     
     # open csv schedule for parsing (this path only works when script is called from convert.py)
     csvfilename = '../csv/%d-%d.csv' % (year, month)
-    with open(csvfilename, 'r') as assignments:
+    with open(csvfilename, encoding='utf-8', mode='r') as assignments:
         assgn = Assignment() # object used for holding an assignment
-        
+        assignments.__next__() # skip the column headers 
         # each line is an assignment
         for assignment in assignments:
             
@@ -48,7 +48,7 @@ def to_sql(year, month):
             
 
     sqlfilename = '../sql/%d-%d.sql' % (year, month)
-    with open(sqlfilename, 'w') as assgn_sql_f:
+    with open(sqlfilename, encoding='utf-8', mode='w') as assgn_sql_f:
         
         for line in sqlStatements:
             assgn_sql_f.write(line+'\n')

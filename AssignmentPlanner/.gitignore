@@ -1,3 +1,6 @@
+# config files
+src/main/resources/application.properties
+
 ## Eclipse specific ignore
 .metadata
 bin/

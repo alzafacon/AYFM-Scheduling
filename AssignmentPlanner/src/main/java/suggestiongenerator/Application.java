@@ -1,12 +1,17 @@
 package suggestiongenerator;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import suggestiongenerator.entities.Assignment;
+import suggestiongenerator.repository.AssignmentRepository;
+import suggestiongenerator.services.ImportService;
+import suggestiongenerator.services.Schedule;
+
 
 /**
  * Spring Boot Gradle Plugin searches for the 
@@ -15,33 +20,25 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @author FidelCoria
  *
  */
-// @SpringBootApplication
-@Configuration
-@EnableAutoConfiguration
-@ComponentScan(basePackages = {"dao"})
+ @SpringBootApplication
 public class Application implements CommandLineRunner {
-
-	@Autowired
-    JdbcTemplate jdbcTemplate;
-	
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);	
+	 
+	 @Autowired
+	 Schedule schedule;
+	 
+	 @Autowired
+	 ImportService importService;
+	 
+	 @Autowired
+	 AssignmentRepository assignmentRepository;
+	 
+	 public static void main(String[] args) {
+		SpringApplication.run(Application.class);
 	}
 
     @Override
     public void run(String... strings) throws Exception {
-
-    	System.out.println("Welcome to Assignment Planner.");
-		
-		int year = 2017;
-		int month = 7;		
-		Schedule sched = new Schedule(year, month);
-		
-		
-		System.out.println("\nGenerating Schedule...");
-		sched.generateSchedule();
-		
-		sched.print();
+    	
     }
-
+    
 }

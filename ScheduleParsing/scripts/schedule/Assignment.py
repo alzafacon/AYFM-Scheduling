@@ -7,8 +7,8 @@ BIB_STUDY = '4' #this may also happen to be a talk by a brother
 TYPES = (READING, INIT_CALL, RET_VISIT, BIB_STUDY)
 
 # The Classrooms
-SECTION_A = 'a'
-SECTION_B = 'b'
+SECTION_A = '1'
+SECTION_B = '2'
 CLASSROOMS = (SECTION_A, SECTION_B)
 
 class Assignment:

@@ -26,7 +26,7 @@ public enum Section {
 	}
 	
 	public static Section get(String section) {
-		switch (section) {
+		switch (section.toLowerCase()) {
 		case "a":
 			return Section.A;
 		case "b":

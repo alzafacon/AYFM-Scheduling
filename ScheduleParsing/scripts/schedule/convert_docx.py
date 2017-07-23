@@ -25,6 +25,9 @@ SECTION_A_LESSON = 2
 SECTION_B_PARTICIPANTS = 3
 SECTION_B_LESSON = 4
 
+# csv column header
+HEADER = 'Date,Type,Assignee,Householder,Lesson,Classroom'
+
 def getWeekDate(weekHeaderRow, year, month):
     '''extract the date from the date row from table'''
     raw_date = weekHeaderRow.cells[DATE].text.strip()
@@ -156,6 +159,7 @@ def to_csv(path, year, month):
     #path will only work when called from main.py      
     csvfilename = '../csv/%d-%d.csv' % (year, month)
     with open(csvfilename, encoding='utf-8', mode='w') as parsed:
+        parsed.write(HEADER+'\n')
         for line in csvSched:
             parsed.write(line)
     

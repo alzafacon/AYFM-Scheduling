@@ -1,5 +1,24 @@
 #I know there's a better way to track issues...
 
+Relational objects not mapped completly into java objects
+
+Schedule Generator:
+	Genders are not being matched
+	assignments not being counted
+	advancing progression is to decoupled.
+	-type:2, sec:a, role:1
+	>type:3, sec:b, role:2
+	>type:4, sec:a, role:1
+	>type:1, sec:b, role:2
+	>type:2, sec:a, role:1
+
+	what is more important? getting the exact progression 
+	--or going sooner when no participation has happened in the longest?
+	#causes same person to be assigned on the same week,
+	##because coincidenalyy land on same week on different runs
+
+	Why is marcelo and I as READERS causing null pointer exceptions on progression (.getHouseholder)???
+
 Separate the DataAccess project from the AssignmentPlanner
 
 ==============================================
