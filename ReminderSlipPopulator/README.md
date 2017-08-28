@@ -23,3 +23,7 @@ There is a command line interface to this program. To pass arguments to the prog
 3. Go to "Debug" (on the left of the tab that opened)
 4. Set the working directory to the project folder (..\\ReminderSlipPopulator)
 5. Enter any command line arguments you like
+
+## packaging with java code
+All of the .dll's together with the .pdf's and the .exe in /ReminderSlipPopulator/bin/Debug/ should be included in the src/main/resources/PdfFormFill/ folder.
+During installation the PdfFormFill/ folder should be extracted and saved on the disk for later use.
