@@ -2,14 +2,14 @@ package suggestiongenerator.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.*;
 
 import util.Assignment_t;
 import util.Section;
-
-import java.util.Date;
-
+import util.Role;
 
 /**
  * The persistent class for the assignment database table.
@@ -44,12 +44,12 @@ public class Assignment implements Serializable {
 	@Column(name="is_passed")
 	private boolean isPassed;
 
-	//many-to-one association to Person
-	@ManyToOne(cascade=CascadeType.REMOVE)
+	// many-to-one association to Person
+	@ManyToOne(cascade=CascadeType.REMOVE) // TODO: test the deletion
 	@JoinColumn(name="assignee", nullable=false)
 	private Person assignee;
 
-	//bi-directional many-to-one association to Person
+	// many-to-one association to Person
 	@ManyToOne(cascade=CascadeType.REMOVE)
 	@JoinColumn(name="householder")
 	private Person householder;
@@ -110,6 +110,9 @@ public class Assignment implements Serializable {
 	}
 
 	public LocalDate getWeek() {
+		if (this.week == null) {
+			return null;
+		}
 		// in case java.sql is not available for some reason: 
 	    //  return week.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(); 
 	    return new java.sql.Date(this.week.getTime()).toLocalDate(); 
@@ -136,12 +139,114 @@ public class Assignment implements Serializable {
 	public void setHouseholder(Person householder) {
 		this.householder = householder;
 	}
+
+	/**
+	 * @param role Assignee or Householder roles
+	 * @return Person in role possibly null, null for unexpected role also.
+	 */
+	public Person getPersonInRole(Role role) {
+
+		switch (role) {
+		case ASSIGNEE:
+			return getAssignee();
+			
+		case HOUSEHOLDER:
+			return getHouseholder();
+
+		default:
+			return null;
+		}
+
+	}
 	
-	// TODO: handle null householder elegantly; null pointers...
+	/**
+	 * Equality of Assignments does not include `this.id` because Hibernate
+	 * fiddles around with it and can cause issues. 
+	 * `this.isPassed`, `this.isCompleted` also not checked.
+	 * Equality does include Week, Assignee, Householder, classroom, type, and lesson.
+	 * Declared `final` because casting is guarded by `instanceof`.
+	 * If there is an extended class the overriding .equals(Object) 
+	 * implementation is not guaranteed to play nice with this implementation. 
+	 */
+	@Override
+	final public boolean equals(Object obj) {
+		
+		if (this == obj) { // self check
+			return true;
+		}
+		if (obj == null || !(obj instanceof Assignment)) {
+			return false;
+		}
+		
+		Assignment other = (Assignment) obj;
+		
+		// week, assignee, householder
+		// Objects.equals() takes care of checking for null
+		if (!Objects.equals(this.getWeek(), other.getWeek())
+			|| !Objects.equals(this.getAssignee(), other.getAssignee())
+			|| !Objects.equals(this.getHouseholder(), other.getHouseholder())) {
+			return false;
+		}
+	
+		// classroom, type, lesson
+		if (this.getClassroom() != other.getClassroom()
+			|| this.getAssignmentType() != other.getAssignmentType()
+			|| this.getLesson() != other.getLesson()) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Since .equals() is overridden hashCode is also overridden.
+	 * Not all members are included in the .equals() check but the
+	 * default hashCode will include all members.
+	 * This implementation only hashes immutable objects (which are
+	 * a subset of the members checked in .equals() and provide a reasonably
+	 * unique set of values for different Assignments and thus a good hash).
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.getWeek(), this.getClassroom(), this.getAssignmentType());
+	}
+	
 	@Override
 	public String toString() {
-		return String.format("date: %s assignee: %s householder: %s class: %d, lesson: %d", 
-				week, assignee.getFullName(), householder, classroom, lesson);
+		StringBuilder strBld = new StringBuilder();
+		
+		strBld.append("date: ");
+		if (week != null) {
+			strBld.append(week);
+			strBld.append(" ");
+		}
+		
+		strBld.append("type: ");
+		strBld.append(Assignment_t.get(type));
+		strBld.append(" ");
+		
+		strBld.append("assignee: ");
+		if (assignee != null) {
+			strBld.append(assignee.getFullName());
+			strBld.append(" ");
+		}
+		
+		strBld.append("householder: ");
+		if (householder != null) {
+			strBld.append(householder.getFullName());
+			strBld.append(" ");
+		}
+		
+		strBld.append("class: ");
+		if (getClassroom() != null) {
+			strBld.append(getClassroom().toString());
+			strBld.append(" ");
+		}
+		
+		strBld.append("lesson: ");
+		strBld.append(lesson);
+		
+		return strBld.toString();
 	}
 
 }

@@ -7,19 +7,24 @@ import suggestiongenerator.entities.Person;
 
 
 /**
- * This is a DTO (Data Transfer Object)
- * perhaps in the future this could be extended to make for specific suggestions
+ * Participation used similar to a DTO (Data Transfer Object).
  * 
- * Wraps a Student object together with an Assignment object for convenience
+ * Wraps a Person object together with an Assignment object for convenience.
+ * The Person is either the Assignee or Householder on the Assignment object.
+ * Since Participation objects are used to identify the last participation
+ * the student reference is needed to clarify which Person the participation
+ * applies to.
+ * 
+ * @author FidelCoria
+ * 
  */
 public class Participation {
 	
-	public Person student;
-	
-	public Assignment mostRecentAssignment;
+	private Person student;
+	private Assignment mostRecentAssignment;
 	
 	public Participation() {
-		
+		this(null, null);
 	}
 	
 	public Participation(Person s) {
@@ -27,10 +32,26 @@ public class Participation {
 	}
 	
 	public Participation(Person s, Assignment a) {
-		this.student = s;
-		this.mostRecentAssignment = a;
+		student = s;
+		mostRecentAssignment = a;
 	}
 	
+	public Person getStudent() {
+		return student;
+	}
+	
+	public void updateMostRecentAssignment(Assignment assignment) {
+		mostRecentAssignment = assignment;
+	}
+	
+	public Assignment getAssignment() {
+		return mostRecentAssignment;
+	}
+
+	/**
+	 * Function<> KeyExtractor for use by sort. 
+	 * @return date of last participation (null if no participation available)
+	 */
 	public LocalDate getDate() {
 		if (mostRecentAssignment == null) {
 			return null;

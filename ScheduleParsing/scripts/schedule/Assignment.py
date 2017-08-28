@@ -21,11 +21,11 @@ class Assignment:
         self.hholder = ''
         self.lesson = ''
         self.section = ''
-    
+
     def setFromCSV(self, csv):
         '''use csv row to populate attrbs'''
         record = csv.split(',')
-        
+
         #INDECIES FOR THE SPLIT CSV LINE
         DATE = 0
         TYPE = 1
@@ -33,21 +33,21 @@ class Assignment:
         HHLD = 3
         LSSN = 4
         SECT = 5
-                
+
         self.date = record[DATE]
         self.type = record[TYPE]
         self.assignee = record[NAME]
         self.hholder = record[HHLD]
         self.lesson = record[LSSN]
         self.section = record[SECT]
-        
-        
+
+
     def __str__(self):
         return self.makeCSV()
-    
+
     def makeCSV(self):
         return ','.join([self.date, self.type, self.assignee, self.hholder, self.lesson, self.section])
-    
+
     def clear(self):
         self.date = ''
         self.type = ''

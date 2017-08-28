@@ -33,6 +33,13 @@ public class ImportService {
 	@Autowired
 	PersonRepository personRepository;
 	
+	@Autowired
+	AssignmentRepository assignmentRepository;
+	
+	/**
+	 * Assignment CSV file column processor
+	 * @return CellProcessor[], each column is an element in the array
+	 */
 	private CellProcessor[] getAssignmentCsvProcessors() {
     	
     	final CellProcessor[] processors = new CellProcessor[] {
@@ -44,7 +51,6 @@ public class ImportService {
 			
 			// Assignee
 			new NotNull(),  
-			
 			
 			// Householder
 			new Optional(), 
@@ -59,36 +65,44 @@ public class ImportService {
     	return processors;
     }
     
-    public List<Assignment> readAssignmentsWithCsvListReader(String csvFileName) throws Exception {
+	/**
+	 * Map CSV file records to a list of Assignment objects.
+	 * @param csvFileName use full path when possible
+	 * @return List of Assignments that were mapped from the records to Assignment objects.
+	 * @throws Exception File may not be found or not able to read. // TODO
+	 */
+    public List<Assignment> readAssignmentsWithCsvMapReader(String csvFileName) throws Exception {
     	
     	List<Assignment> assignments = new LinkedList<>();
     	ICsvMapReader mapReader = null;
     	
     	try {
     		mapReader = new CsvMapReader(
-				new InputStreamReader(new FileInputStream(csvFileName), Charset.forName("UTF-8")),
+				new InputStreamReader(
+					new FileInputStream(csvFileName),
+					Charset.forName("UTF-8")),
 				CsvPreference.STANDARD_PREFERENCE);
     		
     		final String[] header = mapReader.getHeader(true);
     		final CellProcessor[] processors = getAssignmentCsvProcessors();
     		
+    		// read a single assignment record at a time
     		Map<String, Object> assignment;
     		while ((assignment = mapReader.read(header, processors)) != null) {
     			
     			Assignment assignmentToPersist = new Assignment();
     			
-
     			Person assignee = personRepository.findByFullName((String)assignment.get("Assignee"));
     			Person householder = personRepository.findByFullName((String)assignment.get("Householder"));
 
-    			// TODO: what to do when the person is not found?
+    			// TODO: what to do when the person (assignee or householder) is not found?
     			if (assignee == null) {
-    				
     				System.out.println("Unable to find "+assignment.get("Assignee"));
     				System.out.println("ignoring person for now but should be asking user for clarification");
     				continue;
     			}
     			
+    			// map record values into Java Assignment Object
     			assignmentToPersist.setWeek((LocalDate)assignment.get("Date"));
     			assignmentToPersist.setAssignee(assignee);
     			assignmentToPersist.setHouseholder(householder);
@@ -109,5 +123,17 @@ public class ImportService {
     	}
     	
     	return assignments;
+    }
+    
+    /**
+     * Persists the list of assignments
+     * @param assignments
+     * @return the saved entities
+     */
+    public List<Assignment> saveAssignments(List<Assignment> assignments) {
+    	
+    	List<Assignment> persistedAssignments = assignmentRepository.save(assignments);
+    	
+    	return persistedAssignments;
     }
 }

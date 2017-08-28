@@ -11,18 +11,36 @@ import org.springframework.stereotype.Repository;
 
 import suggestiongenerator.entities.Assignment;
 
+/**
+ * AUTO IMPLEMENTED by Spring into a Bean called assignmentRepository 
+ * when AssignmentRepository'@Autowired'
+ * 
+ * @author FidelCoria
+ *
+ */
 @Repository("assignmentRepository")
 public interface AssignmentRepository extends JpaRepository<Assignment, Integer> {
 
-	String RECENT_ASSIGNMENT =
-			"FROM Assignment a  " + 
-			"WHERE a.assignee.id = :id " + 
+	final String RECENT_ASSIGNMENT =
+		"FROM Assignment a  " + 
+		"WHERE a.assignee.id = :id " + 
 			"OR a.householder.id = :id " + 
-			"ORDER BY a.week DESC ";
+		"ORDER BY a.week DESC ";
 	
+	/**
+	 * Look up assignments in reverse chronological order where student has participated.
+	 * @param student id to find
+	 * @param pagable used to simulate a LIMIT BY
+	 * @return Assignments
+	 */
 	@Query(RECENT_ASSIGNMENT)
 	public List<Assignment> findAllParticipations(@Param("id") int student, Pageable pagable);
 	
+	/**
+	 * Look up most recent assignment for a given student
+	 * @param student id to find
+	 * @return if found assignment has one record, 0 records otherwise
+	 */
 	default List<Assignment> findMostRecentAssignment(int student) {
 		return findAllParticipations(student, new PageRequest(0, 1));
 	}

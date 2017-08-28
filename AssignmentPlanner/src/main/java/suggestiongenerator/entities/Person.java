@@ -7,6 +7,7 @@ import util.Assignment_t;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -161,5 +162,40 @@ public class Person implements Serializable {
 	public void setEligibleTalk(boolean isEligibleTalk) {
 		this.isEligibleTalk = isEligibleTalk;
 	}
+	
+	/**
+	 * Equality only checked on firstName, lastName, and gender
+	 * Declared `final` because casting is guarded by `instanceof`.
+	 * If there is an extended class the overriding .equals(Object) 
+	 * implementation is not guaranteed to play nice with this implementation. 
+	 */
+	@Override
+	final public boolean equals(Object obj) {
+		
+		if (this == obj) { // self check
+			return true;
+		}
+		if (obj == null || !(obj instanceof Person)) {
+			return false;
+		}
+		
+		Person other = (Person) obj;
+		
+		return Objects.equals(this.firstName, other.firstName) 
+			&& Objects.equals(this.lastName, other.lastName)
+			&& Objects.equals(this.gender, other.gender);
+	}
 
+	/**
+	 * Since .equals() is overridden hashCode is also overridden.
+	 * Not all members are included in the .equals() check but the
+	 * default hashCode will include all members.
+	 * This implementation only hashes immutable objects (which are
+	 * a subset of the members checked in .equals() and provide a reasonably
+	 * unique set of values for different Assignments and thus a good hash).
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName, lastName, gender);
+	}
 }

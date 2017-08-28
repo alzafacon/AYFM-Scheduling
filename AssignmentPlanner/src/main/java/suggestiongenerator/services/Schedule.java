@@ -35,19 +35,27 @@ public class Schedule {
 	AssignmentRepository assignmentRepository;
 	
 	public static final int MAX_NUM_WEEKS = 5;
-	public static final int NUM_ASSIGNMENT_TYPES = 4;
+	public static final int NUM_WEEKLY_ASSIGNMENT_TYPES = 4; // categories each week
 	public static final int NUM_SECTIONS = 2;
 	
 	private Assignment[][][] schedule;
 	
 	private int year;
 	private int month;
-	private int effectiveWeeks;
+	private int effectiveWeeks; // number of weeks actually in month (less than MAX_NUM_WEEKS)
 	
+	/**
+	 * Protected: let Spring handle instantiation and injection
+	 */
 	protected Schedule() {
 		
 	}
 	
+	/**
+	 * Initialize the autowired Schedule for a desired month to be generated.
+	 * @param year 
+	 * @param month
+	 */
 	public void setYearMonth(int year, int month) {
 		this.year = year;
 		this.month = month;
@@ -61,7 +69,7 @@ public class Schedule {
 	 * @param month Numeric month to build schedule
 	 */
 	private void init() {
-		schedule = new Assignment[MAX_NUM_WEEKS][NUM_ASSIGNMENT_TYPES][NUM_SECTIONS];
+		schedule = new Assignment[MAX_NUM_WEEKS][NUM_WEEKLY_ASSIGNMENT_TYPES][NUM_SECTIONS];
 		
 		// the first week of every month ONLY has one reading assignment
 		schedule[0] = new Assignment[1][1];
@@ -102,8 +110,12 @@ public class Schedule {
 		 * 1+ for the reading during the first week
 		 * effectiveWeeks-1 so the first week is not counted
 		 * *NUM_ASSIGNMENT_TYPES*NUM_SECTIONS for the number of assignments per week
+		 * +(effectiveWeeks-1)*(NUM_WEEKLY_ASSIGNMENT_TYPES-1)*NUM_SECTIONS for the
+		 *  householder assignments... there must be a better way to count the assignments
+		 *  for controlling the algorithm
 		 */
-		final int MAX_ASSGNS = 1+(effectiveWeeks-1)*NUM_ASSIGNMENT_TYPES*NUM_SECTIONS;
+		final int MAX_ASSGNS = 1+(effectiveWeeks-1)*NUM_WEEKLY_ASSIGNMENT_TYPES*NUM_SECTIONS
+				+(effectiveWeeks-1)*(NUM_WEEKLY_ASSIGNMENT_TYPES-1)*NUM_SECTIONS;
 		int assignmentsPlaced = 0;
 		
 		List<Participation> prioritizedParticipations = createPrioritizedParticipations();
@@ -111,14 +123,14 @@ public class Schedule {
 		while (!prioritizedParticipations.isEmpty() && assignmentsPlaced < MAX_ASSGNS) {
 			
 			Participation part = prioritizedParticipations.remove(0);
-			Assignment suggestion = generateSuggestion(part);
+			boolean advanceLesson = part.getAssignment() != null;
+			Assignment suggestion = generateSuggestion(part, advanceLesson);
 			Assignment cycleStart = suggestion;
 			
 			int week = 0;
-			Assignment scheduleSlot;
 			
-			int typeAsInt = suggestion.getAssignmentType().toInt();
-			int sectionAsInt = suggestion.getClassroom().toInt();
+			int typeAsInt = suggestion.getAssignmentType().toInt() - 1;
+			int sectionAsInt = suggestion.getClassroom().toInt() - 1;
 			
 			// week: 0 only has array index for type: 0 and section: 0
 			// if those are not the values then skip to week: 1
@@ -126,19 +138,18 @@ public class Schedule {
 				week = 1;
 			}
 			
-			scheduleSlot = schedule[week][typeAsInt][sectionAsInt];
-			
 			// iteration control flag. loop also terminated by `break`
 			boolean placed = false;
 			while (!placed) {
 				
-				if (isCompatible(suggestion, scheduleSlot)) {
+				if (isCompatible(suggestion, schedule[week][typeAsInt][sectionAsInt])) {
 					placed = true;
+					assignmentsPlaced++;
 
 					mergeInto(
 						schedule[week][typeAsInt][sectionAsInt], suggestion
 					);
-					part.mostRecentAssignment = schedule[week][typeAsInt][sectionAsInt];
+					part.updateMostRecentAssignment(schedule[week][typeAsInt][sectionAsInt]);
 					
 					// append to the end of the queue
 					prioritizedParticipations.add(part);
@@ -148,18 +159,26 @@ public class Schedule {
 				
 				if (week == effectiveWeeks) {
 					// all weeks failed, apply suggestion again
-					suggestion = generateSuggestion(new Participation(part.student, suggestion));
-					// TODO : missing set up for typeAsInt etc.
-					if (suggestion == cycleStart) { // TODO: WRONG EQUALITY
+					suggestion = generateSuggestion(new Participation(part.getStudent(), suggestion), false);
+					
+					week = 0;
+					typeAsInt = suggestion.getAssignmentType().toInt() - 1;
+					sectionAsInt = suggestion.getClassroom().toInt() - 1;
+					
+					if (!(typeAsInt == 0 && sectionAsInt == 0)) {
+						week = 1;
+					}
+					
+					if (suggestion.equals(cycleStart)) {
 						// full progression cycle traversed
 						// do not append student back to queue
 						break;
 					}
+					
 				}
 			} // `break;` escapes here
 			
 		}
-		
 		
 		System.out.println("placed = "+assignmentsPlaced);
 		System.out.println("max no = "+MAX_ASSGNS);
@@ -185,11 +204,43 @@ public class Schedule {
 		}
 	}
 
+	/**
+	 * Determine whether the suggestion is compatible with scheduleSlot.
+	 * The person slot must be null (available) and the gender must match
+	 * the assignment partner, if there is a partner.
+	 * @param suggestion generated with progression
+	 * @param scheduleSlot reference to slot in schedule to be filled
+	 * @return true when the conditions above are met, false othewise
+	 */
 	private boolean isCompatible(Assignment suggestion, Assignment scheduleSlot) {
-		// TODO
+		
+		Role suggestedRole = (suggestion.getAssignee() == null)? Role.HOUSEHOLDER : Role.ASSIGNEE;
+		Person personToAssign = suggestion.getPersonInRole(suggestedRole);
+		Person scheduleSlotPersonToFill = scheduleSlot.getPersonInRole(suggestedRole);
+		
+		// if the role is already assigned: not compatible
+		if (scheduleSlotPersonToFill != null) {
+			return false;
+		}
+
+		// The role is available but...
+
+		// if other role is null or same gender: compatible
+		Role otherRole = (suggestedRole == Role.ASSIGNEE)? Role.HOUSEHOLDER : Role.ASSIGNEE;
+		Person assignmentPartner = scheduleSlot.getPersonInRole(otherRole);
+		if (assignmentPartner == null
+			|| personToAssign.getGender().equals(assignmentPartner.getGender())) {
+			return true;
+		}
+
+		// otherwise: not compatible
 		return false;
 	}
 
+	/**
+	 * Create the 'queue' of participations.
+	 * @return List of participations sorted with null first and dates in ascending order.
+	 */
 	private List<Participation> createPrioritizedParticipations() {
 		
 		List<Participation> activeStudentParticipations = personRepository.findAllActiveStudents();
@@ -198,10 +249,10 @@ public class Schedule {
 		//  when found attach to the participation object
 		for (Participation part : activeStudentParticipations) {
 			
-			List<Assignment> lastAssignment = assignmentRepository.findMostRecentAssignment(part.student.getId());
+			List<Assignment> lastAssignment = assignmentRepository.findMostRecentAssignment(part.getStudent().getId());
 			
 			if (lastAssignment.size() == 1) {
-				part.mostRecentAssignment = lastAssignment.get(0);
+				part.updateMostRecentAssignment(lastAssignment.get(0));
 			}
 		}
 		
@@ -221,89 +272,91 @@ public class Schedule {
 	/**
 	 * Progression: as defined in the method
 	 * This progression is filtered based on what the student can work on.
-	 * 
+	 * The suggested assignment includes the Person, Type, Section, and Lesson.
+	 * The role is determined as the Person (assignee or householder)
+	 * which is not null, while the other Person is null.
 	 * @param participation used to find current position in progression
 	 * 	and then find next position
 	 * @return Assignment suggestion based on most recent participation
 	 */
-	private Assignment generateSuggestion(Participation participation) {
+	private Assignment generateSuggestion(Participation participation, boolean advanceLesson) {
 	
-		final Progression[] defaultProgression = {
-			new Progression(Role.ASSIGNEE, Assignment_t.READING, Section.A),
-			new Progression(Role.ASSIGNEE,    Assignment_t.INITIAL_CALL, Section.A),
-			new Progression(Role.HOUSEHOLDER, Assignment_t.INITIAL_CALL, Section.A),				
-			new Progression(Role.ASSIGNEE,    Assignment_t.RETURN_VISIT, Section.A),
-			new Progression(Role.HOUSEHOLDER, Assignment_t.RETURN_VISIT, Section.A),				
-			new Progression(Role.ASSIGNEE,    Assignment_t.BIBLE_STUDY, Section.A),
-			new Progression(Role.HOUSEHOLDER, Assignment_t.BIBLE_STUDY, Section.A),
-			
-			new Progression(Role.ASSIGNEE, Assignment_t.READING, Section.B),
-			new Progression(Role.ASSIGNEE,    Assignment_t.INITIAL_CALL, Section.B),
-			new Progression(Role.HOUSEHOLDER, Assignment_t.INITIAL_CALL, Section.B),				
-			new Progression(Role.ASSIGNEE,    Assignment_t.RETURN_VISIT, Section.B),
-			new Progression(Role.HOUSEHOLDER, Assignment_t.RETURN_VISIT, Section.B),
-			new Progression(Role.ASSIGNEE,    Assignment_t.BIBLE_STUDY, Section.B),
-			new Progression(Role.HOUSEHOLDER, Assignment_t.BIBLE_STUDY, Section.B)
-		};
-	
-		Person student = participation.student;
-		Assignment pastAssignment = participation.mostRecentAssignment;
-		
-		System.out.println("\n"+student.getFullName());
-		
-		
-		List<Assignment_t> eligibility = student.getEligibility();
+		Person student = participation.getStudent();
+		Assignment pastAssignment = participation.getAssignment();
 		
 		// filter the progression
+		List<Assignment_t> eligibility = student.getEligibility();
 		
 		ArrayList<Progression> filteredProgression = new ArrayList<>();
 		
-		for (Progression progression : defaultProgression) {
+		for (Progression progression : Progression.defaultProgression) {
 			if (eligibility.contains(progression.getType())) {
 				filteredProgression.add(progression);
 			}
 		}
-		
+		if (filteredProgression.size() == 0) {
+//			throw new IndexOutOfBoundsException("No eligibility set up for student "+student.getFullName());
+			System.out.println("size of progression was 0");
+		}
 		
 		Assignment suggestion = new Assignment();
-		
-		// find item in fillteredProgression that matches pastAssignment
+		 
 		Role lastRole;
-		if (student.getId() == pastAssignment.getAssignee().getId()) {
-			lastRole = Role.ASSIGNEE;
-		} else {
-			lastRole = Role.HOUSEHOLDER;
-		}
+		Assignment_t lastType;
+		Section lastSection;
+		Integer lastLesson;
 		
-		Assignment_t lastType = pastAssignment.getAssignmentType();
-		Section lastSection = pastAssignment.getClassroom();
-		int progressionIndex = filteredProgression.indexOf(new Progression(lastRole, lastType, lastSection));
+		Person nextAssignee;
+		Person nextHouseholder;
+		Assignment_t nextType;
+		Section nextSection;
+		Integer nextLesson;
 		
-		int nextProgressionIndex = (progressionIndex+1) % filteredProgression.size();
-		
-		Progression nextProgression = filteredProgression.get(nextProgressionIndex);
-		
-		Assignment_t nextType = nextProgression.getType();
-		Section nextSection = nextProgression.getSection();
-		
-		Person nextAssignee = null;
-		Person nextHouseholder = null;
-		
-		if (Role.ASSIGNEE == nextProgression.getRole()) {
+		// find current position in fillteredProgression
+		// if no previous assignment just take the first
+		if (pastAssignment == null) {
 			nextAssignee = student;
+			nextHouseholder = null;
+			nextType = filteredProgression.get(0).getType();
+			nextSection = filteredProgression.get(0).getSection();
+			nextLesson = getNextLesson(nextType, 0);
 		} else {
-			nextHouseholder = student;
+			if (student.equals(pastAssignment.getAssignee())) {
+				lastRole = Role.ASSIGNEE;
+			} else {
+				lastRole = Role.HOUSEHOLDER;
+			}
+			
+			lastType = pastAssignment.getAssignmentType();
+			lastSection = pastAssignment.getClassroom();
+			
+			lastLesson = pastAssignment.getLesson();
+			
+			int currentProgressionIndex = 
+				filteredProgression.indexOf(new Progression(lastRole, lastType, lastSection));
+			
+			int nextProgressionIndex =
+				(currentProgressionIndex + 1) % filteredProgression.size();
+			
+			Progression nextProgression = filteredProgression.get(nextProgressionIndex);
+			
+			nextType = nextProgression.getType();
+			nextSection = nextProgression.getSection();
+			
+			if (advanceLesson == true) {
+				nextLesson = getNextLesson(nextType, lastLesson);
+			} else {
+				nextLesson = lastLesson;
+			}
+			
+			if (nextProgression.getRole() == Role.ASSIGNEE) {
+				nextAssignee = student;
+				nextHouseholder = null;
+			} else {
+				nextAssignee = null;
+				nextHouseholder = student;
+			}
 		}
-		
-		// Attempt to advance progression on lesson
-		// TODO: this line is causing nullptr exceptions
-		Integer lastLesson = pastAssignment.getLesson();
-		Integer nextLesson = null;
-		
-		if (lastLesson != null) {	
-			nextLesson = getNextLesson(nextType, lastLesson);
-		}
-		// if there was no lesson suggested before, do not suggest one now
 		
 		// save the advanced values to the suggestion
 		suggestion.setAssignmentType(nextType);
@@ -311,7 +364,7 @@ public class Schedule {
 		suggestion.setLesson(nextLesson);
 		suggestion.setAssignee(nextAssignee);
 		suggestion.setHouseholder(nextHouseholder);
-		
+
 		return suggestion;
 	}
 	
@@ -344,12 +397,12 @@ public class Schedule {
 	/**
 	 * Advances lesson specifically for Reading type of assignments.
 	 * @param lastLesson
-	 * @return next lesson to be assigned, 0 if not able to suggest one
+	 * @return next lesson to be assigned, start over at 1 if not able to suggest one
 	 */
 	private int getNextReadingLesson(int lastLesson) {
 		
-		if (lastLesson == 0) {
-			return 0;
+		if (lastLesson < 0) {
+			return 1;
 		}
 		
 		final int GREATEST_READING_LESSON = 17;
@@ -363,33 +416,27 @@ public class Schedule {
 	 * RETURN_VISIT
 	 * BIBLE_STUDY
 	 * @param lastLesson
-	 * @return next lesson to be assigned, 0 if not able to suggest one
+	 * @return next lesson to be assigned, start over at 1 if not able to suggest one
 	 */
 	private int getNextDemonstrationLesson(int lastLesson) {
 		
 		// the appropriate demonstration lessons fall in the following ranges:
 		// [1, 6] U [8, 51]
 		
-		switch (lastLesson) {
-		case 0:
-			// invalid lesson
-			return 0;
-			
-		case 6:
-			// skip 7
-			return 8;
-			
-		case 51:
-			// wrap around
+		if (lastLesson <= 0 || lastLesson >= 51) {
 			return 1;
-
-		default:
-			// advance to next
+		} else if (lastLesson == 6) {
+			return 8;
+		} else {
 			return lastLesson + 1;
 		}
 		
 	}
 
+	/**
+	 * Print to console the assignments
+	 * weeks are separated by a line of dashed
+	 */
 	public void print() {
 		
 		for (int week = 0; week < MAX_NUM_WEEKS; week++) {
