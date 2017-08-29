@@ -26,9 +26,9 @@ public class Assignment implements Serializable {
 	@Column(unique=true, nullable=false)
 	private int id;
 
-	@Temporal(TemporalType.DATE)
+//	@Temporal(TemporalType.DATE)
 	@Column(nullable=false)
-	private Date week;
+	private String week;
 	
 	@Column(nullable=false)
 	private int classroom;
@@ -113,15 +113,11 @@ public class Assignment implements Serializable {
 		if (this.week == null) {
 			return null;
 		}
-		// in case java.sql is not available for some reason: 
-	    //  return week.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(); 
-	    return new java.sql.Date(this.week.getTime()).toLocalDate(); 
+		return LocalDate.parse(this.week);
 	}
 
 	public void setWeek(LocalDate week) {
-		// in case java.sql is not available for some reason: 
-	    //   this.week = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()); 
-	    this.week = java.sql.Date.valueOf(week); 
+	    this.week = week.toString(); 
 	}
 
 	public Person getAssignee() {

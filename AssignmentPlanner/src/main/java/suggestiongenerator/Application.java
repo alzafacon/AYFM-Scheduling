@@ -1,16 +1,9 @@
 package suggestiongenerator;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import suggestiongenerator.entities.Assignment;
-import suggestiongenerator.repository.AssignmentRepository;
-import suggestiongenerator.services.ImportService;
-import suggestiongenerator.services.Schedule;
+import org.springframework.context.annotation.ComponentScan;
 
 
 /**
@@ -21,16 +14,8 @@ import suggestiongenerator.services.Schedule;
  *
  */
  @SpringBootApplication
+ @ComponentScan("suggestiongenerator.services") // need for tests to grab context correctly
 public class Application implements CommandLineRunner {
-	 
-	 @Autowired
-	 Schedule schedule;
-	 
-	 @Autowired
-	 ImportService importService;
-	 
-	 @Autowired
-	 AssignmentRepository assignmentRepository;
 	 
 	 public static void main(String[] args) {
 		SpringApplication.run(Application.class);
