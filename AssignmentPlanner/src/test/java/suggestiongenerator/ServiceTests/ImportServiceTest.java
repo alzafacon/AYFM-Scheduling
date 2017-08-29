@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +20,20 @@ import suggestiongenerator.entities.Assignment;
 import suggestiongenerator.entities.Person;
 import suggestiongenerator.services.ImportService;
 
+/**
+ * Typically tests run in order but there is no guarantee of this.
+ * @author FidelCoria
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DataJpaTest
-// Even if uncommented will still commit to database (only with gradlew build)
-@Transactional(propagation = Propagation.NOT_SUPPORTED) 
-@AutoConfigureTestDatabase(replace=Replace.NONE) // uncomment to run against actual db
+// use only one of the two below at a time
+//@Commit // store test changes
+@Transactional() // roll back test
+//use only one of the two below at a time
+//@AutoConfigureTestDatabase(replace=Replace.NONE) // run against actual db
+@AutoConfigureTestDatabase(replace=Replace.ANY) // create in-memory db for test
 public class ImportServiceTest {
 
 	@Autowired
@@ -33,36 +42,25 @@ public class ImportServiceTest {
 	@Test
 	public void importStudents( ) throws Exception {
 		
-//		 read data
-//		List<Person> students = 
-//			importService.readStudentsWithCsvMapReader("<your-file-here>");
-//		
-//		for (Person p : students) {
-//			System.out.println("person name: "+p.getFullName());
-//		}
-//		
-//		List<Person> persisted = importService.saveStudents(students);
-//		
-//		System.out.println("these people are persisted");
-//		for (Person p : persisted) {
-//			System.out.print(p.getId()+ " ");
-//			System.out.println(p.getFirstName());
-//		}
-//		
-//		assertThat(persisted.size()).isEqualTo(students.size());
+		// read data
+		List<Person> students = 
+			importService.readStudentsWithCsvMapReader("C:\\Users\\FidelCoria\\git\\AYFM-Scheduling\\Database\\enrollment.csv");
+		
+		List<Person> persisted = importService.saveStudents(students);
+		
+		// everything actually gets persisted
+		assertThat(persisted.size()).isEqualTo(students.size());
 	}
 	
 	@Test
 	public void importAssignments() throws Exception {
 		
-//		List<Assignment> assignmentsCsv =
-//				importService.readAssignmentsWithCsvMapReader("<your-file-here>");
-//		
-//		List<Assignment> persisted = importService.saveAssignments(assignmentsCsv);
-//		
-//		assertThat(persisted.size()).isNotEqualTo(0);
-//		
-//		assertThat(persisted.size()).isEqualTo(assignmentsCsv.size());
+		List<Assignment> assignmentsCsv =
+				importService.readAssignmentsWithCsvMapReader("C:\\Users\\FidelCoria\\git\\AYFM-Scheduling\\ScheduleParsing\\csv\\2016-10.csv");
+		
+		List<Assignment> persisted = importService.saveAssignments(assignmentsCsv);
+		
+		assertThat(persisted.size()).isEqualTo(assignmentsCsv.size());
 	}
 	
 	

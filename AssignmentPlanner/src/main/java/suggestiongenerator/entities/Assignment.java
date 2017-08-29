@@ -16,8 +16,13 @@ import util.Role;
  * 
  */
 @Entity
-@Table(name="assignment")
-@NamedQuery(name="Assignment.findAll", query="SELECT a FROM Assignment a")
+@Table(
+	indexes= {
+		@Index(name="week_ix", columnList="week"),
+		@Index(name="assgn_fk_person_id_ix", columnList="assignee"),
+		@Index(name="assgn_fk_person_householder_ix", columnList="householder")
+	}
+)
 public class Assignment implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -26,9 +31,9 @@ public class Assignment implements Serializable {
 	@Column(unique=true, nullable=false)
 	private int id;
 
-//	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.DATE)
 	@Column(nullable=false)
-	private String week;
+	private Date week;
 	
 	@Column(nullable=false)
 	private int classroom;
@@ -113,11 +118,15 @@ public class Assignment implements Serializable {
 		if (this.week == null) {
 			return null;
 		}
-		return LocalDate.parse(this.week);
+		// in case java.sql is not available for some reason:  
+		//  return week.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();  
+		return new java.sql.Date(this.week.getTime()).toLocalDate(); 
 	}
 
 	public void setWeek(LocalDate week) {
-	    this.week = week.toString(); 
+		// in case java.sql is not available for some reason:  
+		//   this.week = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());  
+		this.week = java.sql.Date.valueOf(week);  
 	}
 
 	public Person getAssignee() {

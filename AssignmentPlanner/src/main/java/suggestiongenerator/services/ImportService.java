@@ -144,8 +144,7 @@ public class ImportService {
     	
     	final CellProcessor[] processors = new CellProcessor[] {
     		// Assignment Date
-			// new ParseLocalDate(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-			new NotNull(), // above is the format, but sqlite just keep everything as text
+			 new ParseLocalDate(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
     			
 			// Assignment Type
 			new ParseInt(), 
@@ -204,7 +203,7 @@ public class ImportService {
     			}
     			
     			// map record values into Java Assignment Object
-    			assignmentToPersist.setWeek((LocalDate)LocalDate.parse((String)assignment.get("Date")));
+    			assignmentToPersist.setWeek((LocalDate)assignment.get("Date"));
     			assignmentToPersist.setAssignee(assignee);
     			assignmentToPersist.setHouseholder(householder);
     			assignmentToPersist.setAssignmentType(Assignment_t.get((int)assignment.get("Type")));
