@@ -1,15 +1,15 @@
 # First time database setup
 
-1. Schema `ayfm` is setup by running: ```ayfm_schema.sql```
+1. There is an empty database in the Database/ folder which can be copied and used for development.
+When developing changes to the schema and a new database file needs to be created:
 
-2. (Optional) Student profiles can be created in the database using an enrollment.csv file.
-Tables `person` and `works_on` are populated in this process. This is meant as a setup convenience for the user, not for frequent use.
-  - columns for .csv file:
-    - Gender,Last Name,First Name,Active,Reading,Initial Call,Return Visit,Bible Study
-  - prepare the SQL by running: ```enrollment.py```
-  - populate the tables: ```populatePersonAndWorksOn.sql```
+   - set `spring.jpa.hibernate.ddl-auto=create` in *`application.properties`*
+   - uncomment `@AutoConfigureTestDatabase(replace=Replace.NONE)` in *`ImportServiceTest.java`*
+   - uncomment `@Transactional()` in the same test
+   - execute a Gradle build
 
-3. The assignment table is populated from .docx schedules.
-Generating SQL should be limited to Java code as much as possible.
-The .docx file is converted into a .csv file for the Java code by a python script:
-```main.py```
+   There are a variety of other ways to do this (like doing bootRun with `Replace.NONE`) but try to stick to the one above.
+
+2. To import data: run the python scripts (in Databse and ScheduleParsing folders) to generate the sql and use your favorite sql visualizer to run the sql on the data. I am using H2's own "H2 console (command line)". It is a pain to work with because you __always have to disconnect from the database manually when you leave the H2 console.__
+
+   The other way to import the data manually through the app.

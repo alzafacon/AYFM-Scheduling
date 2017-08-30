@@ -3,6 +3,8 @@ package suggestiongenerator.entities;
 import java.io.Serializable;
 import javax.persistence.*;
 
+
+
 import util.Assignment_t;
 
 import java.util.ArrayList;
@@ -15,8 +17,13 @@ import java.util.Objects;
  * 
  */
 @Entity
-@Table(name="person")
-@NamedQuery(name="Person.findAll", query="SELECT p FROM Person p")
+@Table(
+	uniqueConstraints={
+		@UniqueConstraint(columnNames= {"last_name", "first_name"})
+	},
+	indexes={@Index(name="full_name_Ix", columnList = "first_name,last_name")}
+)
+
 public class Person implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -25,6 +32,7 @@ public class Person implements Serializable {
 	@Column(unique=true, nullable=false)
 	private int id;
 
+	
 	@Column(name="first_name", nullable=false, length=45)
 	private String firstName;
 

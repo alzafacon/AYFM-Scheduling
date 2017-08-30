@@ -28,9 +28,9 @@ dependencies {
     // JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // Use MySQL Connector-J
-    compile 'mysql:mysql-connector-java'    
-    
+    // embedded database
+    compile("com.h2database:h2")
+
     // Data import is done from csv files
     compile('net.sf.supercsv:super-csv:2.4.0')
     compile('net.sf.supercsv:super-csv-java8:2.4.0')
