@@ -16,6 +16,8 @@ public class PdfFormFillService {
 		
 		int exitValue = 1;
 		
+		File exeDirectory = new File("C:\\Program Files\\AYFM\\PdfReminderSlipPopulator");
+		
 		// Windows machine
 		boolean isWindows = System.getProperty("os.name")
 				  .toLowerCase().startsWith("windows");
@@ -23,15 +25,18 @@ public class PdfFormFillService {
 		String cmd = "cmd.exe";  // only needed on windows
 		String reminderSlipPopulator = "ReminderSlipPopulator.exe";
 		String option = "--populate";
-		String[] cmdarray = {cmd, "/c", reminderSlipPopulator, option, pathToDocxSched, destinationDirectory};
+		String[] cmdarray;
+		if (isWindows) {
+			cmdarray = new String[] {cmd, "/c", reminderSlipPopulator, option, pathToDocxSched, destinationDirectory};
+		} else {
+			cmdarray = new String[] {reminderSlipPopulator, option, pathToDocxSched, destinationDirectory};
+		}
 		
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.command(cmdarray);
 		processBuilder.inheritIO();
-		String classpath = System.getProperty("java.class.path");
-		// doesn't work because spring is packaging a .jar file
-		// the exe would need to be unzipped
-		processBuilder.directory(new File(classpath+"\\BOOT-INF\\classes\\"));
+		
+		processBuilder.directory(exeDirectory);
 		
 		try {
 			Process cSharpConsoleApp = processBuilder.start();

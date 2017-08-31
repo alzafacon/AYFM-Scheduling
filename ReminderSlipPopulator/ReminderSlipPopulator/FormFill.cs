@@ -132,8 +132,8 @@ namespace ReminderSlipPopulator
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                Console.WriteLine("Press any key to proceed...");
-                Console.ReadKey();
+                // Console.WriteLine("Press any key to proceed...");
+                // Console.ReadKey();
             }
             finally
             {
@@ -196,8 +196,8 @@ namespace ReminderSlipPopulator
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                Console.WriteLine("Press any key to proceed...");
-                Console.ReadKey();
+                // Console.WriteLine("Press any key to proceed...");
+                // Console.ReadKey();
                 if (reminders != null && !reminders.IsClosed())
                 {
                     reminders.Close();
