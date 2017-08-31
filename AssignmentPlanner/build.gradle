@@ -15,6 +15,9 @@ apply plugin: 'org.springframework.boot'
 jar {
     baseName = 'assignment-planner'
     version =  '0.1.0'
+    // from ('') {
+    // 	include ''
+    // }
 }
 
 repositories {
@@ -38,6 +41,13 @@ dependencies {
 	compile 'org.apache.poi:poi-ooxml:3.16'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
+
+    // itext pdf stuff (first three always requiered)
+    // compile 'com.itextpdf:kernel:7.0.4'
+    // compile 'com.itextpdf:io:7.0.4'
+    // compile 'com.itextpdf:layout:7.0.4'
+    // compile 'com.itextpdf:forms:7.0.4' // needed for working with form fields 
+    
     // testCompile("junit:junit")
 }
 
