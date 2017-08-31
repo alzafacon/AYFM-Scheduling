@@ -27,7 +27,7 @@ import util.Section;
  *
  */
 @Service("schedule")
-public class Schedule {
+public class ScheduleService {
 	
 	@Autowired
 	PersonRepository personRepository;
@@ -47,7 +47,7 @@ public class Schedule {
 	/**
 	 * Protected: let Spring handle instantiation and injection
 	 */
-	protected Schedule() {
+	protected ScheduleService() {
 		
 	}
 	
@@ -450,4 +450,7 @@ public class Schedule {
 		}
 	}
 	
+	public void saveToDocxSchedule() {
+		
+	}
 }

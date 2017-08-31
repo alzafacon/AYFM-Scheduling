@@ -1,4 +1,4 @@
-package suggestiongenerator.ServiceTests;
+package suggestiongenerator.Service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,14 +11,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import suggestiongenerator.entities.Assignment;
 import suggestiongenerator.entities.Person;
-import suggestiongenerator.services.ImportService;
+import suggestiongenerator.services.StudentImportService;
 
 /**
  * Typically tests run in order but there is no guarantee of this.
@@ -34,34 +31,21 @@ import suggestiongenerator.services.ImportService;
 //use only one of the two below at a time
 //@AutoConfigureTestDatabase(replace=Replace.NONE) // run against actual db
 @AutoConfigureTestDatabase(replace=Replace.ANY) // create in-memory db for test
-public class ImportServiceTest {
+public class StudentImportServiceTest {
 
 	@Autowired
-	ImportService importService;
+	StudentImportService studentImportService;
 	
 	@Test
-	public void importStudents( ) throws Exception {
+	public void importStudentsCsv() throws Exception {
 		
 		// read data
 		List<Person> students = 
-			importService.readStudentsWithCsvMapReader("C:\\Users\\FidelCoria\\git\\AYFM-Scheduling\\Database\\enrollment.csv");
+			studentImportService.readStudentsWithCsvMapReader("");
 		
-		List<Person> persisted = importService.saveStudents(students);
+		List<Person> persisted = studentImportService.saveStudents(students);
 		
 		// everything actually gets persisted
 		assertThat(persisted.size()).isEqualTo(students.size());
 	}
-	
-	@Test
-	public void importAssignments() throws Exception {
-		
-		List<Assignment> assignmentsCsv =
-				importService.readAssignmentsWithCsvMapReader("C:\\Users\\FidelCoria\\git\\AYFM-Scheduling\\ScheduleParsing\\csv\\2016-10.csv");
-		
-		List<Assignment> persisted = importService.saveAssignments(assignmentsCsv);
-		
-		assertThat(persisted.size()).isEqualTo(assignmentsCsv.size());
-	}
-	
-	
 }

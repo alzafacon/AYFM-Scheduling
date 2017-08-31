@@ -44,10 +44,10 @@ public class Assignment implements Serializable {
 	private int lesson;
 	
 	@Column(name="is_completed")
-	private boolean isCompleted;
+	private Boolean isCompleted;
 
 	@Column(name="is_passed")
-	private boolean isPassed;
+	private Boolean isPassed;
 
 	// many-to-one association to Person
 	@ManyToOne(cascade=CascadeType.REMOVE) // TODO: test the deletion
@@ -82,7 +82,7 @@ public class Assignment implements Serializable {
 		this.classroom = classroom.toInt();
 	}
 
-	public boolean isCompleted() {
+	public Boolean isCompleted() {
 		return this.isCompleted;
 	}
 
@@ -98,7 +98,7 @@ public class Assignment implements Serializable {
 		this.lesson = lesson;
 	}
 
-	public boolean isPassed() {
+	public Boolean isPassed() {
 		return this.isPassed;
 	}
 

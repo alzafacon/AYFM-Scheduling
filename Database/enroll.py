@@ -2,7 +2,8 @@ import argparse
 import csv
 
 # format strings for generating SQL
-insert_person = '''INSERT IGNORE INTO person 
+# H2 does not support insert ignore
+insert_person = '''INSERT INTO person 
 (first_name, last_name, gender, is_active, \
 is_eligible_reading, is_eligible_init_call, is_eligible_ret_visit, \
 is_eligible_bib_study, is_eligible_talk) 
