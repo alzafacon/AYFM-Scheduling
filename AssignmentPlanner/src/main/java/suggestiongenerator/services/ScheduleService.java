@@ -2,12 +2,23 @@ package suggestiongenerator.services;
 
 import static java.time.temporal.TemporalAdjusters.firstInMonth;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -180,8 +191,8 @@ public class ScheduleService {
 			
 		}
 		
-		System.out.println("placed = "+assignmentsPlaced);
-		System.out.println("max no = "+MAX_ASSGNS);
+//		System.out.println("placed = "+assignmentsPlaced);
+//		System.out.println("max no = "+MAX_ASSGNS);
 	}
 	
 	/**
@@ -450,7 +461,80 @@ public class ScheduleService {
 		}
 	}
 	
-	public void saveToDocxSchedule() {
+	public void saveToDocxSchedule(File outputDocx) throws FileNotFoundException, IOException {
+		
+		File template = new File("C:\\Program Files\\AYFM\\docx-template\\schedule-S.docx");
+		
+		XWPFDocument document = new XWPFDocument(new FileInputStream(template));
+		XWPFTable table = document.getTables().get(0);
+		Iterator<XWPFTableRow> scheduleRowIt = table.getRows().iterator();
+		
+		XWPFTableRow row; // handle for return from iterator
+		
+		LocalDate weekDate = LocalDate.of(this.year, this.month, 1).with(firstInMonth(DayOfWeek.MONDAY));
+		int week = 0;
+		int type = Assignment_t.READING.toInt()-1;
+		int section = Section.A.toInt()-1;
+		
+		scheduleRowIt.next(); // throw away the header row
+		
+		row = scheduleRowIt.next(); // first week date header
+		
+		row.getCell(0).setText(weekDate.toString());
+		
+		row = scheduleRowIt.next(); // first week in month
+		
+		if (this.schedule[week][type][section] != null
+				&& this.schedule[week][type][section].getAssignee() != null) {
+			
+			String student = this.schedule[week][type][section].getAssignee().getFullName();
+			int lesson = this.schedule[week][type][section].getLesson();
+			
+			row.getCell(1).setText(student);
+			if (lesson > 0) {
+				row.getCell(2).setText(Integer.toString(lesson));
+			}
+		}
+		
+		for (week = 1; week <= 4; week++) {
+			
+			row = scheduleRowIt.next(); // get week date header
+			
+			row.getCell(0).setText(weekDate.plusWeeks(week).toString()); // set date
+			
+			for (type = 0; type <= 3; type++) {
+				row = scheduleRowIt.next(); // get assignment row
+				
+				for (section = 0; section <= 1; section++) {
+					if (schedule[week][type][section] != null
+							&& schedule[week][type][section].getAssignee() != null) {
+						
+						String assignee = schedule[week][type][section].getAssignee().getFullName();
+						Person householder = schedule[week][type][section].getHouseholder();
+						
+						int lesson = schedule[week][type][section].getLesson();
+						
+						row.getCell(1+section*2).setText(assignee);
+						
+						if (householder != null) {
+							XWPFParagraph householderParagraph = row.getCell(1+section*2).addParagraph();
+							XWPFRun householderRun =  householderParagraph.createRun();
+							householderRun.setText(householder.getFullName());
+						}
+						
+						if (lesson > 0) {
+							row.getCell(2+section*2).setText(Integer.toString(lesson));
+						}
+						
+					}
+				}
+			}
+			
+		}
+		
+		document.write(new FileOutputStream(outputDocx));
+		
+		document.close();
 		
 	}
 }

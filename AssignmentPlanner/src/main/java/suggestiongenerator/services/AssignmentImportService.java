@@ -147,10 +147,10 @@ public class AssignmentImportService {
 			}
 			
 			Person assignee = personRepository.findByFullName(names[0].trim());
-			Person householder = personRepository.findByFullName(names[1].trim());
+			
 
 			// TODO  If people are not found ask user to create or select existing
-			if (assignee == null || householder == null) { continue; }
+			if (assignee == null) { continue; }
 			
 			Assignment assignment = new Assignment();
 
@@ -162,6 +162,9 @@ public class AssignmentImportService {
 			assignment.setAssignee(assignee);
 
 			if (names.length > 1) {
+				Person householder = personRepository.findByFullName(names[1].trim());
+				if (householder == null) { continue; }
+				
 				assignment.setHouseholder(householder);
 			}
 

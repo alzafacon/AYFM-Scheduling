@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +41,7 @@ public class StudentImportServiceTest {
 	public void importStudentsCsv() throws Exception {
 		
 		// read data
-		List<Person> students = 
-			studentImportService.readStudentsWithCsvMapReader("");
+		List<Person> students = studentImportService.readStudentsWithCsvMapReader("sample-data/enrollment.csv");
 		
 		List<Person> persisted = studentImportService.saveStudents(students);
 		
