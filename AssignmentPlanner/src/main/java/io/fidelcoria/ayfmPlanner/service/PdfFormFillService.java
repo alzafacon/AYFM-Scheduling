@@ -1,4 +1,4 @@
-package suggestiongenerator.services;
+package io.fidelcoria.ayfmPlanner.service;
 
 import java.io.File;
 import java.io.IOException;

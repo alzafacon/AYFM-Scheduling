@@ -1,8 +1,8 @@
-package suggestiongenerator.Service;
+package io.fidelcoria.ayfmPlanner.service;
 
 import org.junit.Test;
 
-import suggestiongenerator.services.PdfFormFillService;
+import io.fidelcoria.ayfmPlanner.service.PdfFormFillService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

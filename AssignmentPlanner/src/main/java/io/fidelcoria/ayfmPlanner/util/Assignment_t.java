@@ -1,4 +1,4 @@
-package util;
+package io.fidelcoria.ayfmPlanner.util;
 
 /**
  * Enum for types of Assignments to be assigned.

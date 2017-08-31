@@ -1,4 +1,4 @@
-package suggestiongenerator.services;
+package io.fidelcoria.ayfmPlanner.service;
 
 import java.io.FileReader;
 import java.util.LinkedList;
@@ -15,9 +15,9 @@ import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
-import suggestiongenerator.entities.Person;
-import suggestiongenerator.repository.AssignmentRepository;
-import suggestiongenerator.repository.PersonRepository;
+import io.fidelcoria.ayfmPlanner.domain.AssignmentRepository;
+import io.fidelcoria.ayfmPlanner.domain.Person;
+import io.fidelcoria.ayfmPlanner.domain.PersonRepository;
 
 @Service
 public class StudentImportService {

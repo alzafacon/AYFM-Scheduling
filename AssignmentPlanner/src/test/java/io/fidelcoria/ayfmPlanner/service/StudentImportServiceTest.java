@@ -1,4 +1,4 @@
-package suggestiongenerator.Service;
+package io.fidelcoria.ayfmPlanner.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,8 +15,8 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import suggestiongenerator.entities.Person;
-import suggestiongenerator.services.StudentImportService;
+import io.fidelcoria.ayfmPlanner.domain.Person;
+import io.fidelcoria.ayfmPlanner.service.StudentImportService;
 
 /**
  * Typically tests run in order but there is no guarantee of this.

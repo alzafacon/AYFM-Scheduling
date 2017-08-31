@@ -1,11 +1,9 @@
-package suggestiongenerator.entities;
+package io.fidelcoria.ayfmPlanner.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
 
-
-
-import util.Assignment_t;
+import io.fidelcoria.ayfmPlanner.util.Assignment_t;
 
 import java.util.ArrayList;
 import java.util.List;

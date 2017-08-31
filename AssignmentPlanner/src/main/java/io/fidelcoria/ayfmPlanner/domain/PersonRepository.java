@@ -1,4 +1,4 @@
-package suggestiongenerator.repository;
+package io.fidelcoria.ayfmPlanner.domain;
 
 import java.util.List;
 
@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import suggestiongenerator.entities.Person;
-import util.Participation;
+import io.fidelcoria.ayfmPlanner.util.Participation;
 
 /**
  * AUTO IMPLEMENTED by Spring into a Bean called personRepository
@@ -33,6 +32,6 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 	 * @return Persons wrapped in a List of Participations
 	 * with the Assignment set to null. 
 	 */
-	@Query("SELECT new util.Participation(p) FROM Person p WHERE p.isActive = true ")
+	@Query("SELECT new io.fidelcoria.ayfmPlanner.util.Participation(p) FROM Person p WHERE p.isActive = true ")
 	public List<Participation> findAllActiveStudents();
 }

@@ -1,4 +1,4 @@
-package suggestiongenerator.entities;
+package io.fidelcoria.ayfmPlanner.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -7,9 +7,9 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
-import util.Assignment_t;
-import util.Section;
-import util.Role;
+import io.fidelcoria.ayfmPlanner.util.Assignment_t;
+import io.fidelcoria.ayfmPlanner.util.Role;
+import io.fidelcoria.ayfmPlanner.util.Section;
 
 /**
  * The persistent class for the assignment database table.

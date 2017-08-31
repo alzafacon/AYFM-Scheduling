@@ -1,4 +1,4 @@
-package suggestiongenerator.services;
+package io.fidelcoria.ayfmPlanner.service;
 
 import static java.time.temporal.TemporalAdjusters.firstInMonth;
 
@@ -19,12 +19,12 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import suggestiongenerator.entities.Assignment;
-import suggestiongenerator.entities.Person;
-import suggestiongenerator.repository.AssignmentRepository;
-import suggestiongenerator.repository.PersonRepository;
-import util.Assignment_t;
-import util.Section;
+import io.fidelcoria.ayfmPlanner.domain.Assignment;
+import io.fidelcoria.ayfmPlanner.domain.AssignmentRepository;
+import io.fidelcoria.ayfmPlanner.domain.Person;
+import io.fidelcoria.ayfmPlanner.domain.PersonRepository;
+import io.fidelcoria.ayfmPlanner.util.Assignment_t;
+import io.fidelcoria.ayfmPlanner.util.Section;
 
 /**
  * Import assignment schedule from DOCX file.

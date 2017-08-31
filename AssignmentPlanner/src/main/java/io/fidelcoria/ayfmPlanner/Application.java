@@ -1,4 +1,4 @@
-package suggestiongenerator;
+package io.fidelcoria.ayfmPlanner;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
  *
  */
  @SpringBootApplication
- @ComponentScan("suggestiongenerator.services") // need for tests to grab context correctly
+ @ComponentScan("io.fidelcoria.ayfmPlanner.service") // need for tests to grab context correctly
 public class Application implements CommandLineRunner {
 	 
 	 public static void main(String[] args) {

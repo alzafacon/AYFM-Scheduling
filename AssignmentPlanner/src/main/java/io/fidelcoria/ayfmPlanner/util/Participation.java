@@ -1,9 +1,9 @@
-package util;
+package io.fidelcoria.ayfmPlanner.util;
 
 import java.time.LocalDate;
 
-import suggestiongenerator.entities.Assignment;
-import suggestiongenerator.entities.Person;
+import io.fidelcoria.ayfmPlanner.domain.Assignment;
+import io.fidelcoria.ayfmPlanner.domain.Person;
 
 
 /**

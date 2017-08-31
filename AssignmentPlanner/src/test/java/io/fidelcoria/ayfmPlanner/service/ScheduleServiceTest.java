@@ -1,4 +1,4 @@
-package suggestiongenerator.Service;
+package io.fidelcoria.ayfmPlanner.service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import suggestiongenerator.services.ScheduleService;
+import io.fidelcoria.ayfmPlanner.service.ScheduleService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

@@ -1,4 +1,4 @@
-package util;
+package io.fidelcoria.ayfmPlanner.util;
 
 /**
  * Convenience wrapper for Assignment parameters generated 

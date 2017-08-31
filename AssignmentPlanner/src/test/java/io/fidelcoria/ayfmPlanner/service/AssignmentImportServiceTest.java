@@ -1,4 +1,4 @@
-package suggestiongenerator.Service;
+package io.fidelcoria.ayfmPlanner.service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,10 +14,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
 
-import suggestiongenerator.entities.Assignment;
-import suggestiongenerator.services.AssignmentImportService;
+import io.fidelcoria.ayfmPlanner.domain.Assignment;
+import io.fidelcoria.ayfmPlanner.service.AssignmentImportService;
+
+import org.springframework.transaction.annotation.Propagation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
