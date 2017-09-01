@@ -26,6 +26,11 @@ public class PdfFormFillService {
 		String reminderSlipPopulator = "ReminderSlipPopulator.exe";
 		String option = "--populate";
 		String[] cmdarray;
+		
+		if (!destinationDirectory.endsWith("\\")) {
+			destinationDirectory = destinationDirectory + "\\";
+		}
+		
 		if (isWindows) {
 			cmdarray = new String[] {cmd, "/c", reminderSlipPopulator, option, pathToDocxSched, destinationDirectory};
 		} else {

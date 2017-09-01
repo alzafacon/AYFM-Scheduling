@@ -42,7 +42,7 @@ dependencies {
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 
-    // itext pdf stuff (first three always requiered)
+    // itext pdf stuff (first three always required)
     // compile 'com.itextpdf:kernel:7.0.4'
     // compile 'com.itextpdf:io:7.0.4'
     // compile 'com.itextpdf:layout:7.0.4'

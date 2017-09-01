@@ -130,14 +130,14 @@ public class AssignmentImportService {
 			// word DOCX keeps the text inside of XML nested tags table/tableRow/cell/paragraph/text (there might be runs too)
 			List<XWPFParagraph> paragraphs = tablerow.getCell(column[section][PEOPLE]).getParagraphs();
 			
-			if (paragraphs.size() == 0) { continue; } // if there are no people then the assignment is skipped
+			if (paragraphs.size() <= 0) { continue; } // if there are no people then the assignment is skipped
 			
-			String participants = paragraphs.get(0).getText().trim();
+			String assigneeName = paragraphs.get(0).getText().trim();
 
-			if ("".equals(participants)) { continue; } // if there are no people then the assignment is skipped
-
-			String[] names = participants.split("\\n"); // when two participants, they will be separated by newline
-
+			if ("".equals(assigneeName)) { continue; } // if there are no people then the assignment is skipped
+			
+			System.out.println("assignee: "+assigneeName);
+			
 			int lesson;
 			try{
 				lesson = Integer.parseInt(tablerow.getCell(column[section][LESSON]).getParagraphs().get(0).getText().trim());
@@ -146,7 +146,7 @@ public class AssignmentImportService {
 				lesson = 0;
 			}
 			
-			Person assignee = personRepository.findByFullName(names[0].trim());
+			Person assignee = personRepository.findByFullName(assigneeName.trim());
 			
 
 			// TODO  If people are not found ask user to create or select existing
@@ -161,8 +161,10 @@ public class AssignmentImportService {
 
 			assignment.setAssignee(assignee);
 
-			if (names.length > 1) {
-				Person householder = personRepository.findByFullName(names[1].trim());
+			if (paragraphs.size() > 1) {
+				String householderName = paragraphs.get(1).getText().trim();
+				
+				Person householder = personRepository.findByFullName(householderName);
 				if (householder == null) { continue; }
 				
 				assignment.setHouseholder(householder);
