@@ -1,20 +1,7 @@
 # AYFM-Scheduling
 ## Tool to aid in scheduling assignments for mid-week meeting "Apply Yourself to the Field Ministry."
 
-### Assignment Planner
-An Eclipse project in Java that packages the whole application.
-
-### Schedule Parsing
-This "subsystem" handles the input processing and preparation for processing.
-
-### Software Engineering
-Documentation and design for the project.
-
-### database
-The MySQL workbench model and sql scripts for setting up the database are in this folder.
-
 ### Description of Problem Domain for AYFM Scheduling
-
 Apply Yourself to the Field Ministry (AYFM) is the section of the Jehovah's Witness midweek meeting that is meant to prepare those enrolled for the Field Ministry (door to door preaching).
 
 The "Christian Congregation of Jehovah’s Witnesses" publishes a monthly workbook, "Our Christian Life and Ministry-Meeting Workbook," that details the sections of the midweek meetings (e.g. AYFM) for that month and the specific topics and talks under each section.

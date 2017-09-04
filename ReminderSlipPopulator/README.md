@@ -25,5 +25,5 @@ There is a command line interface to this program. To pass arguments to the prog
 5. Enter any command line arguments you like
 
 ## packaging with java code
-All of the .dll's together with the .pdf's and the .exe in /ReminderSlipPopulator/bin/Debug/ should be included in the src/main/resources/PdfFormFill/ folder.
-During installation the PdfFormFill/ folder should be extracted and saved on the disk for later use.
+All of the .dll's together with the .pdf's and the .exe in /ReminderSlipPopulator/bin/Debug/ are needed by the JAR.
+During installation all of the files mentioned above should saved at "C:\Program Files\AYFM\PdfReminderSlipPopulator\\"

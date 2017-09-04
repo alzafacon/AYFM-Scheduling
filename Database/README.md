@@ -1,6 +1,9 @@
-# First time database setup
+# Database
+Assignment Planner uses the default Java Spring embedded database, H2.
 
-1. There is an empty database in the Database/ folder which can be copied and used for development.
+## First time database setup
+
+1. There is an empty database in the Database/ folder which should be copied and used for development (place copy in "C:\Program Files\AYFM\\" as indicated in the application.properties).
 When developing changes to the schema and a new database file needs to be created:
 
    - set `spring.jpa.hibernate.ddl-auto=create` in *`application.properties`*
