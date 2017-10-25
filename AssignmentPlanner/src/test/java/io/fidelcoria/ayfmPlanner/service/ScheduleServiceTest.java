@@ -26,7 +26,7 @@ public class ScheduleServiceTest {
 		
 		scheduleService.generateSchedule();
 		
-		File outputDocx = new File("C:\\Users\\FidelCoria\\Documents\\AYFM\\schedule.docx");
+		File outputDocx = new File("sample-data/schedule.docx");
 		
 		scheduleService.saveToDocxSchedule(outputDocx);
 	}

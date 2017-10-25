@@ -98,7 +98,7 @@ public class GenerateTabController {
 	private void generateReminders(ActionEvent event) {
 		System.out.println("gen reminders");
 		
-		pdfFormFillService.formFill(scheduleToBuildReminders, scheduleDirectory);
+//		pdfFormFillService.formFill(scheduleToBuildReminders, scheduleDirectory);
 		
 	}
 }

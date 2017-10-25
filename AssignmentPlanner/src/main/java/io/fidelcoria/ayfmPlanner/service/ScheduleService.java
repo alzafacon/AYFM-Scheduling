@@ -463,6 +463,7 @@ public class ScheduleService {
 	
 	public void saveToDocxSchedule(File outputDocx) throws FileNotFoundException, IOException {
 		
+		// TODO: how to manage template files?
 		File template = new File("C:\\Program Files\\AYFM\\docx-template\\schedule-S.docx");
 		
 		XWPFDocument document = new XWPFDocument(new FileInputStream(template));

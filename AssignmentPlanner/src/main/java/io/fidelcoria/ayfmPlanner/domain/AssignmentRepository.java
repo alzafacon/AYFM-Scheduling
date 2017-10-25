@@ -42,4 +42,13 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Integer>
 	default List<Assignment> findMostRecentAssignment(int student) {
 		return findAllParticipations(student, new PageRequest(0, 1));
 	}
+	
+	final String MONTH_SCHEDULE = 
+		"FROM Assignment a " +
+		"WHERE MONTH(a.week) = ?1 " +
+	    	"AND YEAR(a.week) = ?2 " +
+		"ORDER BY a.week";
+
+	@Query(MONTH_SCHEDULE)
+	public List<Assignment> findAllByMonthAndYear(int month, int year);
 }

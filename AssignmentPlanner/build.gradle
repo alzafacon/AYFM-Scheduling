@@ -43,10 +43,10 @@ dependencies {
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 
     // itext pdf stuff (first three always required)
-    // compile 'com.itextpdf:kernel:7.0.4'
-    // compile 'com.itextpdf:io:7.0.4'
-    // compile 'com.itextpdf:layout:7.0.4'
-    // compile 'com.itextpdf:forms:7.0.4' // needed for working with form fields 
+    compile 'com.itextpdf:kernel:7.0.4'
+    compile 'com.itextpdf:io:7.0.4'
+    compile 'com.itextpdf:layout:7.0.4'
+    compile 'com.itextpdf:forms:7.0.4' // needed for working with form fields 
     
     // testCompile("junit:junit")
 }
