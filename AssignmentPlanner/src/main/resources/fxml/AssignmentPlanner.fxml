@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1280.0" stylesheets="@AssignmentPlanner.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER" prefHeight="64.0" prefWidth="200.0">
+         <children>
+            <Button id="hamburger" minHeight="73.0" minWidth="72.0" mnemonicParsing="false" prefWidth="72.0" text="Hamburger" />
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="action-bar">
+                     <children>
+                        <Label styleClass="action-label" text="Selected Tab" />
+                     </children>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <TabPane id="nav" prefWidth="600.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+         <tabs>
+            <Tab id="generate-tab">
+               <content>
+                  <TabPane prefHeight="500.0" prefWidth="500.0" styleClass="action-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                     <tabs>
+                        <Tab text="Command 1">
+                           <content>
+                              <GridPane prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
+                                 <children>
+                                    <ProgressIndicator visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" text="Complete!" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">
+                                       <children>
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <Button mnemonicParsing="false" text="generate" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                        <Tab text="Command 2">
+                           <content>
+                              <GridPane prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
+                                 <children>
+                                    <ProgressIndicator visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" text="Complete!" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">
+                                       <children>
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <Button mnemonicParsing="false" text="Button" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </content>
+               <styleClass>
+                  <String fx:value="generate-tab-icon" />
+                  <String fx:value="tab-icon" />
+               </styleClass>
+            </Tab>
+            <Tab id="import-tab">
+               <styleClass>
+                  <String fx:value="import-tab-icon" />
+                  <String fx:value="tab-icon" />
+               </styleClass>
+               <content>
+                  <TabPane prefHeight="500.0" prefWidth="500.0" styleClass="action-tab-pane" tabClosingPolicy="UNAVAILABLE">
+                     <tabs>
+                        <Tab text="Command 1">
+                           <content>
+                              <GridPane prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
+                                 <children>
+                                    <ProgressIndicator visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" text="Complete!" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">
+                                       <children>
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <Button mnemonicParsing="false" text="generate" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                        <Tab text="Command 2">
+                           <content>
+                              <GridPane prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
+                                 <children>
+                                    <ProgressIndicator visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" text="Complete!" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">
+                                       <children>
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <ChoiceBox prefWidth="150.0" />
+                                          <Button mnemonicParsing="false" text="Button" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                              </GridPane>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </content></Tab>
+            <Tab id="edit-tab">
+               <styleClass>
+                  <String fx:value="edit-tab-icon" />
+                  <String fx:value="tab-icon" />
+               </styleClass></Tab>
+         </tabs>
+      </TabPane>
+   </children>
+</VBox>

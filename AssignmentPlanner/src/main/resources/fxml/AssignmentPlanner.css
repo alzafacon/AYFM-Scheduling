@@ -1,0 +1,149 @@
+
+.root {
+	/* color constants */
+	theme-color: rgb(193, 134, 38);
+	nav-bar-color:    rgb(60, 56, 54);
+	nav-active-color: rgb(142, 100, 28);
+	action-bar-color:           rgb(236, 235, 231);
+    action-title-text-color:    rgb(60, 56, 54);
+	action-inactive-text-color: rgb(168, 151, 147);
+	action-active-text-color:   rgb(102, 96, 93);
+    separator-color: rgb(218, 218, 217);
+}
+
+/****************************************
+ * general control re-style customization
+ */
+
+.button {
+    /* clear style */
+	-fx-background-color: transparent;
+}
+
+.tab {
+    /* tighten header-area around tab buttons */
+    -fx-background-color: transparent;   
+}
+.tab-header-area {
+    /* tighten header-area around tab buttons */
+    -fx-padding: 0;
+}
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    /* hide focus border */
+    -fx-border-width: 0;
+}
+
+.separator {
+	-fx-background-color: separator-color;
+	-fx-min-height: 2px;
+}
+
+
+/*******************
+  * component styles
+  */
+
+/* action bars are the long bars at the top */
+.action-bar {
+	-fx-background-color: action-bar-color;
+	-fx-alignment: center-left;
+    -fx-padding: 20;
+	-fx-spacing: 25;
+	-fx-font-family: Arial;
+    -fx-font-size: 18pt;
+}
+/* Top bar with name of selected action */
+.action-label {
+	-fx-text-fill: action-title-text-color;
+}
+
+/* navigation tabpane style */
+#nav, .tab-header-background {
+	-fx-background-color: nav-bar-color;
+}
+#nav, .tab-label {
+    -fx-text-fill: white;
+}
+#nav, .tab-content-area {
+    -fx-background-color: white;
+}
+#nav, .tab-pane {
+    /* since nav's tabs are sideways 
+    the height is the actaul width */
+    -fx-tab-min-height: 72px;
+    /* without text the tabs collapse
+        so give a min width */
+    -fx-tab-min-width: 72px;
+}
+#nav, .tab {
+    -fx-padding: 0;
+}
+  
+.action-tab-pane .tab {
+    /* spacing buttons (note 20 is aligned with Title above) */
+    -fx-padding: 0 20 0 20;
+}
+.action-tab-pane .tab-header-background {
+    -fx-background-color: action-bar-color;
+}
+.action-tab-pane .tab-label {
+    -fx-font-family: 'Arial Narrow';
+    -fx-font-size: 20pt;
+    -fx-text-fill: action-inactive-text-color;
+}
+.action-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: action-active-text-color;
+}
+.action-tab-pane, .tab-pane {
+    /* NOTE: -fx-[ tab  ]-min-height */
+    -fx-tab-min-height: 76px;
+}
+
+/* grid pane does not have a selector
+    this one was created manually */
+.grid-pane {
+    -fx-hhap: 20px;
+    -fx-padding: 20;
+}
+
+#hamburger {
+    -fx-graphic: url(hamburger.png);
+    -fx-padding: 0;
+}
+
+.tab-icon {
+    -fx-background-size: 50;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 0px;
+}
+.tab-icon:hover {
+    /* TODO */
+}
+
+.generate-tab-icon {
+    -fx-background-image: url(generate-inactive.png);
+}
+.generate-tab-icon:left:selected {
+    -fx-background-image: url(generate-active.png);
+    -fx-background-color: nav-active-color;
+}
+
+.import-tab-icon {
+    -fx-background-image: url(import-inactive.png);
+}
+.import-tab-icon:left:selected {
+    -fx-background-image: url(import-active.png);
+    -fx-background-color: nav-active-color;
+}
+
+.edit-tab-icon {
+    -fx-background-image: url(edit-inactive.png);
+}
+.edit-tab-icon:left:selected {
+    -fx-background-image: url(edit-active.png);
+    -fx-background-color: nav-active-color;
+}
+
+
