@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner;
+package io.fidelcoria.ayfmap;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -18,10 +18,10 @@ import org.springframework.context.annotation.ComponentScan;
  * @author FidelCoria
  *
  */
- @SpringBootApplication
- @ComponentScan("io.fidelcoria.ayfmPlanner.service") // need for tests to grab context correctly
- @ComponentScan("io.fidelcoria.ayfmPlanner.controller") // needed for fxml to auto wire correctly
-public class Main extends Application {
+@SpringBootApplication
+@ComponentScan("io.fidelcoria.ayfmap.service") // need for tests to grab context correctly
+@ComponentScan("io.fidelcoria.ayfmap.controller") // needed for fxml to auto wire correctly
+public class AssignmentPlanner extends Application {
 	 
 	 private ConfigurableApplicationContext springContext;
 	 private Parent rootNode;
@@ -32,16 +32,19 @@ public class Main extends Application {
 
     @Override
     public void init() throws Exception {
-    	springContext = SpringApplication.run(Main.class);
-    	FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
+    	springContext = SpringApplication.run(AssignmentPlanner.class);
+    	FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/AssignmentPlanner.fxml"));
     	fxmlLoader.setControllerFactory(springContext::getBean);
     	rootNode = fxmlLoader.load();
     }
     
     @Override
     public void start(Stage stage) throws Exception {
-    	stage.setTitle("AYFM Planner");
+    	stage.setTitle("AYFM Assignment Planner");
     	stage.setScene(new Scene(rootNode));
+    	stage.setMaximized(true);
+    	//scene.getStylesheets().add(
+    	//		AssignmentPlanner.class.getResource("Login.css").toExternalForm());
     	stage.show();
     }
     

@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.controller;
+package io.fidelcoria.ayfmap.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 
 import com.sun.glass.events.MouseEvent;
 
-import io.fidelcoria.ayfmPlanner.service.PdfFormFillService;
-import io.fidelcoria.ayfmPlanner.service.ScheduleService;
+import io.fidelcoria.ayfmap.service.PdfFormFillService;
+import io.fidelcoria.ayfmap.service.ScheduleService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

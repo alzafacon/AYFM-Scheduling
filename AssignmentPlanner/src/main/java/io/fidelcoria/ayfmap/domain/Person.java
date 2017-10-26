@@ -1,9 +1,9 @@
-package io.fidelcoria.ayfmPlanner.domain;
+package io.fidelcoria.ayfmap.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
 
-import io.fidelcoria.ayfmPlanner.util.Assignment_t;
+import io.fidelcoria.ayfmap.util.Assignment_t;
 
 import java.util.ArrayList;
 import java.util.List;

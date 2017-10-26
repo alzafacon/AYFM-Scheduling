@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.util;
+package io.fidelcoria.ayfmap.util;
 
 /**
  * Assignment Roles come in two flavors, assignee and householder.

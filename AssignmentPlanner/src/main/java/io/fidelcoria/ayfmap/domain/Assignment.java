@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.domain;
+package io.fidelcoria.ayfmap.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -7,9 +7,9 @@ import java.util.Objects;
 
 import javax.persistence.*;
 
-import io.fidelcoria.ayfmPlanner.util.Assignment_t;
-import io.fidelcoria.ayfmPlanner.util.Role;
-import io.fidelcoria.ayfmPlanner.util.Section;
+import io.fidelcoria.ayfmap.util.Assignment_t;
+import io.fidelcoria.ayfmap.util.Role;
+import io.fidelcoria.ayfmap.util.Section;
 
 /**
  * The persistent class for the assignment database table.

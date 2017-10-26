@@ -1,0 +1,50 @@
+.button {
+	
+}
+
+.button:hover {
+
+}
+
+/* 
+scene title
+	text-transform: capitalized
+	font: arial
+	font-color: 
+	60, 56, 54
+	hue 13 sat 13 lum 54
+	
+control bar 
+	text-transform: all caps
+	font: arial narrow
+	
+	inactive {
+		font-color:
+		168 151 147
+		hue 8 sat 26 lum 148
+	}
+	
+	active {
+		font-color:
+		102 96 93
+		13 11 92
+	}
+	
+horizontal-bar:
+	color:
+	236 235 231
+	32 28 220
+	
+Action-column
+	
+	
+theme 
+	color
+	193 134 38
+	25 161 109
+	
+active action
+	-fx-background-color:
+	142 100 28
+	24 161 80
+	*/

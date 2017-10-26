@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.controller;
+package io.fidelcoria.ayfmap.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,10 +11,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.fidelcoria.ayfmPlanner.domain.Assignment;
-import io.fidelcoria.ayfmPlanner.domain.Person;
-import io.fidelcoria.ayfmPlanner.service.AssignmentImportService;
-import io.fidelcoria.ayfmPlanner.service.StudentImportService;
+import io.fidelcoria.ayfmap.domain.Assignment;
+import io.fidelcoria.ayfmap.domain.Person;
+import io.fidelcoria.ayfmap.service.AssignmentImportService;
+import io.fidelcoria.ayfmap.service.StudentImportService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;

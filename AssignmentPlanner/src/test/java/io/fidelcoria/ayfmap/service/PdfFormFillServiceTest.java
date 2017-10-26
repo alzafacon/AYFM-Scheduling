@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.service;
+package io.fidelcoria.ayfmap.service;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
@@ -12,8 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.fidelcoria.ayfmPlanner.domain.Assignment;
-import io.fidelcoria.ayfmPlanner.service.PdfFormFillService;
+import io.fidelcoria.ayfmap.domain.Assignment;
+import io.fidelcoria.ayfmap.service.AssignmentImportService;
+import io.fidelcoria.ayfmap.service.PdfFormFillService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

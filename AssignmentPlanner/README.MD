@@ -37,3 +37,5 @@ Using Eclipse Oxygen is recommended since there is documentation below on setup 
 
 ## Working with JavaFX
 Download "JavaFX Scene Builder 2" from [here](http://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html). This tool was used to generate the first iteration of the FXML but has not been tested to make modifications after the scene was broken up into four files (this was done in order to use multiple controllers, thus improving encapsulation, modularity, cohesion, and reducing coupling).
+
+To integrate Scene Builder with Eclipse follow [these](https://docs.oracle.com/javase/8/scene-builder-2/work-with-java-ides/sb-with-eclipse.htm#BABBFEBD) instructions. By navigating around that page you can also find information regarding other ides.

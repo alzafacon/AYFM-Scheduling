@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.service;
+package io.fidelcoria.ayfmap.service;
 
 import static java.time.temporal.TemporalAdjusters.firstInMonth;
 
@@ -17,8 +17,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 
-import io.fidelcoria.ayfmPlanner.domain.Assignment;
-import io.fidelcoria.ayfmPlanner.domain.AssignmentRepository;
+import io.fidelcoria.ayfmap.domain.Assignment;
+import io.fidelcoria.ayfmap.domain.AssignmentRepository;
 
 @Service
 public class PdfFormFillService {

@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.service;
+package io.fidelcoria.ayfmap.service;
 
 import java.io.FileReader;
 import java.util.LinkedList;
@@ -15,9 +15,9 @@ import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
-import io.fidelcoria.ayfmPlanner.domain.AssignmentRepository;
-import io.fidelcoria.ayfmPlanner.domain.Person;
-import io.fidelcoria.ayfmPlanner.domain.PersonRepository;
+import io.fidelcoria.ayfmap.domain.AssignmentRepository;
+import io.fidelcoria.ayfmap.domain.Person;
+import io.fidelcoria.ayfmap.domain.PersonRepository;
 
 @Service
 public class StudentImportService {

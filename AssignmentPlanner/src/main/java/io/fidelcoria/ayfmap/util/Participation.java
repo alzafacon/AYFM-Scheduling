@@ -1,9 +1,9 @@
-package io.fidelcoria.ayfmPlanner.util;
+package io.fidelcoria.ayfmap.util;
 
 import java.time.LocalDate;
 
-import io.fidelcoria.ayfmPlanner.domain.Assignment;
-import io.fidelcoria.ayfmPlanner.domain.Person;
+import io.fidelcoria.ayfmap.domain.Assignment;
+import io.fidelcoria.ayfmap.domain.Person;
 
 
 /**

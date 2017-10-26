@@ -1,7 +1,8 @@
-package io.fidelcoria.ayfmPlanner.service;
+package io.fidelcoria.ayfmap.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
@@ -11,18 +12,16 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.fidelcoria.ayfmPlanner.domain.Person;
-import io.fidelcoria.ayfmPlanner.service.StudentImportService;
+import io.fidelcoria.ayfmap.domain.Assignment;
+import io.fidelcoria.ayfmap.service.AssignmentImportService;
 
-/**
- * Typically tests run in order but there is no guarantee of this.
- * @author FidelCoria
- *
- */
+import org.springframework.transaction.annotation.Propagation;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DataJpaTest
@@ -32,20 +31,21 @@ import io.fidelcoria.ayfmPlanner.service.StudentImportService;
 //use only one of the two below at a time
 //@AutoConfigureTestDatabase(replace=Replace.NONE) // run against actual db
 @AutoConfigureTestDatabase(replace=Replace.ANY) // create in-memory db for test
-public class StudentImportServiceTest {
+public class AssignmentImportServiceTest {
 
 	@Autowired
-	StudentImportService studentImportService;
+	AssignmentImportService assignmentImportService;
 	
 	@Test
-	public void importStudentsCsv() throws Exception {
+	public void importFromDocx() throws FileNotFoundException, IOException {
 		
-		// read data
-		List<Person> students = studentImportService.readStudentsWithCsvMapReader("sample-data/enrollment.csv");
+		File docx = new File("sample-data/2016-7.docx");
 		
-		List<Person> persisted = studentImportService.saveStudents(students);
+		List<Assignment> assignments = assignmentImportService.readAssignmentsFromDocx(docx, 2017, 1);
 		
-		// everything actually gets persisted
-		assertThat(persisted.size()).isEqualTo(students.size());
+		List<Assignment> persisted = assignmentImportService.save(assignments);
+		
+		assertThat(assignments.size()).isEqualTo(persisted.size());
+		
 	}
 }

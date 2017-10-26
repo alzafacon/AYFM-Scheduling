@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.domain;
+package io.fidelcoria.ayfmap.domain;
 
 import java.util.List;
 

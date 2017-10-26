@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.controller;
+package io.fidelcoria.ayfmap.controller;
 
 import org.springframework.stereotype.Component;
 

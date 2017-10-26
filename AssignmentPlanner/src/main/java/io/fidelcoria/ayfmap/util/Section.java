@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.util;
+package io.fidelcoria.ayfmap.util;
 
 /**
  * Enum for the classrooms where assignments can take place.

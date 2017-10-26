@@ -1,4 +1,4 @@
-package io.fidelcoria.ayfmPlanner.service;
+package io.fidelcoria.ayfmap.service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import io.fidelcoria.ayfmPlanner.service.ScheduleService;
+import io.fidelcoria.ayfmap.service.ScheduleService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
