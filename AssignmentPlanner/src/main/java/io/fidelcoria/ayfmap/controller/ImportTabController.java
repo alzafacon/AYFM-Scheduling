@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -32,29 +33,28 @@ public class ImportTabController {
 	
 	
 	@FXML
-	Button choseScheduleButton;
-	@FXML
 	ChoiceBox<Month> scheduleImportMonthChoiceBox;
 	@FXML
 	ChoiceBox<Integer> scheduleImportYearChoiceBox;
 	@FXML
-	Label scheduleChosenForImportLabel;
-	@FXML
 	Button importScheduleButton;
-	private File scheduleToImport;
+	@FXML
+	ProgressIndicator scheduleImportProgress;
+	@FXML
+	Label scheduleImportFeedback;
 	
-	@FXML
-	Button chooseEnrollmentButton;
-	@FXML
-	Label enrollmentChosenLabel;
 	@FXML
 	Button importEnrollmentButton;
-	private File enrollmentToImport;
+	@FXML
+	ProgressIndicator enrollmentImportProgress;
+	@FXML
+	Label enrollmentImportFeedback;
 	
 	public void initialize() {
-		scheduleImportMonthChoiceBox.getItems().addAll(Month.values());
 		
 		int currentYear = LocalDate.now().getYear();
+		
+		scheduleImportMonthChoiceBox.getItems().addAll(Month.values());
 		
 		List<Integer> years = new ArrayList<>();
 		
@@ -65,59 +65,69 @@ public class ImportTabController {
 		scheduleImportYearChoiceBox.getItems().addAll(years);
 	}
 	
-	public void openScheduleFilePicker() {
+	public File openScheduleFilePicker() {
 		
 		FileChooser chooseSchedule = new FileChooser();
-		chooseSchedule.setInitialDirectory(new File("C:\\Users\\FidelCoria\\Documents\\AYFM\\"));
-		chooseSchedule.getExtensionFilters().add(new ExtensionFilter("MS Word", "*.docx"));
+		chooseSchedule.setInitialDirectory(
+				new File(System.getProperty("user.home")+"/Documents/AYFM/"));
+		chooseSchedule.getExtensionFilters().add(
+				new ExtensionFilter("MS Word", "*.docx"));
 		
 		File schedule = chooseSchedule.showOpenDialog(null);
 		
-		if (schedule != null) {
-			scheduleToImport = schedule;
-			scheduleChosenForImportLabel.setText(scheduleToImport.getName());
-		} else {
-			scheduleToImport = null;
-			scheduleChosenForImportLabel.setText("no file chosen");
-		}
+		return schedule;
 	}
 	
 	public void importSchedule() throws FileNotFoundException, IOException {
 		
+		scheduleImportFeedback.setVisible(false);
+		
 		Month month = scheduleImportMonthChoiceBox.getValue();
 		Integer year = scheduleImportYearChoiceBox.getValue();
 		
-		List<Assignment> assignments = assignmentImportService.readAssignmentsFromDocx(scheduleToImport, year, month.getValue());
+		File scheduleToImport = openScheduleFilePicker();
+		
+		scheduleImportProgress.setVisible(true);
+		
+		List<Assignment> assignments = 
+				assignmentImportService.readAssignmentsFromDocx(
+						scheduleToImport, year, month.getValue());
 		
 		assignmentImportService.save(assignments);
 		
-		// the only feed back the use will get... uugh
-		scheduleChosenForImportLabel.setText("import successful");
+		scheduleImportProgress.setVisible(false);
+		scheduleImportFeedback.setVisible(true);
+		
 	}
 	
-	public void openEnrollmentFilePicker() {
+	public File openEnrollmentFilePicker() {
 	
 		FileChooser chooseEnrollment = new FileChooser();
-		chooseEnrollment.setInitialDirectory(new File("C:\\Users\\FidelCoria\\Documents\\AYFM\\"));
-		chooseEnrollment.getExtensionFilters().add(new ExtensionFilter("CSV", "*.csv"));
+		chooseEnrollment.setInitialDirectory(
+				new File(System.getProperty("user.home")+"/Documents/AYFM/"));
+		chooseEnrollment.getExtensionFilters().add(
+				new ExtensionFilter("CSV", "*.csv"));
 		
 		File enrollment = chooseEnrollment.showOpenDialog(null);
 		
-		if (enrollment != null) {
-			enrollmentToImport = enrollment;
-			enrollmentChosenLabel.setText(enrollment.getName());
-		} else {
-			enrollmentToImport = null;
-			enrollmentChosenLabel.setText("no file chosen");
-		}
+		return enrollment;
 	}
 	
 	public void importEnrollment() throws Exception {
 		
-		List<Person> students = studentImportService.readStudentsWithCsvMapReader(enrollmentToImport.getAbsolutePath());
+		enrollmentImportFeedback.setVisible(false);
+		
+		File enrollmentToImport = openEnrollmentFilePicker();
+		
+		enrollmentImportProgress.setVisible(true);
+		
+		List<Person> students = 
+				studentImportService.readStudentsWithCsvMapReader(
+						enrollmentToImport.getAbsolutePath());
 		
 		studentImportService.saveStudents(students);
 		
-		enrollmentChosenLabel.setText("import successful");
+		enrollmentImportProgress.setVisible(false);
+		enrollmentImportFeedback.setVisible(true);
 	}
 }

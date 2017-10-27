@@ -9,8 +9,6 @@ import java.time.Month;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.sun.glass.events.MouseEvent;
-
 import io.fidelcoria.ayfmap.service.PdfFormFillService;
 import io.fidelcoria.ayfmap.service.ScheduleService;
 import javafx.event.ActionEvent;
@@ -18,9 +16,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 @Component
 public class GenerateTabController {
@@ -37,68 +34,95 @@ public class GenerateTabController {
 	ChoiceBox<Integer> scheduleYearChoiceBox;
 	@FXML
 	Button generateScheduleButton;
+	@FXML
+	ProgressIndicator scheduleGenerateSpinner;
+	@FXML
+	Label feedbackLabel;
 	
 	@FXML
-	Button chooseScheduleButton;
+	ChoiceBox<Month> remindersMonthChoiceBox;
 	@FXML
-	Label scheduleChosenForRemindersLabel;
+	ChoiceBox<Integer> remindersYearChoiceBox;
 	@FXML
 	Button generateRemindersButton;
-	private String scheduleDirectory;
-	private String scheduleToBuildReminders;
+	@FXML
+	ProgressIndicator reminderGenerateSpinner;
+	@FXML
+	Label remindersFeedbackLabel;
+	
 	
 	public void initialize() {
-		scheduleMonthChoiceBox.getItems().addAll(Month.values());
 		
 		int currentYear = LocalDate.now().getYear();
 		
-		scheduleYearChoiceBox.getItems().addAll((Integer)currentYear, (Integer)(currentYear+1), (Integer)(currentYear+2));
+		scheduleMonthChoiceBox.getItems().addAll(Month.values());
+		scheduleYearChoiceBox.getItems().addAll(
+				(Integer)currentYear, (Integer)(currentYear+1), (Integer)(currentYear+2));
+		
+		remindersMonthChoiceBox.getItems().addAll(Month.values());
+		remindersYearChoiceBox.getItems().addAll(
+				(Integer)currentYear, (Integer)(currentYear+1), (Integer)(currentYear+2));
 	}
 	
 	@FXML
 	private void generateSchedule(ActionEvent event) throws FileNotFoundException, IOException {
+		// TODO: should be logging...
 		System.out.println("generating a schedule");
 		
+		feedbackLabel.setVisible(false);
+		
 		DirectoryChooser folderForSchedule = new DirectoryChooser();
-		folderForSchedule.setInitialDirectory(new File(System.getProperty("user.home")+"\\Documents\\AYFM\\"));
+		folderForSchedule.setInitialDirectory(
+				new File(System.getProperty("user.home")+"/Documents/AYFM/"));
 		
-		File outputDocx = folderForSchedule.showDialog(null);
+		File outputDir = folderForSchedule.showDialog(null);
 		
-		if (outputDocx != null) {
+		if (outputDir != null) {
+			scheduleGenerateSpinner.setVisible(true);
 			
 			Month month = scheduleMonthChoiceBox.getValue();
 			Integer year = scheduleYearChoiceBox.getValue();
 
-			String directory = outputDocx.getAbsolutePath() + "\\"+year+"-"+month.getValue()+".docx";
+			String directory = outputDir.getAbsolutePath() + "/"+year+"-"+month.getValue()+".docx";
 			
 			scheduleService.setYearMonth(year, month.getValue());
-
 			scheduleService.generateSchedule();
 
 			scheduleService.saveToDocxSchedule(new File(directory));
+			
+			scheduleGenerateSpinner.setVisible(false);
+			feedbackLabel.setVisible(true);
 		}
+		
 	}
 	
 	@FXML
-	private void openScheduleFilePicker() {
-		FileChooser chooseSchedule = new FileChooser();
-		chooseSchedule.setInitialDirectory(new File(System.getProperty("user.home")+"\\Documents\\AYFM\\"));
-		chooseSchedule.getExtensionFilters().add(new ExtensionFilter("MS Word", "*.docx"));
-		
-		File schedule = chooseSchedule.showOpenDialog(null);
-		
-		if (schedule != null) {
-			scheduleDirectory = schedule.getParent();
-			scheduleToBuildReminders = schedule.getAbsolutePath();
-			scheduleChosenForRemindersLabel.setText(schedule.getName());
-		}
-	}
-	
-	@FXML
-	private void generateReminders(ActionEvent event) {
+	private void generateReminders(ActionEvent event) throws Exception {
+		// TODO: should be logging
 		System.out.println("gen reminders");
 		
-//		pdfFormFillService.formFill(scheduleToBuildReminders, scheduleDirectory);
+		// hide feedback when starting a new request
+		remindersFeedbackLabel.setVisible(false);
 		
+		// let user choose folder to drop files in
+		DirectoryChooser folderForReminders = new DirectoryChooser();
+		folderForReminders.setInitialDirectory(
+				new File(System.getProperty("user.home")+"/Documents/AYFM/"));
+		
+		File outputDir = folderForReminders.showDialog(null);
+		
+		if (outputDir != null) {
+			Month month = scheduleMonthChoiceBox.getValue();
+			Integer year = scheduleYearChoiceBox.getValue();
+			
+			String directory = outputDir.getAbsolutePath() + "/";
+			
+			reminderGenerateSpinner.setVisible(true);
+			
+			pdfFormFillService.formFill(year, month.getValue(), directory);
+			
+			reminderGenerateSpinner.setVisible(false);
+			remindersFeedbackLabel.setVisible(true);
+		}
 	}
 }

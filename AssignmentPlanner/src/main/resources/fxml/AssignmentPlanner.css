@@ -62,6 +62,7 @@
 	-fx-background-color: nav-bar-color;
 }
 #nav, .tab-label {
+    /* not used for anything */
     -fx-text-fill: white;
 }
 #nav, .tab-content-area {
@@ -70,10 +71,10 @@
 #nav, .tab-pane {
     /* since nav's tabs are sideways 
     the height is the actaul width */
-    -fx-tab-min-height: 72px;
+    -fx-tab-min-height: 72;
     /* without text the tabs collapse
         so give a min width */
-    -fx-tab-min-width: 72px;
+    -fx-tab-min-width: 72;
 }
 #nav, .tab {
     -fx-padding: 0;
@@ -81,7 +82,7 @@
   
 .action-tab-pane .tab {
     /* spacing buttons (note 20 is aligned with Title above) */
-    -fx-padding: 0 20 0 20;
+    -fx-padding: 0 20 0 20; /* right and left */
 }
 .action-tab-pane .tab-header-background {
     -fx-background-color: action-bar-color;
@@ -96,18 +97,19 @@
 }
 .action-tab-pane, .tab-pane {
     /* NOTE: -fx-[ tab  ]-min-height */
-    -fx-tab-min-height: 76px;
+    -fx-tab-min-height: 76;
+    -fx-tab-min-width: 100;
 }
 
 /* grid pane does not have a selector
     this one was created manually */
 .grid-pane {
-    -fx-hhap: 20px;
+    -fx-hhap: 20;
     -fx-padding: 20;
 }
 
 #hamburger {
-    -fx-graphic: url(hamburger.png);
+    -fx-graphic: url(img/hamburger.png);
     -fx-padding: 0;
 }
 
@@ -123,26 +125,26 @@
 }
 
 .generate-tab-icon {
-    -fx-background-image: url(generate-inactive.png);
+    -fx-background-image: url(img/generate/inactive.png);
 }
 .generate-tab-icon:left:selected {
-    -fx-background-image: url(generate-active.png);
+    -fx-background-image: url(img/generate/active.png);
     -fx-background-color: nav-active-color;
 }
 
 .import-tab-icon {
-    -fx-background-image: url(import-inactive.png);
+    -fx-background-image: url(img/import/inactive.png);
 }
 .import-tab-icon:left:selected {
-    -fx-background-image: url(import-active.png);
+    -fx-background-image: url(img/import/active.png);
     -fx-background-color: nav-active-color;
 }
 
 .edit-tab-icon {
-    -fx-background-image: url(edit-inactive.png);
+    -fx-background-image: url(img/edit/inactive.png);
 }
 .edit-tab-icon:left:selected {
-    -fx-background-image: url(edit-active.png);
+    -fx-background-image: url(img/edit/active.png);
     -fx-background-color: nav-active-color;
 }
 

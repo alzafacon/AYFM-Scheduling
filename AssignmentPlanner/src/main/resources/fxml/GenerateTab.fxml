@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane prefHeight="398.0" prefWidth="676.0" styleClass="action-tab-pane" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.fidelcoria.ayfmap.controller.GenerateTabController">
+   <tabs>
+      <Tab text="Schedule">
+         <content>
+            <GridPane alignment="CENTER" prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
+               <children>
+                  <ProgressIndicator fx:id="scheduleGenerateSpinner" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Label fx:id="feedbackLabel" text="Complete!" visible="false" />
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">
+                     <children>
+                        <ChoiceBox fx:id="scheduleMonthChoiceBox" prefWidth="150.0" />
+                        <ChoiceBox fx:id="scheduleYearChoiceBox" prefWidth="150.0" />
+                        <Button fx:id="generateScheduleButton" mnemonicParsing="false" onAction="#generateSchedule" text="Generate Schedule" />
+                     </children>
+                  </HBox>
+               </children>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
+         </content>
+      </Tab>
+      <Tab text="Reminder Slips">
+         <content>
+            <GridPane alignment="CENTER" prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
+               <children>
+                  <ProgressIndicator fx:id="reminderGenerateSpinner" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Label fx:id="remindersFeedbackLabel" alignment="CENTER" contentDisplay="CENTER" text="Complete!" />
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">
+                     <children>
+                        <ChoiceBox fx:id="remindersMonthChoiceBox" prefWidth="150.0" />
+                        <ChoiceBox fx:id="remindersYearChoiceBox" prefWidth="150.0" />
+                        <Button fx:id="generateRemindersButton" mnemonicParsing="false" text="Generate Reminders" />
+                     </children>
+                  </HBox>
+               </children>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
+         </content>
+      </Tab>
+   </tabs>
+</TabPane>
