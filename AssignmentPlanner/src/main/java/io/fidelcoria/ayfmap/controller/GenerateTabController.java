@@ -58,10 +58,15 @@ public class GenerateTabController {
 		scheduleMonthChoiceBox.getItems().addAll(Month.values());
 		scheduleYearChoiceBox.getItems().addAll(
 				(Integer)currentYear, (Integer)(currentYear+1), (Integer)(currentYear+2));
+		scheduleMonthChoiceBox.getSelectionModel().selectFirst();
+		scheduleYearChoiceBox.getSelectionModel().selectFirst();
+		
 		
 		remindersMonthChoiceBox.getItems().addAll(Month.values());
 		remindersYearChoiceBox.getItems().addAll(
 				(Integer)currentYear, (Integer)(currentYear+1), (Integer)(currentYear+2));
+		remindersMonthChoiceBox.getSelectionModel().selectFirst();
+		remindersYearChoiceBox.getSelectionModel().selectFirst();
 	}
 	
 	@FXML

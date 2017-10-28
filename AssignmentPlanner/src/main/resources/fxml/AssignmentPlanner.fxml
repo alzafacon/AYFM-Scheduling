@@ -11,14 +11,18 @@
 
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="756.0" prefWidth="1280.0" stylesheets="@AssignmentPlanner.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.fidelcoria.ayfmap.controller.MainController">
    <children>
-      <HBox alignment="CENTER" prefHeight="64.0" prefWidth="200.0">
+      <HBox alignment="CENTER">
          <children>
-            <Button id="hamburger" minHeight="73.0" minWidth="72.0" mnemonicParsing="false" prefWidth="72.0" text="Hamburger" />
-            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+            <Pane prefWidth="40.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="action-bar">
+                  <Button id="hamburger" alignment="CENTER" graphicTextGap="0.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="40.0" HBox.hgrow="ALWAYS" />
+               </children>
+            </Pane>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT" styleClass="action-bar">
                      <children>
-                        <Label fx:id="actionHeaderBar" styleClass="action-label" text="Selected Tab" />
+                        <Label fx:id="actionHeaderBar" styleClass="action-label" text="Generate Documents" />
                      </children>
                      <padding>
                         <Insets left="10.0" />
@@ -31,7 +35,7 @@
       </HBox>
       <TabPane id="nav" fx:id="actionTabPane" prefWidth="600.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
          <tabs>
-            <Tab id="generate-tab">
+            <Tab id="generate-tab" onSelectionChanged="#tabClicked">
                <content>
                   <fx:include source="GenerateTab.fxml" /> 
                </content>
@@ -40,7 +44,7 @@
                   <String fx:value="tab-icon" />
                </styleClass>
             </Tab>
-            <Tab id="import-tab">
+            <Tab id="import-tab" onSelectionChanged="#tabClicked">
                <styleClass>
                   <String fx:value="import-tab-icon" />
                   <String fx:value="tab-icon" />
@@ -48,7 +52,7 @@
                <content>
                   <fx:include source="ImportTab.fxml" />
                </content></Tab>
-            <Tab id="edit-tab">
+            <Tab id="edit-tab" onSelectionChanged="#tabClicked">
                <styleClass>
                   <String fx:value="edit-tab-icon" />
                   <String fx:value="tab-icon" />

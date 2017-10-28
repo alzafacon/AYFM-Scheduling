@@ -9,7 +9,7 @@
    <tabs>
       <Tab text="Schedule">
          <content>
-            <GridPane alignment="CENTER" prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
+            <GridPane alignment="CENTER" prefHeight="200.0" prefWidth="1020.0" styleClass="grid-pane">
                <children>
                   <ProgressIndicator fx:id="scheduleGenerateSpinner" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -21,7 +21,7 @@
                      <children>
                         <ChoiceBox fx:id="scheduleMonthChoiceBox" prefWidth="150.0" />
                         <ChoiceBox fx:id="scheduleYearChoiceBox" prefWidth="150.0" />
-                        <Button fx:id="generateScheduleButton" mnemonicParsing="false" onAction="#generateSchedule" text="Generate Schedule" />
+                        <Button fx:id="generateScheduleButton" mnemonicParsing="false" onAction="#generateSchedule" styleClass="minimal-btn" text="Generate Schedule" />
                      </children>
                   </HBox>
                </children>
@@ -52,7 +52,7 @@
                      <children>
                         <ChoiceBox fx:id="remindersMonthChoiceBox" prefWidth="150.0" />
                         <ChoiceBox fx:id="remindersYearChoiceBox" prefWidth="150.0" />
-                        <Button fx:id="generateRemindersButton" mnemonicParsing="false" text="Generate Reminders" />
+                        <Button fx:id="generateRemindersButton" mnemonicParsing="false" styleClass="minimal-btn" text="Generate Reminders" />
                      </children>
                   </HBox>
                </children>

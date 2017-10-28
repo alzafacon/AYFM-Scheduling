@@ -55,6 +55,7 @@ public class ImportTabController {
 		int currentYear = LocalDate.now().getYear();
 		
 		scheduleImportMonthChoiceBox.getItems().addAll(Month.values());
+		scheduleImportMonthChoiceBox.getSelectionModel().selectFirst();
 		
 		List<Integer> years = new ArrayList<>();
 		
@@ -63,6 +64,7 @@ public class ImportTabController {
 		}
 		
 		scheduleImportYearChoiceBox.getItems().addAll(years);
+		scheduleImportYearChoiceBox.getSelectionModel().selectFirst();
 	}
 	
 	public File openScheduleFilePicker() {
