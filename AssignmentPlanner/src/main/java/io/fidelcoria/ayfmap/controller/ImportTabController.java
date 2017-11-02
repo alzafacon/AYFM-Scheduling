@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.fidelcoria.ayfmap.domain.Assignment;
@@ -50,6 +51,9 @@ public class ImportTabController {
 	@FXML
 	Label enrollmentImportFeedback;
 	
+	@Value("${installation.directory.workspace}")
+	private String workspace;
+	
 	public void initialize() {
 		
 		int currentYear = LocalDate.now().getYear();
@@ -70,10 +74,9 @@ public class ImportTabController {
 	public File openScheduleFilePicker() {
 		
 		FileChooser chooseSchedule = new FileChooser();
-		chooseSchedule.setInitialDirectory(
-				new File(System.getProperty("user.home")+"/Documents/AYFM/"));
-		chooseSchedule.getExtensionFilters().add(
-				new ExtensionFilter("MS Word", "*.docx"));
+		
+		chooseSchedule.setInitialDirectory(new File(workspace));
+		chooseSchedule.getExtensionFilters().add(new ExtensionFilter("MS Word", "*.docx"));
 		
 		File schedule = chooseSchedule.showOpenDialog(null);
 		
@@ -92,8 +95,8 @@ public class ImportTabController {
 		scheduleImportProgress.setVisible(true);
 		
 		List<Assignment> assignments = 
-				assignmentImportService.readAssignmentsFromDocx(
-						scheduleToImport, year, month.getValue());
+			assignmentImportService
+				.readAssignmentsFromDocx(scheduleToImport, year, month.getValue());
 		
 		assignmentImportService.save(assignments);
 		
@@ -105,10 +108,8 @@ public class ImportTabController {
 	public File openEnrollmentFilePicker() {
 	
 		FileChooser chooseEnrollment = new FileChooser();
-		chooseEnrollment.setInitialDirectory(
-				new File(System.getProperty("user.home")+"/Documents/AYFM/"));
-		chooseEnrollment.getExtensionFilters().add(
-				new ExtensionFilter("CSV", "*.csv"));
+		chooseEnrollment.setInitialDirectory(new File(workspace));
+		chooseEnrollment.getExtensionFilters().add(new ExtensionFilter("CSV", "*.csv"));
 		
 		File enrollment = chooseEnrollment.showOpenDialog(null);
 		
@@ -124,8 +125,8 @@ public class ImportTabController {
 		enrollmentImportProgress.setVisible(true);
 		
 		List<Person> students = 
-				studentImportService.readStudentsWithCsvMapReader(
-						enrollmentToImport.getAbsolutePath());
+			studentImportService
+				.readStudentsWithCsvMapReader(enrollmentToImport.getAbsolutePath());
 		
 		studentImportService.saveStudents(students);
 		

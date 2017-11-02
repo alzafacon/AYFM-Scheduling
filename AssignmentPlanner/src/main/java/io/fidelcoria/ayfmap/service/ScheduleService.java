@@ -20,6 +20,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.fidelcoria.ayfmap.domain.Assignment;
@@ -54,6 +55,9 @@ public class ScheduleService {
 	private int year;
 	private int month;
 	private int effectiveWeeks; // number of weeks actually in month (less than MAX_NUM_WEEKS)
+	
+	@Value("${installation.directory.templates}")
+	private String templateDir;
 	
 	/**
 	 * Protected: let Spring handle instantiation and injection
@@ -191,8 +195,6 @@ public class ScheduleService {
 			
 		}
 		
-//		System.out.println("placed = "+assignmentsPlaced);
-//		System.out.println("max no = "+MAX_ASSGNS);
 	}
 	
 	/**
@@ -463,8 +465,7 @@ public class ScheduleService {
 	
 	public void saveToDocxSchedule(File outputDocx) throws FileNotFoundException, IOException {
 		
-		// TODO: how to manage template files?
-		File template = new File("C:\\Program Files\\AYFM\\docx-template\\schedule-S.docx");
+		File template = new File(templateDir+"schedule-S.docx");
 		
 		XWPFDocument document = new XWPFDocument(new FileInputStream(template));
 		XWPFTable table = document.getTables().get(0);

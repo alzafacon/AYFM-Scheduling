@@ -21,10 +21,8 @@ public class MainController {
 	
 	@FXML 
 	private GenerateTabController generateTabController;
-	
 	@FXML
 	private ImportTabController importTabController;
-	
 	@FXML
 	private DataTabController dataTabController;
 	
@@ -44,6 +42,7 @@ public class MainController {
 	public void tabClicked() {
 		
 		for (Tab tab : actionTabPane.getTabs()) {
+			
 			if (tab.isSelected()) {
 				
 				String title = tabTitles.get(tab.getId());

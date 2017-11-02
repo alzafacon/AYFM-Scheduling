@@ -12,7 +12,7 @@
             <GridPane alignment="CENTER" prefHeight="200.0" prefWidth="1020.0" styleClass="grid-pane">
                <children>
                   <ProgressIndicator fx:id="scheduleGenerateSpinner" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
                         <Label fx:id="feedbackLabel" text="Complete!" visible="false" />
                      </children>
@@ -43,7 +43,7 @@
             <GridPane alignment="CENTER" prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
                <children>
                   <ProgressIndicator fx:id="reminderGenerateSpinner" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
                         <Label fx:id="remindersFeedbackLabel" alignment="CENTER" contentDisplay="CENTER" text="Complete!" />
                      </children>
@@ -52,7 +52,7 @@
                      <children>
                         <ChoiceBox fx:id="remindersMonthChoiceBox" prefWidth="150.0" />
                         <ChoiceBox fx:id="remindersYearChoiceBox" prefWidth="150.0" />
-                        <Button fx:id="generateRemindersButton" mnemonicParsing="false" styleClass="minimal-btn" text="Generate Reminders" />
+                        <Button fx:id="generateRemindersButton" mnemonicParsing="false" onAction="#generateReminders" styleClass="minimal-btn" text="Generate Reminders" />
                      </children>
                   </HBox>
                </children>

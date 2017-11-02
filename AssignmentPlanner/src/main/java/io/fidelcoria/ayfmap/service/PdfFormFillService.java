@@ -7,8 +7,10 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.itextpdf.forms.PdfAcroForm;
@@ -28,7 +30,6 @@ public class PdfFormFillService {
 	
 	private final static int NUM_WEEKS_PER_SCHEDULE = 5;
 	
-	// TODO: where will template files actually be?
 	private final static String FIRST_WEEK_SPANISH_PDF = "S-89-S_1.pdf";
 	private final static String MID_MONTH_SPANISH_PDF = "S-89-S_8.pdf";
 	
@@ -38,15 +39,11 @@ public class PdfFormFillService {
 	private final static String DATE = "Date";
 	private final static String LESSON = "Lesson";
 
-	private final static String TYPE = "_type-";
-	private final static String READING_T = "1";        // _T for type
-	private final static String INITIAL_CALL_T = "2";
-	private final static String RETURN_VISIT_T = "3";
-	private final static String BIBILE_STUDY_T = "4";
-
-	private final static String SECTION = "_section-";
-	private final static String CLASS_A_S = "a";        // _S for section
-	private final static String CLASS_B_S = "b";
+	private final static String TYPE = "_type-";		// _T for type
+	private final static String SECTION = "_section-"; 	// _S for section
+	
+	@Value("${installation.directory.templates}")
+	private String templateDir;
 	
 	public PdfFormFillService () {
 		
@@ -61,7 +58,7 @@ public class PdfFormFillService {
 		// load assignments from database (sorted by date)
 		List<Assignment> monthlySchedule = assignmentRepository.findAllByMonthAndYear(month, year);
 		
-//		System.out.println("the actaul data drawn from db is: "+monthlySchedule.size());
+		System.out.println("the actual data drawn from db is: "+monthlySchedule.size());
 		
 		// each week of assignments is to be saved as a list element in `weeks`
 		List< List<Assignment> > weeks = new LinkedList< List<Assignment> >();
@@ -100,13 +97,14 @@ public class PdfFormFillService {
         	
         	for (List<Assignment> weekOfAssignments : weeks) {
 				if (weekOfAssignments.size() == 0) {
+					System.out.println("week has no assignments...");
 					continue;
 				}
 				
 				LocalDate week = weekOfAssignments.get(0).getWeek();
-				
-				String pdfTemplate = week.equals(firstWeek)? 
-						FIRST_WEEK_SPANISH_PDF : MID_MONTH_SPANISH_PDF;
+				System.out.println("week: "+week);
+				String pdfTemplate = templateDir + 
+						(week.equals(firstWeek)? FIRST_WEEK_SPANISH_PDF : MID_MONTH_SPANISH_PDF);
 								
 				reminders = new PdfDocument(
 						new PdfReader(pdfTemplate), 
@@ -115,9 +113,16 @@ public class PdfFormFillService {
 				acroForm = PdfAcroForm.getAcroForm(reminders, true);
 	        	fields = acroForm.getFormFields();
 	        	
+	        	Set<String> fieldKeys = fields.keySet();
+	        	
+	        	System.out.println("the form keys are...");
+	        	for (String key : fieldKeys) {
+	        		System.out.println(key);
+	        	}
+	        	
 	        	for (Assignment assgn : weekOfAssignments) {
-	        		String suffix = buildKey("",assgn.getAssignmentType().toString(), assgn.getClassroom().toString());
-	            	
+	        		String suffix = buildKey("",Integer.toString(assgn.getAssignmentType().toInt()), assgn.getClassroom().toString());
+	            	System.out.println("looking up key: "+DATE+suffix);
 	            	fields.get(DATE+suffix).setValue(assgn.getWeek().toString());
 	            	
 	            	fields.get(ASSIGNEE+suffix).setValue(assgn.getAssignee().getFullName());
@@ -128,10 +133,14 @@ public class PdfFormFillService {
 	            	
 	            	fields.get(LESSON+suffix).setValue(Integer.toString(assgn.getLesson()));
 	        	}
+	        	
+	        	reminders.close();
 			}
+        	
         	
         }
         catch (Exception ex) {
+        	ex.printStackTrace();
         	if (reminders != null && !reminders.isClosed()) {
                 reminders.close();
             }

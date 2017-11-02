@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.Month;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.fidelcoria.ayfmap.service.PdfFormFillService;
@@ -50,6 +51,8 @@ public class GenerateTabController {
 	@FXML
 	Label remindersFeedbackLabel;
 	
+	@Value("${installation.directory.workspace}")
+	private String workspace;
 	
 	public void initialize() {
 		
@@ -74,22 +77,25 @@ public class GenerateTabController {
 		// TODO: should be logging...
 		System.out.println("generating a schedule");
 		
+		// hide feedback when starting a new request
 		feedbackLabel.setVisible(false);
 		
+		// let user choose folder to drop files in
 		DirectoryChooser folderForSchedule = new DirectoryChooser();
-		folderForSchedule.setInitialDirectory(
-				new File(System.getProperty("user.home")+"/Documents/AYFM/"));
+		folderForSchedule.setInitialDirectory(new File(workspace));
 		
 		File outputDir = folderForSchedule.showDialog(null);
 		
 		if (outputDir != null) {
+			// TODO: not visible (needs a separate thread)
 			scheduleGenerateSpinner.setVisible(true);
 			
 			Month month = scheduleMonthChoiceBox.getValue();
 			Integer year = scheduleYearChoiceBox.getValue();
 
-			String directory = outputDir.getAbsolutePath() + "/"+year+"-"+month.getValue()+".docx";
+			String directory = outputDir.getAbsolutePath()+"/"+year+"-"+month.getValue()+".docx";
 			
+			// TODO: change into a single call
 			scheduleService.setYearMonth(year, month.getValue());
 			scheduleService.generateSchedule();
 
@@ -111,16 +117,15 @@ public class GenerateTabController {
 		
 		// let user choose folder to drop files in
 		DirectoryChooser folderForReminders = new DirectoryChooser();
-		folderForReminders.setInitialDirectory(
-				new File(System.getProperty("user.home")+"/Documents/AYFM/"));
+		folderForReminders.setInitialDirectory(new File(workspace));
 		
 		File outputDir = folderForReminders.showDialog(null);
 		
 		if (outputDir != null) {
-			Month month = scheduleMonthChoiceBox.getValue();
-			Integer year = scheduleYearChoiceBox.getValue();
+			Month month = remindersMonthChoiceBox.getValue();
+			Integer year = remindersYearChoiceBox.getValue();
 			
-			String directory = outputDir.getAbsolutePath() + "/";
+			String directory = outputDir.getAbsolutePath()+"/";
 			
 			reminderGenerateSpinner.setVisible(true);
 			
@@ -129,5 +134,6 @@ public class GenerateTabController {
 			reminderGenerateSpinner.setVisible(false);
 			remindersFeedbackLabel.setVisible(true);
 		}
+		System.out.println("leaving gen reminders");
 	}
 }
