@@ -16,6 +16,7 @@ import io.fidelcoria.ayfmap.domain.Assignment;
 import io.fidelcoria.ayfmap.domain.Person;
 import io.fidelcoria.ayfmap.service.AssignmentImportService;
 import io.fidelcoria.ayfmap.service.StudentImportService;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -92,17 +93,39 @@ public class ImportTabController {
 		
 		File scheduleToImport = openScheduleFilePicker();
 		
-		scheduleImportProgress.setVisible(true);
+		if (scheduleToImport == null) {
+			return;
+		}
 		
-		List<Assignment> assignments = 
-			assignmentImportService
-				.readAssignmentsFromDocx(scheduleToImport, year, month.getValue());
+		Task<Void> task = new Task<Void>() {
+			@Override
+			public Void call() {
+				List<Assignment> assignments;
+				try {
+					assignments = assignmentImportService
+						.readAssignmentsFromDocx(scheduleToImport, year, month.getValue());
+					assignmentImportService.save(assignments);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				// indicate that step 1 of 1 has been completed
+				updateProgress(1, 1);
+				return null;
+			}
+		};
 		
-		assignmentImportService.save(assignments);
+		scheduleImportProgress.progressProperty().bind(task.progressProperty());
+		new Thread(task).start();
 		
-		scheduleImportProgress.setVisible(false);
-		scheduleImportFeedback.setVisible(true);
+		scheduleImportProgress.setVisible(true);		
 		
+		//scheduleImportProgress.setVisible(false);
+		//scheduleImportFeedback.setVisible(true);
 	}
 	
 	public File openEnrollmentFilePicker() {
@@ -122,15 +145,35 @@ public class ImportTabController {
 		
 		File enrollmentToImport = openEnrollmentFilePicker();
 		
+		if (enrollmentToImport == null) {
+			return;
+		}
+		
+		Task<Void> task = new Task<Void>() {
+			@Override
+			public Void call() {
+				
+				List<Person> students;
+				try {
+					students = studentImportService
+						.readStudentsWithCsvMapReader(enrollmentToImport.getAbsolutePath());
+					studentImportService.saveStudents(students);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				updateProgress(1, 1);
+				return null;
+			}
+		};
+		
+		enrollmentImportProgress.progressProperty().bind(task.progressProperty());
+		new Thread(task).start();
+		
 		enrollmentImportProgress.setVisible(true);
 		
-		List<Person> students = 
-			studentImportService
-				.readStudentsWithCsvMapReader(enrollmentToImport.getAbsolutePath());
-		
-		studentImportService.saveStudents(students);
-		
-		enrollmentImportProgress.setVisible(false);
-		enrollmentImportFeedback.setVisible(true);
+//		enrollmentImportProgress.setVisible(false);
+//		enrollmentImportFeedback.setVisible(true);
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import io.fidelcoria.ayfmap.service.PdfFormFillService;
 import io.fidelcoria.ayfmap.service.ScheduleService;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -77,34 +78,51 @@ public class GenerateTabController {
 		// TODO: should be logging...
 		System.out.println("generating a schedule");
 		
-		// hide feedback when starting a new request
-		feedbackLabel.setVisible(false);
-		
 		// let user choose folder to drop files in
 		DirectoryChooser folderForSchedule = new DirectoryChooser();
 		folderForSchedule.setInitialDirectory(new File(workspace));
 		
 		File outputDir = folderForSchedule.showDialog(null);
 		
-		if (outputDir != null) {
-			// TODO: not visible (needs a separate thread)
-			scheduleGenerateSpinner.setVisible(true);
-			
-			Month month = scheduleMonthChoiceBox.getValue();
-			Integer year = scheduleYearChoiceBox.getValue();
-
-			String directory = outputDir.getAbsolutePath()+"/"+year+"-"+month.getValue()+".docx";
-			
-			// TODO: change into a single call
-			scheduleService.setYearMonth(year, month.getValue());
-			scheduleService.generateSchedule();
-
-			scheduleService.saveToDocxSchedule(new File(directory));
-			
-			scheduleGenerateSpinner.setVisible(false);
-			feedbackLabel.setVisible(true);
+		if (outputDir == null) {
+			return;
 		}
+
+		Month month = scheduleMonthChoiceBox.getValue();
+		Integer year = scheduleYearChoiceBox.getValue();
 		
+		String directory = outputDir.getAbsolutePath()+"/"+year+"-"+month.getValue()+".docx";
+		
+		// prepare task to be run on a separate thread
+		Task<Void> task = new Task<Void>() {
+			@Override public Void call() {
+				scheduleService.setYearMonth(year, month.getValue());
+				scheduleService.generateSchedule();
+
+				try {
+					scheduleService.saveToDocxSchedule(new File(directory));
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					// let user know through the Label
+					// log stack trace?
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				// indicate that step 1 of 1 is complete
+				updateProgress(1, 1);
+				
+				return null;
+			}
+		};
+		
+		scheduleGenerateSpinner.progressProperty().bind(task.progressProperty());
+		// TODO: bind label to task as well
+		new Thread(task).start();
+		
+		scheduleGenerateSpinner.setVisible(true);	
 	}
 	
 	@FXML
@@ -112,28 +130,42 @@ public class GenerateTabController {
 		// TODO: should be logging
 		System.out.println("gen reminders");
 		
-		// hide feedback when starting a new request
-		remindersFeedbackLabel.setVisible(false);
-		
 		// let user choose folder to drop files in
 		DirectoryChooser folderForReminders = new DirectoryChooser();
 		folderForReminders.setInitialDirectory(new File(workspace));
 		
 		File outputDir = folderForReminders.showDialog(null);
 		
-		if (outputDir != null) {
-			Month month = remindersMonthChoiceBox.getValue();
-			Integer year = remindersYearChoiceBox.getValue();
-			
-			String directory = outputDir.getAbsolutePath()+"/";
-			
-			reminderGenerateSpinner.setVisible(true);
-			
-			pdfFormFillService.formFill(year, month.getValue(), directory);
-			
-			reminderGenerateSpinner.setVisible(false);
-			remindersFeedbackLabel.setVisible(true);
+		if (outputDir == null) {
+			return;
 		}
-		System.out.println("leaving gen reminders");
+		
+		Month month = remindersMonthChoiceBox.getValue();
+		Integer year = remindersYearChoiceBox.getValue();
+			
+		String directory = outputDir.getAbsolutePath()+"/";
+			
+		Task<Void> task = new Task<Void>() {
+			@Override
+			public Void call() {
+				try {
+					// TODO: what if there are no assignments for chosen month???
+					pdfFormFillService.formFill(year, month.getValue(), directory);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// indicate that step 1 of 1 is complete
+				updateProgress(1, 1);
+
+				return null;
+			}
+		};
+		
+		reminderGenerateSpinner.progressProperty().bind(task.progressProperty());
+		new Thread(task).start();
+		
+		reminderGenerateSpinner.setVisible(true);
 	}
 }
