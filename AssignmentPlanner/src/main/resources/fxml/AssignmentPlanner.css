@@ -1,14 +1,15 @@
 
 .root {
-	/* color constants */
-	theme-color: rgb(193, 134, 38);
-	nav-bar-color:    rgb(60, 56, 54);
-	nav-active-color: rgb(142, 100, 28);
-	action-bar-color:           rgb(236, 235, 231);
+    /* color constants */
+    theme-color:                rgb(193, 134, 38);
+    nav-bar-color:              rgb(60, 56, 54);
+    nav-active-color:           rgb(142, 100, 28);
+    nav-hover-color:            rgba(193, 134, 38, 0.4); /* similar to theme-color */
+    action-bar-color:           rgb(236, 235, 231);
     action-title-text-color:    rgb(60, 56, 54);
-	action-inactive-text-color: rgb(168, 151, 147);
-	action-active-text-color:   rgb(102, 96, 93);
-    separator-color: rgb(218, 218, 217);
+    action-inactive-text-color: rgb(168, 151, 147);
+    action-active-text-color:   rgb(102, 96, 93);
+    separator-color:            rgb(218, 218, 217);
 }
 
 /****************************************
@@ -17,7 +18,7 @@
 
 .button {
     /* clear style */
-	-fx-background-color: transparent;
+    -fx-background-color: transparent;
 }
 
 .minimal-btn {
@@ -26,7 +27,7 @@
 }
 
 .tab {
-    /* clear style */
+    /* clearing some more style */
     -fx-background-color: transparent;
 }
 .tab-header-area {
@@ -39,8 +40,8 @@
 }
 
 .separator {
-	-fx-background-color: separator-color;
-	-fx-min-height: 2px;
+    -fx-background-color: separator-color;
+    -fx-min-height: 2px;
 }
 
 
@@ -50,25 +51,22 @@
 
 /* action bars are the long bars at the top */
 .action-bar {
-	-fx-background-color: action-bar-color;
-	-fx-alignment: center-left;
+    -fx-background-color: action-bar-color;
+    -fx-alignment: center-left;
     -fx-padding: 12;
-	-fx-font-family: Arial;
+    -fx-font-family: Arial;
     -fx-font-size: 12pt;
 }
 /* Top bar with name of selected action */
 .action-label {
-	-fx-text-fill: action-title-text-color;
+    -fx-text-fill: action-title-text-color;
 }
 
 /* navigation tabpane style */
 #nav, .tab-header-background {
-	-fx-background-color: nav-bar-color;
+    -fx-background-color: nav-bar-color;
 }
-#nav, .tab-label {
-    /* not used for anything */
-    -fx-text-fill: white;
-}
+
 #nav, .tab-content-area {
     -fx-background-color: white;
 }
@@ -112,6 +110,7 @@
     -fx-background-image: url(img/hamburger.png);
     -fx-background-position: center;
     -fx-background-size: 40;
+    -fx-background-color: theme-color;
 }
 
 .tab-icon {
@@ -121,32 +120,19 @@
     -fx-background-insets: 0px;
     -fx-background-radius: 0px;
 }
-/* TODO
+
 .tab-icon:hover {
-}*/
-
-.generate-tab-icon {
-    -fx-background-image: url(img/generate/inactive.png);
+    -fx-background-color: nav-hover-color;
 }
-.generate-tab-icon:left:selected {
-    -fx-background-image: url(img/generate/active.png);
+.tab-icon:selected {
     -fx-background-color: nav-active-color;
 }
-
-.import-tab-icon {
-    -fx-background-image: url(img/import/inactive.png);
+#generate-tab {
+    -fx-background-image: url(img/generate.png);
 }
-.import-tab-icon:left:selected {
-    -fx-background-image: url(img/import/active.png);
-    -fx-background-color: nav-active-color;
+#import-tab {
+    -fx-background-image: url(img/import.png);
 }
-
-.edit-tab-icon {
-    -fx-background-image: url(img/edit/inactive.png);
+#edit-tab {
+    -fx-background-image: url(img/edit.png);
 }
-.edit-tab-icon:left:selected {
-    -fx-background-image: url(img/edit/active.png);
-    -fx-background-color: nav-active-color;
-}
-
-
