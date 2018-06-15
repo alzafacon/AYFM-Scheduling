@@ -22,9 +22,7 @@ public class ScheduleServiceTest {
 	@Test
 	public void generateSchedule() throws FileNotFoundException, IOException {
 		
-		scheduleService.setYearMonth(2017, 8);
-		
-		scheduleService.generateSchedule();
+		scheduleService.generateSchedule(2017, 8);
 		
 		File outputDocx = new File("sample-data/schedule.docx");
 		

@@ -39,7 +39,7 @@ public class GenerateTabController {
 	@FXML
 	ProgressIndicator scheduleGenerateSpinner;
 	@FXML
-	Label feedbackLabel;
+	Label scheduleFeedbackLabel;
 	
 	@FXML
 	ChoiceBox<Month> remindersMonthChoiceBox;
@@ -78,6 +78,8 @@ public class GenerateTabController {
 		// TODO: should be logging...
 		System.out.println("generating a schedule");
 		
+		scheduleFeedbackLabel.setVisible(false);
+		
 		// let user choose folder to drop files in
 		DirectoryChooser folderForSchedule = new DirectoryChooser();
 		folderForSchedule.setInitialDirectory(new File(workspace));
@@ -96,39 +98,54 @@ public class GenerateTabController {
 		// prepare task to be run on a separate thread
 		Task<Void> task = new Task<Void>() {
 			@Override public Void call() {
-				scheduleService.setYearMonth(year, month.getValue());
-				scheduleService.generateSchedule();
+				boolean failed = false;
+				
+				scheduleService.generateSchedule(year, month.getValue());
 
 				try {
 					scheduleService.saveToDocxSchedule(new File(directory));
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					// let user know through the Label
+					
+					updateMessage("Unable to open file"); // let user know through the Label
+					failed = true;
+					updateProgress(0, 1);
+					
 					// log stack trace?
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					updateMessage("Something failed");
+					failed = true;
+					updateProgress(0,1);
+					
+					// TODO logging... maybe?
 					e.printStackTrace();
 				}
 				
 				// indicate that step 1 of 1 is complete
-				updateProgress(1, 1);
+				if (!failed) {
+					updateProgress(1, 1);
+				}
 				
 				return null;
 			}
 		};
 		
 		scheduleGenerateSpinner.progressProperty().bind(task.progressProperty());
-		// TODO: bind label to task as well
+		// bind label to task as well (instead of spinner b/c it's harder)
+		scheduleFeedbackLabel.textProperty().bind(task.messageProperty());
+		
 		new Thread(task).start();
 		
-		scheduleGenerateSpinner.setVisible(true);	
+		scheduleGenerateSpinner.setVisible(true);
+		scheduleFeedbackLabel.setVisible(true);
 	}
 	
 	@FXML
 	private void generateReminders(ActionEvent event) throws Exception {
 		// TODO: should be logging
 		System.out.println("gen reminders");
+		
+		remindersFeedbackLabel.setVisible(false);
 		
 		// let user choose folder to drop files in
 		DirectoryChooser folderForReminders = new DirectoryChooser();
@@ -148,24 +165,39 @@ public class GenerateTabController {
 		Task<Void> task = new Task<Void>() {
 			@Override
 			public Void call() {
+				int countFilled = 0;
+				boolean failed = false;
+				
 				try {
-					// TODO: what if there are no assignments for chosen month???
-					pdfFormFillService.formFill(year, month.getValue(), directory);
+					countFilled = pdfFormFillService.formFill(year, month.getValue(), directory);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					updateProgress(0, 1); // failed
+					failed = true;
+					updateMessage("Failed");
+					
+					// TODO logging?
 					e.printStackTrace();
 				}
 
-				// indicate that step 1 of 1 is complete
-				updateProgress(1, 1);
-
+				
+				if (countFilled == 0) {
+					updateProgress(0, 1); // failed
+					updateMessage("Nothing to fill");
+				} else if (!failed) {
+					// indicate that step 1 of 1 is complete
+					updateProgress(1, 1);					
+				}
+				
 				return null;
 			}
 		};
 		
 		reminderGenerateSpinner.progressProperty().bind(task.progressProperty());
+		remindersFeedbackLabel.textProperty().bind(task.messageProperty());
+		
 		new Thread(task).start();
 		
 		reminderGenerateSpinner.setVisible(true);
+		remindersFeedbackLabel.setVisible(true);
 	}
 }
