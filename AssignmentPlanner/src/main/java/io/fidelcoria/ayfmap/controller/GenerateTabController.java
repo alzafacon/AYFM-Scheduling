@@ -98,32 +98,24 @@ public class GenerateTabController {
 		// prepare task to be run on a separate thread
 		Task<Void> task = new Task<Void>() {
 			@Override public Void call() {
-				boolean failed = false;
-				
 				scheduleService.generateSchedule(year, month.getValue());
 
 				try {
 					scheduleService.saveToDocxSchedule(new File(directory));
-				} catch (FileNotFoundException e) {
 					
+					updateProgress(1, 1);
+				} catch (FileNotFoundException e) {
 					updateMessage("Unable to open file"); // let user know through the Label
-					failed = true;
 					updateProgress(0, 1);
 					
 					// log stack trace?
 					e.printStackTrace();
 				} catch (IOException e) {
 					updateMessage("Something failed");
-					failed = true;
 					updateProgress(0,1);
 					
 					// TODO logging... maybe?
 					e.printStackTrace();
-				}
-				
-				// indicate that step 1 of 1 is complete
-				if (!failed) {
-					updateProgress(1, 1);
 				}
 				
 				return null;
@@ -166,26 +158,22 @@ public class GenerateTabController {
 			@Override
 			public Void call() {
 				int countFilled = 0;
-				boolean failed = false;
 				
 				try {
 					countFilled = pdfFormFillService.formFill(year, month.getValue(), directory);
+					
+					updateProgress(1, 1);
 				} catch (Exception e) {
 					updateProgress(0, 1); // failed
-					failed = true;
 					updateMessage("Failed");
 					
 					// TODO logging?
 					e.printStackTrace();
 				}
-
 				
 				if (countFilled == 0) {
 					updateProgress(0, 1); // failed
-					updateMessage("Nothing to fill");
-				} else if (!failed) {
-					// indicate that step 1 of 1 is complete
-					updateProgress(1, 1);					
+					updateMessage("Nothing to fill");		
 				}
 				
 				return null;

@@ -101,31 +101,38 @@ public class ImportTabController {
 			@Override
 			public Void call() {
 				List<Assignment> assignments;
+				
 				try {
 					assignments = assignmentImportService
 						.readAssignmentsFromDocx(scheduleToImport, year, month.getValue());
 					assignmentImportService.save(assignments);
+					
+					updateProgress(1, 1);
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
+					updateProgress(0,1);
+					updateMessage("File not found");
+					
+					// TODO logging
 					e.printStackTrace();
 				} catch (IOException e) {
+					updateProgress(0,1);
+					updateMessage("Failed");
+					
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-				// indicate that step 1 of 1 has been completed
-				updateProgress(1, 1);
 				return null;
 			}
 		};
 		
 		scheduleImportProgress.progressProperty().bind(task.progressProperty());
+		scheduleImportFeedback.textProperty().bind(task.messageProperty());
+		
 		new Thread(task).start();
 		
-		scheduleImportProgress.setVisible(true);		
-		
-		//scheduleImportProgress.setVisible(false);
-		//scheduleImportFeedback.setVisible(true);
+		scheduleImportProgress.setVisible(true);
+		scheduleImportFeedback.setVisible(true);
 	}
 	
 	public File openEnrollmentFilePicker() {
@@ -152,28 +159,32 @@ public class ImportTabController {
 		Task<Void> task = new Task<Void>() {
 			@Override
 			public Void call() {
-				
 				List<Person> students;
+				
 				try {
 					students = studentImportService
 						.readStudentsWithCsvMapReader(enrollmentToImport.getAbsolutePath());
 					studentImportService.saveStudents(students);
+					
+					updateProgress(1, 1);
 				} catch (Exception e) {
+					updateProgress(0, 1);
+					updateMessage("Import failed");
+					
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
-				updateProgress(1, 1);
 				return null;
 			}
 		};
 		
 		enrollmentImportProgress.progressProperty().bind(task.progressProperty());
+		enrollmentImportFeedback.textProperty().bind(task.messageProperty());
+		
 		new Thread(task).start();
 		
 		enrollmentImportProgress.setVisible(true);
-		
-//		enrollmentImportProgress.setVisible(false);
-//		enrollmentImportFeedback.setVisible(true);
+		enrollmentImportFeedback.setVisible(true);
 	}
 }

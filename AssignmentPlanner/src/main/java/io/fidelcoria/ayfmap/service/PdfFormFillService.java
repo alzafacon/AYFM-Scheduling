@@ -51,6 +51,8 @@ public class PdfFormFillService {
 	
 	public int formFill(int year, int month, String destinationDirectory) throws Exception {
 
+		int countFilled = 0;
+		
 		// find the first week of the assignment schedule
 		LocalDate firstWeek = LocalDate.of(year, month, 1).with(firstInMonth(DayOfWeek.MONDAY));
 		int offset = 0;
@@ -58,6 +60,7 @@ public class PdfFormFillService {
 		// load assignments from database (sorted by date)
 		List<Assignment> monthlySchedule = assignmentRepository.findAllByMonthAndYear(month, year);
 		
+		// TODO should be logged
 		System.out.println("the actual data drawn from db is: "+monthlySchedule.size());
 		
 		// each week of assignments is to be saved as a list element in `weeks`
@@ -132,6 +135,8 @@ public class PdfFormFillService {
 	            	}
 	            	
 	            	fields.get(LESSON+suffix).setValue(Integer.toString(assgn.getLesson()));
+	            	
+	            	countFilled++;
 	        	}
 	        	
 	        	reminders.close();
@@ -146,7 +151,7 @@ public class PdfFormFillService {
             }
         }
         
-		return 0;
+		return countFilled;
 	}
 	
     /**
