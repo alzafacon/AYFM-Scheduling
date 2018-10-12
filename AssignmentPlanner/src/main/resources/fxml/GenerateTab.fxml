@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.paint.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -12,9 +13,12 @@
             <GridPane alignment="CENTER" prefHeight="200.0" prefWidth="1020.0" styleClass="grid-pane">
                <children>
                   <ProgressIndicator fx:id="scheduleGenerateSpinner" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Label fx:id="feedbackLabel" text="Complete!" visible="false" />
+                        <Label fx:id="schedFeedbackLabel" text="Complete!" visible="false">
+                           <font>
+                              <Font size="24.0" />
+                           </font></Label>
                      </children>
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">
@@ -43,9 +47,12 @@
             <GridPane alignment="CENTER" prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
                <children>
                   <ProgressIndicator fx:id="reminderGenerateSpinner" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Label fx:id="remindersFeedbackLabel" alignment="CENTER" contentDisplay="CENTER" text="Complete!" />
+                        <Label fx:id="remindersFeedbackLabel" alignment="CENTER" contentDisplay="CENTER" text="Complete!" visible="false">
+                           <font>
+                              <Font size="24.0" />
+                           </font></Label>
                      </children>
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">

@@ -66,17 +66,6 @@ public class ScheduleService {
 		
 	}
 	
-	/**
-	 * Initialize the autowired Schedule for a desired month to be generated.
-	 * @param year 
-	 * @param month
-	 */
-	public void setYearMonth(int year, int month) {
-		this.year = year;
-		this.month = month;
-		
-		this.init();
-	}
 
 	/**
 	 * Create a skeleton schedule with dates initialized using parameters.
@@ -119,7 +108,12 @@ public class ScheduleService {
 	 * Generate the monthly schedule using a 'queue' of participations.
 	 * 
 	 */
-	public void generateSchedule() {
+	public void generateSchedule(int year, int month) {
+		
+		this.year = year;
+		this.month = month;
+		
+		this.init();
 		
 		/**
 		 * 1+ for the reading during the first week

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import io.fidelcoria.ayfmap.service.PdfFormFillService;
 import io.fidelcoria.ayfmap.service.ScheduleService;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,7 +39,7 @@ public class GenerateTabController {
 	@FXML
 	ProgressIndicator scheduleGenerateSpinner;
 	@FXML
-	Label feedbackLabel;
+	Label scheduleFeedbackLabel;
 	
 	@FXML
 	ChoiceBox<Month> remindersMonthChoiceBox;
@@ -77,8 +78,7 @@ public class GenerateTabController {
 		// TODO: should be logging...
 		System.out.println("generating a schedule");
 		
-		// hide feedback when starting a new request
-		feedbackLabel.setVisible(false);
+		scheduleFeedbackLabel.setVisible(false);
 		
 		// let user choose folder to drop files in
 		DirectoryChooser folderForSchedule = new DirectoryChooser();
@@ -86,25 +86,50 @@ public class GenerateTabController {
 		
 		File outputDir = folderForSchedule.showDialog(null);
 		
-		if (outputDir != null) {
-			// TODO: not visible (needs a separate thread)
-			scheduleGenerateSpinner.setVisible(true);
-			
-			Month month = scheduleMonthChoiceBox.getValue();
-			Integer year = scheduleYearChoiceBox.getValue();
-
-			String directory = outputDir.getAbsolutePath()+"/"+year+"-"+month.getValue()+".docx";
-			
-			// TODO: change into a single call
-			scheduleService.setYearMonth(year, month.getValue());
-			scheduleService.generateSchedule();
-
-			scheduleService.saveToDocxSchedule(new File(directory));
-			
-			scheduleGenerateSpinner.setVisible(false);
-			feedbackLabel.setVisible(true);
+		if (outputDir == null) {
+			return;
 		}
+
+		Month month = scheduleMonthChoiceBox.getValue();
+		Integer year = scheduleYearChoiceBox.getValue();
 		
+		String directory = outputDir.getAbsolutePath()+"/"+year+"-"+month.getValue()+".docx";
+		
+		// prepare task to be run on a separate thread
+		Task<Void> task = new Task<Void>() {
+			@Override public Void call() {
+				scheduleService.generateSchedule(year, month.getValue());
+
+				try {
+					scheduleService.saveToDocxSchedule(new File(directory));
+					
+					updateProgress(1, 1);
+				} catch (FileNotFoundException e) {
+					updateMessage("Unable to open file"); // let user know through the Label
+					updateProgress(0, 1);
+					
+					// log stack trace?
+					e.printStackTrace();
+				} catch (IOException e) {
+					updateMessage("Something failed");
+					updateProgress(0,1);
+					
+					// TODO logging... maybe?
+					e.printStackTrace();
+				}
+				
+				return null;
+			}
+		};
+		
+		scheduleGenerateSpinner.progressProperty().bind(task.progressProperty());
+		// bind label to task as well (instead of spinner b/c it's harder)
+		scheduleFeedbackLabel.textProperty().bind(task.messageProperty());
+		
+		new Thread(task).start();
+		
+		scheduleGenerateSpinner.setVisible(true);
+		scheduleFeedbackLabel.setVisible(true);
 	}
 	
 	@FXML
@@ -112,7 +137,6 @@ public class GenerateTabController {
 		// TODO: should be logging
 		System.out.println("gen reminders");
 		
-		// hide feedback when starting a new request
 		remindersFeedbackLabel.setVisible(false);
 		
 		// let user choose folder to drop files in
@@ -121,19 +145,47 @@ public class GenerateTabController {
 		
 		File outputDir = folderForReminders.showDialog(null);
 		
-		if (outputDir != null) {
-			Month month = remindersMonthChoiceBox.getValue();
-			Integer year = remindersYearChoiceBox.getValue();
-			
-			String directory = outputDir.getAbsolutePath()+"/";
-			
-			reminderGenerateSpinner.setVisible(true);
-			
-			pdfFormFillService.formFill(year, month.getValue(), directory);
-			
-			reminderGenerateSpinner.setVisible(false);
-			remindersFeedbackLabel.setVisible(true);
+		if (outputDir == null) {
+			return;
 		}
-		System.out.println("leaving gen reminders");
+		
+		Month month = remindersMonthChoiceBox.getValue();
+		Integer year = remindersYearChoiceBox.getValue();
+			
+		String directory = outputDir.getAbsolutePath()+"/";
+			
+		Task<Void> task = new Task<Void>() {
+			@Override
+			public Void call() {
+				int countFilled = 0;
+				
+				try {
+					countFilled = pdfFormFillService.formFill(year, month.getValue(), directory);
+					
+					updateProgress(1, 1);
+				} catch (Exception e) {
+					updateProgress(0, 1); // failed
+					updateMessage("Failed");
+					
+					// TODO logging?
+					e.printStackTrace();
+				}
+				
+				if (countFilled == 0) {
+					updateProgress(0, 1); // failed
+					updateMessage("Nothing to fill");		
+				}
+				
+				return null;
+			}
+		};
+		
+		reminderGenerateSpinner.progressProperty().bind(task.progressProperty());
+		remindersFeedbackLabel.textProperty().bind(task.messageProperty());
+		
+		new Thread(task).start();
+		
+		reminderGenerateSpinner.setVisible(true);
+		remindersFeedbackLabel.setVisible(true);
 	}
 }
