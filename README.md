@@ -4,7 +4,7 @@
 ### Description of Problem Domain for AYFM Scheduling
 Apply Yourself to the Field Ministry (AYFM) is the section of the Jehovah's Witness midweek meeting that is meant to prepare those enrolled for the Field Ministry (door to door preaching).
 
-The "Christian Congregation of Jehovah’s Witnesses" publishes a monthly workbook, "Our Christian Life and Ministry-Meeting Workbook," that details the sections of the midweek meetings (e.g. AYFM) for that month and the specific topics and talks under each section. Samples can be found (here)[https://www.jw.org/en/publications/jw-meeting-workbook/].
+The "Christian Congregation of Jehovah’s Witnesses" publishes a monthly workbook, "Our Christian Life and Ministry-Meeting Workbook," that details the sections of the midweek meetings (e.g. AYFM) for that month and the specific topics and talks under each section. Samples can be found [here](https://www.jw.org/en/publications/jw-meeting-workbook/).
 
 There are three skits or mock presentations under AYFM:
 - Initial Call
@@ -27,4 +27,4 @@ The problem is scheduling these in a round-robin fashion. The brothers/sisters s
 
 This application facilitates the management of student activity and *suggests* monthly assignment schedules.
 
-For further details visit the official instructions (here)[https://www.jw.org/en/publications/jw-meeting-workbook/life-and-ministry-instructions/midweek-meeting/].
+For further details visit the official instructions [here](https://www.jw.org/en/publications/jw-meeting-workbook/life-and-ministry-instructions/midweek-meeting/).
