@@ -34,3 +34,5 @@ Please reach out to @fidelcoria if you would like to participate in the ongoing 
 ### Licence
 
 Due to a dependency on [iText](https://itextpdf.com/) the licence for this project must be GNU AGPL.
+
+This project strictly adheres to the [terms of use](https://www.jw.org/en/terms-of-use/) for jw.org.
