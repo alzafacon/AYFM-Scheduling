@@ -1,30 +1,36 @@
 # AYFM-Scheduling
-## Assignment scheduling assistant for mid-week meeting section "Apply Yourself to the Field Ministry."
+## Scheduling assistant for "Apply Yourself to the Field Ministry."
 
-### Description of Problem Domain for AYFM Scheduling
-Apply Yourself to the Field Ministry (AYFM) is the section of the Jehovah's Witness midweek meeting that is meant to prepare those enrolled for the Field Ministry (door to door preaching).
+See [wiki](https://github.com/fidelcoria/AYFM-Scheduling/wiki) for background details.
 
-The "Christian Congregation of Jehovah’s Witnesses" publishes a monthly workbook, "Our Christian Life and Ministry-Meeting Workbook," that details the sections of the midweek meetings (e.g. AYFM) for that month and the specific topics and talks under each section. Samples can be found [here](https://www.jw.org/en/publications/jw-meeting-workbook/).
+### Installation
 
-There are three skits or mock presentations under AYFM:
-- Initial Call
-- Return visits
-- Bible Study
+```git clone https://github.com/fidelcoria/AYFM-Scheduling.git```
 
-A weekly Bible Reading will also be added to these although the Bible reading is technically part of "Treasures From God's Word" (a different section of the midweek meeting). Bible Reading will be assigned to a brother.
+Eclipse is the preferred IDE. To import the project to your workspace navigate to `File > Import...` from the menu bar. Under `General` select `Existing Project into Workspace` and click `Next`. Browse for the root directory of the cloned repo. Now click `Finish`.
 
-Each mock presentations is completed by two students. Both students must be the same gender unless they are family members. One student will be the publisher, responsible for delivering the message described in the Meeting Workbook. The other role is the householder.
+Java 1.8 is required. 
 
-Lessons will be assigned from a book (titled _Benefit_) available to Jehovah's Witnesses. Lessons are given as numbers and the student assigned is expected to read the lesson from _Benefit_ and do the exercise. Students can pass to the next lesson or they can be asked to repeat a lesson depending on their performance.
+The build tool is Gradle. For the best Gradle experience you will need the Gradle Buildship plugin for Eclipse. Navigate to `Help > Eclipse Marketplace...` from the menu bar. Search for Buildship and install it. The Gradle Tasks view is the place to start builds, runs, etc. Navigate to `Window > Show View > Other...` from the menu bar. Under `Gradle` select `Gradle Tasks` and click `Open`. For more detailed instructions see the README under the AssignmentPlanner folder.
 
-Some brothers should only be assigned to do bible readings. Some brothers can be assigned to do bible readings, initial calls, and return visits. Some brothers can do any of the assignments.
+Python3 is required to execute utility scripts used during development for parsing docx files and generating sql.
 
-Sisters are not assigned to Bible Reading.
+H2 is used as the application database. The preferred database tool is `H2 Console`. This is included as part of the H2 installer available [here](http://www.h2database.com/html/main.html). An empty database with the schema already created is available in the Database folder. It is highly recommended to create your own. See the README in the Database folder for more details.
 
-Some topics from the Meeting Workbook may be more appropriate to assign to one person over another. This may be due to the person’s age, gender, or other factors that the elder making the assignments deems relevant.
+There is a C# CLI tool under the ReminderSlipPopulator folder for preparing and filling out pfd reminder slips. This is being deprecated and will be converted to a Gradle Java project.
 
-The problem is scheduling these in a round-robin fashion. The brothers/sisters should not have to wait excessively long times before being assigned and performing an assignment. Likewise, brothers/sisters should not be assigned so often that others are not given the chance to participate.
+### Usage
 
-This application facilitates the management of student activity and *suggests* monthly assignment schedules.
+Try out a build from the Gradle Tasks view by opening `AssignmentPlanner > build` and selecting `build` (with a green gear next to it).
 
-For further details visit the official instructions [here](https://www.jw.org/en/publications/jw-meeting-workbook/life-and-ministry-instructions/midweek-meeting/).
+Try out running the application by going to the Gradle Tasks view and opening `AssignmentPlanner > application` and selecting `bootRun` (with a green gear next to it).
+
+### Contributing
+
+Feel free to open a pull request with fixes/features. 
+
+Please reach out to @fidelcoria if you would like to participate in the ongoing development. You can be added to the Trello board used for tracking planned work.
+
+### Licence
+
+Due to a dependency on [iText](https://itextpdf.com/) the licence for this project must be GNU AGPL.
