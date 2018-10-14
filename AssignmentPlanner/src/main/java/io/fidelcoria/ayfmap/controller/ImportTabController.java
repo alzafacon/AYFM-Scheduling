@@ -22,8 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.scene.layout.VBox;
 
 @Component
 public class ImportTabController {
@@ -35,11 +34,13 @@ public class ImportTabController {
 	
 	
 	@FXML
-	ChoiceBox<Month> scheduleImportMonthChoiceBox;
+	ChoiceBox<Month> scheduleImportMonth;
 	@FXML
-	ChoiceBox<Integer> scheduleImportYearChoiceBox;
+	ChoiceBox<Integer> scheduleImportYear;
 	@FXML
-	Button importScheduleButton;
+	VBox weekForms;
+	@FXML
+	Button doImportSchedule;
 	@FXML
 	ProgressIndicator scheduleImportProgress;
 	@FXML
@@ -57,41 +58,33 @@ public class ImportTabController {
 	
 	public void initialize() {
 		
-		int currentYear = LocalDate.now().getYear();
+		scheduleImportMonth.getItems().addAll(Month.values());
+		scheduleImportMonth.getSelectionModel().selectFirst();
 		
-		scheduleImportMonthChoiceBox.getItems().addAll(Month.values());
-		scheduleImportMonthChoiceBox.getSelectionModel().selectFirst();
+		int currentYear = LocalDate.now().getYear();
 		
 		List<Integer> years = new ArrayList<>();
 		
-		for (int offset = -6; offset < 3; offset++) {
-			years.add((Integer)(currentYear+offset));
+		for (int y = currentYear; y <= currentYear+2; y++) {
+			years.add((Integer) y);
 		}
 		
-		scheduleImportYearChoiceBox.getItems().addAll(years);
-		scheduleImportYearChoiceBox.getSelectionModel().selectFirst();
+		scheduleImportYear.getItems().addAll(years);
+		scheduleImportYear.getSelectionModel().selectFirst();
+		
+		// TODO create weekForms & set default values for weeks
+		// TODO controller for weekFrom is not implemented yet
 	}
 	
-	public File openScheduleFilePicker() {
-		
-		FileChooser chooseSchedule = new FileChooser();
-		
-		chooseSchedule.setInitialDirectory(new File(workspace));
-		chooseSchedule.getExtensionFilters().add(new ExtensionFilter("MS Word", "*.docx"));
-		
-		File schedule = chooseSchedule.showOpenDialog(null);
-		
-		return schedule;
-	}
 	
 	public void importSchedule() throws FileNotFoundException, IOException {
 		
 		scheduleImportFeedback.setVisible(false);
 		
-		Month month = scheduleImportMonthChoiceBox.getValue();
-		Integer year = scheduleImportYearChoiceBox.getValue();
+		Month month = scheduleImportMonth.getValue();
+		Integer year = scheduleImportYear.getValue();
 		
-		File scheduleToImport = openScheduleFilePicker();
+		File scheduleToImport = null;
 		
 		if (scheduleToImport == null) {
 			return;
@@ -135,22 +128,12 @@ public class ImportTabController {
 		scheduleImportFeedback.setVisible(true);
 	}
 	
-	public File openEnrollmentFilePicker() {
-	
-		FileChooser chooseEnrollment = new FileChooser();
-		chooseEnrollment.setInitialDirectory(new File(workspace));
-		chooseEnrollment.getExtensionFilters().add(new ExtensionFilter("CSV", "*.csv"));
-		
-		File enrollment = chooseEnrollment.showOpenDialog(null);
-		
-		return enrollment;
-	}
 	
 	public void importEnrollment() throws Exception {
 		
 		enrollmentImportFeedback.setVisible(false);
 		
-		File enrollmentToImport = openEnrollmentFilePicker();
+		File enrollmentToImport = null;
 		
 		if (enrollmentToImport == null) {
 			return;

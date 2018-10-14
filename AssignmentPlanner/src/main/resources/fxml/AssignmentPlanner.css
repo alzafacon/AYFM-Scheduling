@@ -49,7 +49,7 @@
   * component styles
   */
 
-/* action bars are the long bars at the top */
+/* action bars are the long bars across the top */
 .action-bar {
     -fx-background-color: action-bar-color;
     -fx-alignment: center-left;
@@ -72,7 +72,7 @@
 }
 #nav, .tab-pane {
     /* since nav's tabs are sideways 
-    the height is the actaul width */
+    the height is the actual width */
     -fx-tab-min-height: 40;
     /* without text the tabs collapse
         so give a min width */

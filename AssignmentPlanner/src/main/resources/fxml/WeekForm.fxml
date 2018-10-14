@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="VBox" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox>
+         <children>
+            <Label />
+         </children>
+      </HBox>
+      <GridPane>
+        <columnConstraints>
+          <ColumnConstraints percentWidth="20.0" />
+          <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="40.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints percentHeight="100.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <HBox>
+               <children>
+                  <ChoiceBox />
+                  <ChoiceBox layoutX="10.0" layoutY="10.0" />
+               </children>
+            </HBox>
+            <VBox GridPane.columnIndex="1">
+               <children>
+                  <ComboBox maxWidth="1.7976931348623157E308" />
+                  <ComboBox layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" />
+               </children>
+            </VBox>
+            <VBox GridPane.columnIndex="2">
+               <children>
+                  <ComboBox maxWidth="1.7976931348623157E308" />
+                  <ComboBox layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" />
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </GridPane>
+   </children>
+</fx:root>
