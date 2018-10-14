@@ -9,7 +9,7 @@ See [wiki](https://github.com/fidelcoria/AYFM-Scheduling/wiki) for background de
 
 Eclipse is the preferred IDE. To import the project to your workspace navigate to `File > Import...` from the menu bar. Under `General` select `Existing Project into Workspace` and click `Next`. Browse for the root directory of the cloned repo. Now click `Finish`.
 
-Java 1.8 is required. 
+Java JDK 1.8 is required. 
 
 The build tool is Gradle. For the best Gradle experience you will need the Gradle Buildship plugin for Eclipse. Navigate to `Help > Eclipse Marketplace...` from the menu bar. Search for Buildship and install it. The Gradle Tasks view is the place to start builds, runs, etc. Navigate to `Window > Show View > Other...` from the menu bar. Under `Gradle` select `Gradle Tasks` and click `Open`. For more detailed instructions see the README under the AssignmentPlanner folder.
 
