@@ -6,17 +6,24 @@ package io.fidelcoria.ayfmap.util;
  *
  */
 public enum Assignment_t {
-	UNKNOWN(0),
-	READING(1), INITIAL_CALL(2), RETURN_VISIT(3), BIBLE_STUDY(4), TALK(5);
+	UNKNOWN(0, "Unknown"),
+	READING(1, "Reading"),
+	INIT_CALL(2, "Initial Call"), 
+	FST_RET_VIS(3, "First Return Visit"),
+	SND_RET_VIS(4, "Second Return Visit"), 
+	BIBLE_STUDY(5, "Bible Study"), 
+	TALK(6, "Talk");
 	
 	private final int value;
+	private final String string;
 	
 	/**
 	 * Enum value constructor
 	 * @param v integer value of type
 	 */
-	private Assignment_t(int v) {
+	private Assignment_t(int v, String s) {
 		this.value = v;
+		this.string = s;
 	}
 	
 	/**
@@ -38,19 +45,26 @@ public enum Assignment_t {
 			return READING;
 		
 		case 2:
-			return INITIAL_CALL;
+			return INIT_CALL;
 			
 		case 3:
-			return RETURN_VISIT;
+			return FST_RET_VIS;
 		
 		case 4:
-			return BIBLE_STUDY;
+			return SND_RET_VIS;
 			
 		case 5:
+			return BIBLE_STUDY;
+			
+		case 6:
 			return TALK;
 			
 		default:
 			return UNKNOWN;
 		}
+	}
+	
+	public String toString() {
+		return string;
 	}
 }

@@ -114,10 +114,11 @@ public class Person implements Serializable {
 			eligibility.add(Assignment_t.READING);
 		}
 		if (isEligibleInitCall) {
-			eligibility.add(Assignment_t.INITIAL_CALL);
+			eligibility.add(Assignment_t.INIT_CALL);
 		}
 		if (isEligibleRetVisit) {
-			eligibility.add(Assignment_t.RETURN_VISIT);
+			eligibility.add(Assignment_t.FST_RET_VIS);
+			eligibility.add(Assignment_t.SND_RET_VIS);
 		}
 		if (isEligibleBibStudy) {
 			eligibility.add(Assignment_t.BIBLE_STUDY);

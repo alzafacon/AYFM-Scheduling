@@ -50,18 +50,18 @@ public class Progression {
 	
 	public final static Progression[] defaultProgression = {
 		new Progression(Role.ASSIGNEE, Assignment_t.READING, Section.A),
-		new Progression(Role.ASSIGNEE,    Assignment_t.INITIAL_CALL, Section.A),
-		new Progression(Role.HOUSEHOLDER, Assignment_t.INITIAL_CALL, Section.A),				
-		new Progression(Role.ASSIGNEE,    Assignment_t.RETURN_VISIT, Section.A),
-		new Progression(Role.HOUSEHOLDER, Assignment_t.RETURN_VISIT, Section.A),				
+		new Progression(Role.ASSIGNEE,    Assignment_t.INIT_CALL, Section.A),
+		new Progression(Role.HOUSEHOLDER, Assignment_t.INIT_CALL, Section.A),				
+		new Progression(Role.ASSIGNEE,    Assignment_t.FST_RET_VIS, Section.A),
+		new Progression(Role.HOUSEHOLDER, Assignment_t.FST_RET_VIS, Section.A),				
 		new Progression(Role.ASSIGNEE,    Assignment_t.BIBLE_STUDY, Section.A),
 		new Progression(Role.HOUSEHOLDER, Assignment_t.BIBLE_STUDY, Section.A),
 		
 		new Progression(Role.ASSIGNEE, Assignment_t.READING, Section.B),
-		new Progression(Role.ASSIGNEE,    Assignment_t.INITIAL_CALL, Section.B),
-		new Progression(Role.HOUSEHOLDER, Assignment_t.INITIAL_CALL, Section.B),				
-		new Progression(Role.ASSIGNEE,    Assignment_t.RETURN_VISIT, Section.B),
-		new Progression(Role.HOUSEHOLDER, Assignment_t.RETURN_VISIT, Section.B),
+		new Progression(Role.ASSIGNEE,    Assignment_t.INIT_CALL, Section.B),
+		new Progression(Role.HOUSEHOLDER, Assignment_t.INIT_CALL, Section.B),				
+		new Progression(Role.ASSIGNEE,    Assignment_t.FST_RET_VIS, Section.B),
+		new Progression(Role.HOUSEHOLDER, Assignment_t.FST_RET_VIS, Section.B),
 		new Progression(Role.ASSIGNEE,    Assignment_t.BIBLE_STUDY, Section.B),
 		new Progression(Role.HOUSEHOLDER, Assignment_t.BIBLE_STUDY, Section.B)
 	};

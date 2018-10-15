@@ -10,7 +10,7 @@
    <children>
       <HBox>
          <children>
-            <Label />
+            <Label fx:id="weekDate" />
          </children>
       </HBox>
       <GridPane>
@@ -25,20 +25,20 @@
          <children>
             <HBox>
                <children>
-                  <ChoiceBox />
-                  <ChoiceBox layoutX="10.0" layoutY="10.0" />
+                  <ChoiceBox fx:id="assgnType" />
+                  <ChoiceBox fx:id="lesson" />
                </children>
             </HBox>
             <VBox GridPane.columnIndex="1">
                <children>
-                  <ComboBox maxWidth="1.7976931348623157E308" />
-                  <ComboBox layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" />
+                  <ComboBox fx:id="pubMain" maxWidth="1.7976931348623157E308" />
+                  <ComboBox fx:id="hholdMain" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" />
                </children>
             </VBox>
             <VBox GridPane.columnIndex="2">
                <children>
-                  <ComboBox maxWidth="1.7976931348623157E308" />
-                  <ComboBox layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" />
+                  <ComboBox fx:id="pubAux" maxWidth="1.7976931348623157E308" />
+                  <ComboBox fx:id="hholdAux" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" />
                </children>
             </VBox>
          </children>

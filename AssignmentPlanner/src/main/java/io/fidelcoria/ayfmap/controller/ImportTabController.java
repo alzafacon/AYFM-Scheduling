@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import io.fidelcoria.ayfmap.domain.Assignment;
 import io.fidelcoria.ayfmap.domain.Person;
+import io.fidelcoria.ayfmap.domain.PersonRepository;
+import io.fidelcoria.ayfmap.fx.control.weekForm.WeekForm;
 import io.fidelcoria.ayfmap.service.AssignmentImportService;
 import io.fidelcoria.ayfmap.service.StudentImportService;
 import javafx.concurrent.Task;
@@ -31,7 +34,8 @@ public class ImportTabController {
 	AssignmentImportService assignmentImportService;
 	@Autowired
 	StudentImportService studentImportService;
-	
+	@Autowired
+	PersonRepository personRepository;
 	
 	@FXML
 	ChoiceBox<Month> scheduleImportMonth;
@@ -56,6 +60,8 @@ public class ImportTabController {
 	@Value("${installation.directory.workspace}")
 	private String workspace;
 	
+	private static final int MAX_WEEKS_PER_MONTH = 5;
+	
 	public void initialize() {
 		
 		scheduleImportMonth.getItems().addAll(Month.values());
@@ -66,14 +72,27 @@ public class ImportTabController {
 		List<Integer> years = new ArrayList<>();
 		
 		for (int y = currentYear; y <= currentYear+2; y++) {
-			years.add((Integer) y);
+			years.add(y);
 		}
 		
 		scheduleImportYear.getItems().addAll(years);
 		scheduleImportYear.getSelectionModel().selectFirst();
 		
 		// TODO create weekForms & set default values for weeks
-		// TODO controller for weekFrom is not implemented yet
+		
+		WeekForm[] weeks = new WeekForm[MAX_WEEKS_PER_MONTH];
+		
+		List<Person> ps = personRepository.findAllActiveStudents().stream()
+				.map(s -> s.getStudent()).collect(Collectors.toList());
+		
+		
+		for (int i = 0; i < MAX_WEEKS_PER_MONTH; i++) {
+			weeks[i] = new WeekForm();
+			weeks[i].addAllStudents(ps);
+			
+		}
+		
+		weekForms.getChildren().addAll(weeks);
 	}
 	
 	

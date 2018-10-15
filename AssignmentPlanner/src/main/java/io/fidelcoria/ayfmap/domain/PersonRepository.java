@@ -27,6 +27,7 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
 	@Query("FROM Person p WHERE CONCAT(p.firstName, ' ', p.lastName) = :fullname")
 	public Person findByFullName(@Param("fullname") String fullName);
 	
+	// TODO this is wrong! why return a Participation if name says students?!
 	/**
 	 * Find all active Persons
 	 * @return Persons wrapped in a List of Participations

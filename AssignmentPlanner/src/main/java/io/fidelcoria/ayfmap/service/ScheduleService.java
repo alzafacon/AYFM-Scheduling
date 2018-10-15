@@ -391,8 +391,8 @@ public class ScheduleService {
 		case READING:
 			return getNextReadingLesson(lastLesson);
 		
-		case INITIAL_CALL:
-		case RETURN_VISIT:
+		case INIT_CALL:
+		case FST_RET_VIS:
 		case BIBLE_STUDY:
 			return getNextDemonstrationLesson(lastLesson);
 			
@@ -419,8 +419,8 @@ public class ScheduleService {
 	
 	/**
 	 * Advances lesson for Demonstration type of assignments. These include:
-	 * INITIAL_CALL
-	 * RETURN_VISIT
+	 * INIT_CALL
+	 * FST_RET_VIS
 	 * BIBLE_STUDY
 	 * @param lastLesson
 	 * @return next lesson to be assigned, start over at 1 if not able to suggest one
