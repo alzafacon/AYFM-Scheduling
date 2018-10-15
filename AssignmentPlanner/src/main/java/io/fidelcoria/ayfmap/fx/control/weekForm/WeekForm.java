@@ -54,6 +54,19 @@ public class WeekForm extends VBox {
 	
 	public void initialize() {
 		
+		// event handler must be registered before doing the selection
+		// future assignmentRow control
+		assgnType.setOnAction(value -> {
+			if (assgnType.getValue() == Assignment_t.READING
+					|| assgnType.getValue() == Assignment_t.TALK) {
+				hholdMain.setVisible(false);
+				hholdAux.setVisible(false);
+			} else {
+				hholdMain.setVisible(true);
+				hholdAux.setVisible(true);
+			}
+		});
+		
 		for (Assignment_t t : Assignment_t.values()) {
 			if (t != Assignment_t.UNKNOWN) {
 				assgnType.getItems().add(t);
@@ -69,17 +82,7 @@ public class WeekForm extends VBox {
 		
 		lesson.getSelectionModel().selectFirst();
 		
-		// future assignmentRow control
-		assgnType.setOnAction(value -> {
-			if (assgnType.getValue() == Assignment_t.READING
-					|| assgnType.getValue() == Assignment_t.TALK) {
-				hholdMain.setVisible(false);
-				hholdAux.setVisible(false);
-			} else {
-				hholdMain.setVisible(true);
-				hholdAux.setVisible(true);
-			}
-		});
+		
 	}
 	
 	public void addAllStudents(List<Person> ps) {

@@ -64,6 +64,8 @@ public enum Assignment_t {
 		}
 	}
 	
+	// UI uses toString to display in choiceBox
+	@Override
 	public String toString() {
 		return string;
 	}
