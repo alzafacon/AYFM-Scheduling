@@ -1,13 +1,16 @@
 package io.fidelcoria.ayfmap.controller;
 
+import static java.time.temporal.TemporalAdjusters.firstInMonth;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +22,11 @@ import io.fidelcoria.ayfmap.domain.PersonRepository;
 import io.fidelcoria.ayfmap.fx.control.weekForm.WeekForm;
 import io.fidelcoria.ayfmap.service.AssignmentImportService;
 import io.fidelcoria.ayfmap.service.StudentImportService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -61,40 +68,55 @@ public class ImportTabController {
 	private String workspace;
 	
 	private static final int MAX_WEEKS_PER_MONTH = 5;
+	private int numWeeksThisMonth = 5;
 	
 	public void initialize() {
-		
+
 		scheduleImportMonth.getItems().addAll(Month.values());
-		scheduleImportMonth.getSelectionModel().selectFirst();
 		
 		int currentYear = LocalDate.now().getYear();
+		IntStream.rangeClosed(currentYear, currentYear+2)
+			.forEachOrdered(scheduleImportYear.getItems()::add);
 		
-		List<Integer> years = new ArrayList<>();
-		
-		for (int y = currentYear; y <= currentYear+2; y++) {
-			years.add(y);
-		}
-		
-		scheduleImportYear.getItems().addAll(years);
-		scheduleImportYear.getSelectionModel().selectFirst();
-		
-		// TODO create weekForms & set default values for weeks
-		
-		WeekForm[] weeks = new WeekForm[MAX_WEEKS_PER_MONTH];
-		
-		List<Person> ps = personRepository.findAllActiveStudents().stream()
-				.map(s -> s.getStudent()).collect(Collectors.toList());
-		
+		ObservableList<Person> ps = FXCollections.observableArrayList(
+			personRepository.findAllActiveStudents().stream()
+				.map(s -> s.getStudent()).collect(Collectors.toList())
+		);
 		
 		for (int i = 0; i < MAX_WEEKS_PER_MONTH; i++) {
-			weeks[i] = new WeekForm();
-			weeks[i].addAllStudents(ps);
-			
+			weekForms.getChildren().add(new WeekForm(ps));
 		}
+		 
+		scheduleImportMonth.getSelectionModel().selectFirst();
+		scheduleImportYear .getSelectionModel().selectFirst();
 		
-		weekForms.getChildren().addAll(weeks);
+		// since updateCalenar depends on both month and year having a value
+		// and either one triggers updateCalendar
+		// the EventHandlers are registered after setting values...
+		scheduleImportMonth.setOnAction(e -> { updateCalendar(e); });
+		scheduleImportYear .setOnAction(e -> { updateCalendar(e); });
+		// ... and then a dummy event is fired to trigger the call
+		scheduleImportMonth.fireEvent(new ActionEvent());		
 	}
 	
+	public void updateCalendar(ActionEvent e) {
+		
+		LocalDate date = LocalDate
+				.of(scheduleImportYear.getValue(), scheduleImportMonth.getValue(), 1)
+				.with(firstInMonth(DayOfWeek.MONDAY));
+		
+		numWeeksThisMonth = 0;
+		for (int i = 0; i < MAX_WEEKS_PER_MONTH; i++) {
+			if (date.getMonth() == scheduleImportMonth.getValue()) {
+				((WeekForm) weekForms.getChildren().get(i))
+					.setWeekDate(date.getMonth()+" "+date.getDayOfMonth());
+				numWeeksThisMonth++;
+			} else {
+				weekForms.getChildren().get(i).setVisible(false);
+			}
+			date = date.plusWeeks(1);
+		}
+	}
 	
 	public void importSchedule() throws FileNotFoundException, IOException {
 		
@@ -146,7 +168,6 @@ public class ImportTabController {
 		scheduleImportProgress.setVisible(true);
 		scheduleImportFeedback.setVisible(true);
 	}
-	
 	
 	public void importEnrollment() throws Exception {
 		

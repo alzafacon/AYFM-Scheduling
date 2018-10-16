@@ -205,4 +205,12 @@ public class Person implements Serializable {
 	public int hashCode() {
 		return Objects.hash(firstName, lastName, gender);
 	}
+	
+	/**
+	 * for displaying in UI control 
+	 */
+	@Override
+	public String toString() {
+		return getFullName();
+	}
 }
