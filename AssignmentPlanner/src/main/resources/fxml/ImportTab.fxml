@@ -9,7 +9,7 @@
    <tabs>
       <Tab text="Schedule">
          <content>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <VBox>
                <children>
                   <HBox alignment="CENTER_LEFT">
                      <children>
@@ -31,7 +31,11 @@
                         <Label text="Auxiliary" GridPane.columnIndex="2" />
                      </children>
                   </GridPane>
-                  <VBox fx:id="weekForms" />
+                  <ScrollPane prefViewportWidth="1020.0">
+                     <content>
+                        <VBox fx:id="weekForms" />
+                     </content>
+                  </ScrollPane>
                   <HBox alignment="CENTER_LEFT">
                      <children>
                         <Button fx:id="doImportSchedule" mnemonicParsing="false" onAction="#importSchedule" styleClass="minimal-btn" text="Import Schedule" />
