@@ -1,17 +1,15 @@
 package io.fidelcoria.ayfmap.fx.control;
 
 import java.io.IOException;
+import java.time.Month;
 import java.util.ArrayList;
-import java.util.function.Predicate;
 
+import io.fidelcoria.ayfmap.domain.Assignment;
 import io.fidelcoria.ayfmap.domain.Person;
-import io.fidelcoria.ayfmap.util.Assignment_t;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
@@ -58,5 +56,21 @@ public class WeekForm extends VBox {
 	
 	public String getWeekDate() {
 		return weekDate.getText();
+	}
+
+	public ArrayList<Assignment> getAllAssgns(int weekNum, Month month, Integer year) {
+		
+		ArrayList<Assignment> assgns = new ArrayList<>();
+		
+		int size = this.getChildren().size();
+		
+		// skip index 0; it's a label
+		for (Node node : this.getChildren().subList(1, size)) {
+			AssignmentRowForm arf = (AssignmentRowForm) node;
+			
+			assgns.addAll(arf.getAllAssgns(weekNum, month, year));
+		}
+		
+		return assgns;
 	}
 }

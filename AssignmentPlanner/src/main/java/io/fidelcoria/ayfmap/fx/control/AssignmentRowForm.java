@@ -1,11 +1,19 @@
 package io.fidelcoria.ayfmap.fx.control;
 
+import static java.time.temporal.TemporalAdjusters.firstInMonth;
+
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
+import io.fidelcoria.ayfmap.domain.Assignment;
 import io.fidelcoria.ayfmap.domain.Person;
 import io.fidelcoria.ayfmap.util.Assignment_t;
+import io.fidelcoria.ayfmap.util.Section;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
@@ -108,6 +116,18 @@ public class AssignmentRowForm extends GridPane {
 
 		assgnType.getSelectionModel().selectFirst();
 	}
+
+	public void setAssgnType(Assignment_t t) {
+		assgnType.setValue(t);
+	}
+	
+	public Assignment_t getAssgnType() {
+		return assgnType.getValue();
+	}
+	
+	public Integer getLesson() {
+		return lesson.getValue();
+	}
 	
 	public String getPubMain() {
 		return pubMain.getValue().toString();
@@ -123,5 +143,46 @@ public class AssignmentRowForm extends GridPane {
 	
 	public String getHholdAux() {
 		return hholdAux.getValue().toString();
+	}
+
+	public List<Assignment> getAllAssgns(int weekNum, Month month, Integer year) {
+		
+		LocalDate weekDate = LocalDate.of(year, month.getValue(), 1)
+				.with(firstInMonth(DayOfWeek.MONDAY))
+				.plusWeeks(weekNum);
+		
+		ArrayList<Assignment> as = new ArrayList<>();
+		
+		Assignment
+			main = new Assignment(weekDate, getAssgnType(), Section.A),
+			aux  = new Assignment(weekDate, getAssgnType(), Section.B);
+		
+		if (pubMain.getValue() != null) {
+			main.setAssignee(pubMain.getValue());
+			
+			if (getLesson() != null) {
+				main.setLesson(getLesson());
+			}
+			if (hholdMain.getValue() != null) {
+				main.setHouseholder(hholdMain.getValue());
+			}
+			
+			as.add(main);
+		}
+		
+		if (pubAux.getValue() != null) {
+			aux.setAssignee(pubAux.getValue());
+			
+			if (getLesson() != null) {
+				aux.setLesson(getLesson());
+			}
+			if (hholdAux.getValue() != null) {
+				aux.setHouseholder(hholdAux.getValue());
+			}
+			
+			as.add(aux);
+		}
+		
+		return as;
 	}
 }

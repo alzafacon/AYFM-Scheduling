@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,14 +20,17 @@ import org.springframework.stereotype.Component;
 import io.fidelcoria.ayfmap.domain.Assignment;
 import io.fidelcoria.ayfmap.domain.Person;
 import io.fidelcoria.ayfmap.domain.PersonRepository;
+import io.fidelcoria.ayfmap.fx.control.AssignmentRowForm;
 import io.fidelcoria.ayfmap.fx.control.WeekForm;
 import io.fidelcoria.ayfmap.service.AssignmentImportService;
 import io.fidelcoria.ayfmap.service.StudentImportService;
+import io.fidelcoria.ayfmap.util.Assignment_t;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -98,6 +102,64 @@ public class ImportTabController {
 			weekForms.getChildren().add(new WeekForm(ps));
 		}
 		 
+		// apply default template schedule structure //
+		
+		// drop last 2 assignment rows in first week
+		((WeekForm) weekForms.getChildren().get(0))
+			.getChildren().remove(2, 4);
+		
+		// set default assgn types
+		
+		// second assignment of first week is a TALK
+		WeekForm fstWeek = ((WeekForm) weekForms.getChildren().get(0)); 
+		// note: indexing starts at 1 b/c first child is weekDate
+		((AssignmentRowForm) fstWeek.getChildren().get(2))				
+			.setAssgnType(Assignment_t.TALK);
+		
+		// ayfm parts in second week are INIT_CALL
+		WeekForm sndWeek = ((WeekForm) weekForms.getChildren().get(1));
+		
+		// again, skip first item b/c its a weekDate
+		sndWeek.getChildren().subList(1, 5)
+		.forEach(node -> {
+			((AssignmentRowForm) node)
+				.setAssgnType(Assignment_t.INIT_CALL);
+		});
+		
+		// ayfm parts in third week are FST_RET_VIS
+		WeekForm trdWeek = ((WeekForm) weekForms.getChildren().get(2));
+		
+		trdWeek.getChildren().subList(1, 5)
+		.forEach(node -> {
+			((AssignmentRowForm) node)
+				.setAssgnType(Assignment_t.FST_RET_VIS);
+		});
+		
+		// ayfm parts in fourth week are SND_RET_VIS
+		/// except last part (4th) is Bible study
+		WeekForm fourthWeek = ((WeekForm) weekForms.getChildren().get(3));
+		
+		fourthWeek.getChildren().subList(1, 5)
+		.forEach(node -> {
+			((AssignmentRowForm) node)
+				.setAssgnType(Assignment_t.SND_RET_VIS);
+		});
+		((AssignmentRowForm) fourthWeek.getChildren().get(4))
+			.setAssgnType(Assignment_t.BIBLE_STUDY);
+		
+		// TODO fifth week ??
+		// wait for a workbook that has 5th week
+		
+		// first assignment of every week is a READING
+		weekForms.getChildren().forEach(node -> {
+			((AssignmentRowForm)
+				((WeekForm) 
+					node
+				).getChildren().get(1)
+			).setAssgnType(Assignment_t.READING);
+		});
+			
+		
 		// fitToWidth applies to the node inside the ScrollPane
 		// this ensures the inside node stretches all the way across
 		scheduleScroll.setFitToWidth(true);
@@ -147,39 +209,37 @@ public class ImportTabController {
 	
 	public void importSchedule() throws FileNotFoundException, IOException {
 		
+		// hide label
 		scheduleImportFeedback.setVisible(false);
 		
+		// snapshot alias's
 		Month month = scheduleImportMonth.getValue();
 		Integer year = scheduleImportYear.getValue();
-		
-		File scheduleToImport = null;
-		
-		if (scheduleToImport == null) {
-			return;
-		}
 		
 		Task<Void> task = new Task<Void>() {
 			@Override
 			public Void call() {
-				List<Assignment> assignments;
 				
 				try {
-					assignments = assignmentImportService
-						.readAssignmentsFromDocx(scheduleToImport, year, month.getValue());
+					List<Assignment> assignments = new ArrayList<>();
+					
+					int weekNum = 0;
+					for (Node node : weekForms.getChildren()) {
+						WeekForm wf = (WeekForm) node;
+						
+						assignments.addAll(wf.getAllAssgns(weekNum, month, year));
+						weekNum++;
+					}
+					
 					assignmentImportService.save(assignments);
 					
 					updateProgress(1, 1);
-				} catch (FileNotFoundException e) {
-					updateProgress(0,1);
-					updateMessage("File not found");
-					
-					// TODO logging
-					e.printStackTrace();
-				} catch (IOException e) {
+					updateMessage("");
+				}
+				catch (Exception e) {
 					updateProgress(0,1);
 					updateMessage("Failed");
 					
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
