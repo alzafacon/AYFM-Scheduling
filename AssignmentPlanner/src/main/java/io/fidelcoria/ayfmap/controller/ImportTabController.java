@@ -31,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
 @Component
@@ -43,10 +44,13 @@ public class ImportTabController {
 	@Autowired
 	PersonRepository personRepository;
 	
+	// Schedule Import sub-tab
 	@FXML
 	ChoiceBox<Month> scheduleImportMonth;
 	@FXML
 	ChoiceBox<Integer> scheduleImportYear;
+	@FXML
+	ScrollPane scheduleScroll;
 	@FXML
 	VBox weekForms;
 	@FXML
@@ -55,7 +59,9 @@ public class ImportTabController {
 	ProgressIndicator scheduleImportProgress;
 	@FXML
 	Label scheduleImportFeedback;
+
 	
+	// Enrollment Import sub-tab
 	@FXML
 	Button importEnrollmentButton;
 	@FXML
@@ -69,6 +75,11 @@ public class ImportTabController {
 	private static final int MAX_WEEKS_PER_MONTH = 5;
 	private int numWeeksThisMonth = 5;
 	
+	/** 
+	 * Introduction to FXML - Controllers:
+	 * this method will be called once when the contents of its 
+	 * associated [FXML] document have been completely loaded
+	 */
 	public void initialize() {
 
 		scheduleImportMonth.getItems().addAll(Month.values());
@@ -86,6 +97,10 @@ public class ImportTabController {
 			weekForms.getChildren().add(new WeekForm(ps));
 		}
 		 
+		// fitToWidth applies to the node inside the ScrollPane
+		// this ensures the inside node stretches all the way across
+		scheduleScroll.setFitToWidth(true);
+		
 		scheduleImportMonth.getSelectionModel().selectFirst();
 		scheduleImportYear .getSelectionModel().selectFirst();
 		
@@ -94,8 +109,8 @@ public class ImportTabController {
 		// the EventHandlers are registered after setting values...
 		scheduleImportMonth.setOnAction(e -> { updateCalendar(e); });
 		scheduleImportYear .setOnAction(e -> { updateCalendar(e); });
-		// ... and then a dummy event is fired to trigger the call
-		scheduleImportMonth.fireEvent(new ActionEvent());		
+		// ... and then a dummy event is used to call updateCalendar
+		updateCalendar(new ActionEvent());
 	}
 	
 	public void updateCalendar(ActionEvent e) {
@@ -110,6 +125,7 @@ public class ImportTabController {
 				((WeekForm) weekForms.getChildren().get(i))
 					.setWeekDate(date.getMonth()+" "+date.getDayOfMonth());
 				numWeeksThisMonth++;
+				weekForms.getChildren().get(i).setVisible(true);
 			} else {
 				weekForms.getChildren().get(i).setVisible(false);
 			}

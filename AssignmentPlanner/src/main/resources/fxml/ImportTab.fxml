@@ -31,7 +31,7 @@
                         <Label text="Auxiliary" GridPane.columnIndex="2" />
                      </children>
                   </GridPane>
-                  <ScrollPane prefViewportWidth="1020.0">
+                  <ScrollPane fx:id="scheduleScroll">
                      <content>
                         <VBox fx:id="weekForms" />
                      </content>
