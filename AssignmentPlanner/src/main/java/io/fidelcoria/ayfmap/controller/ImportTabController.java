@@ -74,6 +74,7 @@ public class ImportTabController {
 	
 	private static final int MAX_WEEKS_PER_MONTH = 5;
 	private int numWeeksThisMonth = 5;
+	private ObservableList<Person> ps = FXCollections.observableArrayList();
 	
 	/** 
 	 * Introduction to FXML - Controllers:
@@ -88,7 +89,7 @@ public class ImportTabController {
 		IntStream.rangeClosed(currentYear, currentYear+2)
 			.forEachOrdered(scheduleImportYear.getItems()::add);
 		
-		ObservableList<Person> ps = FXCollections.observableArrayList(
+		ps.addAll(
 			personRepository.findAllActiveStudents().stream()
 				.map(s -> s.getStudent()).collect(Collectors.toList())
 		);
@@ -131,6 +132,17 @@ public class ImportTabController {
 			}
 			date = date.plusWeeks(1);
 		}
+	}
+	
+	/**
+	 * Called when Import Tab selected
+	 */
+	public void updateUnderlyingPersons() {
+		ps.clear();
+		ps.addAll(
+			personRepository.findAllActiveStudents().stream()
+				.map(s -> s.getStudent()).collect(Collectors.toList())
+		);
 	}
 	
 	public void importSchedule() throws FileNotFoundException, IOException {
