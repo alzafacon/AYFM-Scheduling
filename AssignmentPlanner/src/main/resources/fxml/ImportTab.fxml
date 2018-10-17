@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -27,18 +29,36 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Main" GridPane.columnIndex="1" />
-                        <Label text="Auxiliary" GridPane.columnIndex="2" />
+                        <Label text="Main" GridPane.columnIndex="1">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding></Label>
+                        <Label text="Auxiliary" GridPane.columnIndex="2">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <GridPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin></Label>
                      </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
                   </GridPane>
-                  <ScrollPane fx:id="scheduleScroll">
+                  <ScrollPane fx:id="scheduleScroll" prefViewportWidth="1020.0">
                      <content>
                         <VBox fx:id="weekForms" />
                      </content>
                   </ScrollPane>
                   <HBox alignment="CENTER_LEFT">
                      <children>
-                        <Button fx:id="doImportSchedule" mnemonicParsing="false" onAction="#importSchedule" styleClass="minimal-btn" text="Import Schedule" />
+                        <Button fx:id="doImportSchedule" mnemonicParsing="false" onAction="#importSchedule" styleClass="minimal-btn" text="Import Schedule">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin></Button>
                         <ProgressIndicator fx:id="scheduleImportProgress" visible="false" />
                         <Label fx:id="scheduleImportFeedback" visible="false" />
                      </children>
