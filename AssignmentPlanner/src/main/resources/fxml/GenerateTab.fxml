@@ -15,7 +15,7 @@
                   <ProgressIndicator fx:id="scheduleGenerateSpinner" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Label fx:id="schedFeedbackLabel" text="Complete!" visible="false">
+                        <Label fx:id="scheduleFeedbackLabel" text="Complete!" visible="false">
                            <font>
                               <Font size="24.0" />
                            </font></Label>
