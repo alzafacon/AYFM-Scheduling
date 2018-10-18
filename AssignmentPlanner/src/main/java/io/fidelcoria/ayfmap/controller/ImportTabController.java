@@ -3,7 +3,6 @@ package io.fidelcoria.ayfmap.controller;
 import static java.time.temporal.TemporalAdjusters.firstInMonth;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -25,6 +24,7 @@ import io.fidelcoria.ayfmap.fx.control.WeekForm;
 import io.fidelcoria.ayfmap.service.AssignmentImportService;
 import io.fidelcoria.ayfmap.service.StudentImportService;
 import io.fidelcoria.ayfmap.util.Assignment_t;
+import io.fidelcoria.ayfmap.util.ImportException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -207,7 +207,7 @@ public class ImportTabController {
 		);
 	}
 	
-	public void importSchedule() throws FileNotFoundException, IOException {
+	public void importSchedule() {
 		
 		// hide label
 		scheduleImportFeedback.setVisible(false);
@@ -231,14 +231,15 @@ public class ImportTabController {
 						weekNum++;
 					}
 					
+					// TODO what if an assignment already exists...
 					assignmentImportService.save(assignments);
 					
 					updateProgress(1, 1);
 					updateMessage("");
 				}
-				catch (Exception e) {
+				catch (ImportException e) {
 					updateProgress(0,1);
-					updateMessage("Failed");
+					updateMessage(e.getMessage());
 					
 					e.printStackTrace();
 				}

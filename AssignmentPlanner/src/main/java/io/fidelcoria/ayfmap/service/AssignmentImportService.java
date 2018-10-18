@@ -10,7 +10,7 @@ import io.fidelcoria.ayfmap.domain.AssignmentRepository;
 import io.fidelcoria.ayfmap.domain.PersonRepository;
 
 /**
- * Import assignment schedule from DOCX file.
+ * Import assignments
  * @author FidelCoria
  *
  */

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import io.fidelcoria.ayfmap.domain.Assignment;
 import io.fidelcoria.ayfmap.domain.Person;
+import io.fidelcoria.ayfmap.util.ImportException;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -58,7 +59,7 @@ public class WeekForm extends VBox {
 		return weekDate.getText();
 	}
 
-	public ArrayList<Assignment> getAllAssgns(int weekNum, Month month, Integer year) {
+	public ArrayList<Assignment> getAllAssgns(int weekNum, Month month, Integer year) throws ImportException {
 		
 		ArrayList<Assignment> assgns = new ArrayList<>();
 		

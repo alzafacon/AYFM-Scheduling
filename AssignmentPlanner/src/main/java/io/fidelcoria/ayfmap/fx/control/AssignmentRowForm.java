@@ -7,12 +7,15 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import io.fidelcoria.ayfmap.domain.Assignment;
 import io.fidelcoria.ayfmap.domain.Person;
 import io.fidelcoria.ayfmap.util.Assignment_t;
+import io.fidelcoria.ayfmap.util.ImportException;
 import io.fidelcoria.ayfmap.util.Section;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -145,7 +148,7 @@ public class AssignmentRowForm extends GridPane {
 		return hholdAux.getValue().toString();
 	}
 
-	public List<Assignment> getAllAssgns(int weekNum, Month month, Integer year) {
+	public List<Assignment> getAllAssgns(int weekNum, Month month, Integer year) throws ImportException {
 		
 		LocalDate weekDate = LocalDate.of(year, month.getValue(), 1)
 				.with(firstInMonth(DayOfWeek.MONDAY))
@@ -157,32 +160,49 @@ public class AssignmentRowForm extends GridPane {
 			main = new Assignment(weekDate, getAssgnType(), Section.A),
 			aux  = new Assignment(weekDate, getAssgnType(), Section.B);
 		
-		if (pubMain.getValue() != null) {
-			main.setAssignee(pubMain.getValue());
-			
-			if (getLesson() != null) {
-				main.setLesson(getLesson());
-			}
-			if (hholdMain.getValue() != null) {
-				main.setHouseholder(hholdMain.getValue());
-			}
-			
-			as.add(main);
-		}
+		extractAndAddAssgn(pubMain, hholdMain, main, as);
+		extractAndAddAssgn(pubAux, hholdAux, aux, as);
 		
-		if (pubAux.getValue() != null) {
-			aux.setAssignee(pubAux.getValue());
-			
-			if (getLesson() != null) {
-				aux.setLesson(getLesson());
-			}
-			if (hholdAux.getValue() != null) {
-				aux.setHouseholder(hholdAux.getValue());
-			}
-			
-			as.add(aux);
-		}
+		// participants for an assignment row cannot repeat		
+		List<Person> participants = Arrays.asList(
+			main.getAssignee(),
+			main.getHouseholder(),
+			aux.getAssignee(),
+			aux.getHouseholder()
+		).stream().filter(a -> {
+			return a != null;
+		}).collect(Collectors.toList());
+		 
+		 if (participants.stream().distinct().count() != participants.size()) {
+			 throw new ImportException(
+					 "Participant repeated on week of "+
+					 month+" "+weekDate.getDayOfMonth());
+		 }
 		
 		return as;
+	}
+
+	private void extractAndAddAssgn(ComboBox<Person> pub, ComboBox<Person> hhold, Assignment a,
+			ArrayList<Assignment> as) throws ImportException 
+	{
+		if (pub.getValue() != null) {
+			a.setAssignee(pub.getValue());
+			
+			if (getLesson() != null) {
+				a.setLesson(getLesson());
+			}
+			if (hhold.getValue() != null) {
+				a.setHouseholder(hhold.getValue());
+			} else if (getAssgnType() != Assignment_t.READING 
+					&& getAssgnType() != Assignment_t.TALK
+			) {
+				throw new ImportException(
+						getAssgnType()+
+						" missing a householder on week of "+
+						a.getWeek().getMonth()+" "+a.getWeek().getDayOfMonth());
+			}
+			
+			as.add(a);
+		}
 	}
 }
