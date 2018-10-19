@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import io.fidelcoria.ayfmap.domain.Assignment;
 import io.fidelcoria.ayfmap.domain.AssignmentRepository;
-import io.fidelcoria.ayfmap.domain.PersonRepository;
 
 /**
  * Import assignments
@@ -19,14 +18,6 @@ public class AssignmentImportService {
 
 	@Autowired
 	AssignmentRepository assignmentRepository;
-
-	@Autowired
-	PersonRepository personRepository;
-	
-	
-	public AssignmentImportService() {
-		
-	}
 	
 	/**
 	 * Save all given entities
