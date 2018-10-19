@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
@@ -57,7 +58,7 @@
                      <children>
                         <Button fx:id="doImportSchedule" mnemonicParsing="false" onAction="#importSchedule" styleClass="minimal-btn" text="Import Schedule">
                            <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </HBox.margin></Button>
                         <ProgressIndicator fx:id="scheduleImportProgress" visible="false" />
                         <Label fx:id="scheduleImportFeedback" visible="false" />
@@ -67,33 +68,73 @@
             </VBox>
          </content>
       </Tab>
-      <Tab text="Enrollment">
+      <Tab text="Enroll">
          <content>
-            <GridPane prefHeight="572.0" prefWidth="1020.0" styleClass="grid-pane">
+            <VBox>
                <children>
-                  <ProgressIndicator fx:id="enrollmentImportProgress" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
                      <children>
-                        <Label fx:id="enrollmentImportFeedback" alignment="CENTER" contentDisplay="CENTER" text="Complete!" visible="false" />
+                        <TextField fx:id="firstName" promptText="First Name" />
                      </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnSpan="2147483647">
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
                      <children>
-                        <Button fx:id="importEnrollmentButton" mnemonicParsing="false" onAction="#importEnrollment" styleClass="minimal-btn" text="Import Enrollment" />
+                        <TextField fx:id="lastName" promptText="Last Name" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox spacing="30.0">
+                     <children>
+                        <VBox>
+                           <children>
+                              <RadioButton fx:id="isMale" mnemonicParsing="false" text="Male" />
+                              <RadioButton fx:id="isFemale" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Female" />
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="10.0">
+                           <children>
+                              <RadioButton fx:id="isActive" mnemonicParsing="false" text="Active" />
+                              <RadioButton fx:id="isInactive" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Inactive" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <CheckBox fx:id="canRead" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Reading" />
+                        <CheckBox fx:id="canInitCall" layoutX="208.0" layoutY="10.0" mnemonicParsing="false" text="Initial Call" />
+                        <CheckBox fx:id="canRetVis" layoutX="109.0" layoutY="10.0" mnemonicParsing="false" text="Return Visit" />
+                        <CheckBox fx:id="canBibleStudy" layoutX="307.0" layoutY="10.0" mnemonicParsing="false" text="Bible Study" />
+                        <CheckBox fx:id="canTalk" mnemonicParsing="false" text="Talk" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Button fx:id="doEnroll" mnemonicParsing="false" onAction="#importEnrollment" styleClass="minimal-btn" text="Enroll">
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </VBox.margin>
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <ProgressIndicator fx:id="enrollProgress" progress="0.0" visible="false" />
+                        <Label fx:id="enrollFeedback" visible="false" />
                      </children>
                   </HBox>
                </children>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-            </GridPane>
+            </VBox>
          </content>
       </Tab>
    </tabs>

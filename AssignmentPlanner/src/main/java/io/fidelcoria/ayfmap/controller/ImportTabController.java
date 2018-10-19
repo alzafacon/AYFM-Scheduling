@@ -2,12 +2,11 @@ package io.fidelcoria.ayfmap.controller;
 
 import static java.time.temporal.TemporalAdjusters.firstInMonth;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -32,10 +31,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 
 @Component
@@ -49,35 +52,36 @@ public class ImportTabController {
 	PersonRepository personRepository;
 	
 	// Schedule Import sub-tab
-	@FXML
-	ChoiceBox<Month> scheduleImportMonth;
-	@FXML
-	ChoiceBox<Integer> scheduleImportYear;
-	@FXML
-	ScrollPane scheduleScroll;
-	@FXML
-	VBox weekForms;
-	@FXML
-	Button doImportSchedule;
-	@FXML
-	ProgressIndicator scheduleImportProgress;
-	@FXML
-	Label scheduleImportFeedback;
+	@FXML ChoiceBox<Month> scheduleImportMonth;
+	@FXML ChoiceBox<Integer> scheduleImportYear;
+	@FXML ScrollPane scheduleScroll;
+	@FXML VBox weekForms;
+	@FXML Button doImportSchedule;
+	@FXML ProgressIndicator scheduleImportProgress;
+	@FXML Label scheduleImportFeedback;
 
 	
 	// Enrollment Import sub-tab
-	@FXML
-	Button importEnrollmentButton;
-	@FXML
-	ProgressIndicator enrollmentImportProgress;
-	@FXML
-	Label enrollmentImportFeedback;
+	@FXML TextField firstName;
+	@FXML TextField lastName;
+	@FXML RadioButton isMale;
+	@FXML RadioButton isFemale;
+	@FXML RadioButton isActive;
+	@FXML RadioButton isInactive;
+	@FXML CheckBox canRead;
+	@FXML CheckBox canInitCall;
+	@FXML CheckBox canRetVis;
+	@FXML CheckBox canBibleStudy;
+	@FXML CheckBox canTalk;
+	@FXML Button doEnroll;
+	@FXML ProgressIndicator enrollProgress;
+	@FXML Label enrollFeedback;
 	
 	@Value("${installation.directory.workspace}")
 	private String workspace;
 	
 	private static final int MAX_WEEKS_PER_MONTH = 5;
-	private int numWeeksThisMonth = 5;
+
 	private ObservableList<Person> ps = FXCollections.observableArrayList();
 	
 	/** 
@@ -174,6 +178,20 @@ public class ImportTabController {
 		scheduleImportYear .setOnAction(e -> { updateCalendar(e); });
 		// ... and then a dummy event is used to call updateCalendar
 		updateCalendar(new ActionEvent());
+		
+		
+		// initialize enroll tab //
+		ToggleGroup gender = new ToggleGroup();
+		isMale.setToggleGroup(gender);
+		isFemale.setToggleGroup(gender);
+		
+		isMale.setSelected(true);
+		
+		ToggleGroup active = new ToggleGroup();
+		isActive.setToggleGroup(active);
+		isInactive.setToggleGroup(active);
+		
+		isActive.setSelected(true);
 	}
 	
 	public void updateCalendar(ActionEvent e) {
@@ -182,12 +200,10 @@ public class ImportTabController {
 				.of(scheduleImportYear.getValue(), scheduleImportMonth.getValue(), 1)
 				.with(firstInMonth(DayOfWeek.MONDAY));
 		
-		numWeeksThisMonth = 0;
 		for (int i = 0; i < MAX_WEEKS_PER_MONTH; i++) {
 			if (date.getMonth() == scheduleImportMonth.getValue()) {
 				((WeekForm) weekForms.getChildren().get(i))
 					.setWeekDate(date.getMonth()+" "+date.getDayOfMonth());
-				numWeeksThisMonth++;
 				weekForms.getChildren().get(i).setVisible(true);
 			} else {
 				weekForms.getChildren().get(i).setVisible(false);
@@ -197,7 +213,7 @@ public class ImportTabController {
 	}
 	
 	/**
-	 * Called when Import Tab selected
+	 * Called when Import Tab selected to keep data fresh
 	 */
 	public void updateUnderlyingPersons() {
 		ps.clear();
@@ -236,12 +252,15 @@ public class ImportTabController {
 					
 					updateProgress(1, 1);
 					updateMessage("");
-				}
-				catch (ImportException e) {
+				} catch (ImportException e) {
 					updateProgress(0,1);
 					updateMessage(e.getMessage());
 					
 					e.printStackTrace();
+				} catch (Exception e) {
+					updateProgress(0, 1);
+					updateMessage("Import Failed!");
+					throw e;
 				}
 				
 				return null;
@@ -259,43 +278,66 @@ public class ImportTabController {
 	
 	public void importEnrollment() throws Exception {
 		
-		enrollmentImportFeedback.setVisible(false);
+		enrollFeedback.setVisible(false);
 		
-		File enrollmentToImport = null;
-		
-		if (enrollmentToImport == null) {
-			return;
-		}
 		
 		Task<Void> task = new Task<Void>() {
 			@Override
 			public Void call() {
-				List<Person> students;
+				
+				Person p = new Person();
+				
+				String fn = firstName.getText();
+				String ln = lastName.getText();
 				
 				try {
-					students = studentImportService
-						.readStudentsWithCsvMapReader(enrollmentToImport.getAbsolutePath());
-					studentImportService.saveStudents(students);
+					
+					if (fn == null || ln == null || fn.isEmpty() || ln.isEmpty()) {
+						throw new ImportException("Please enter full name");
+					}
+					
+					if (!canRead.isSelected() && !canInitCall.isSelected()
+							&& !canRetVis.isSelected() && !canBibleStudy.isSelected()
+							&& !canTalk.isSelected()
+					) {
+						throw new ImportException("Please check at least one box.");
+					}
+					
+					p.setFirstName(fn);
+					p.setLastName(ln);
+					p.setActive(isActive.isSelected());
+					p.setGender(isMale.isSelected()? "m" : "f");
+					
+					p.setEligibleReading(canRead.isSelected());
+					p.setEligibleInitCall(canInitCall.isSelected());
+					p.setEligibleRetVisit(canRetVis.isSelected());
+					p.setEligibleBibStudy(canBibleStudy.isSelected());
+					p.setEligibleTalk(canTalk.isSelected());
+					
+					studentImportService.saveStudents(Arrays.asList(p));
 					
 					updateProgress(1, 1);
-				} catch (Exception e) {
+				} catch (ImportException e) {
 					updateProgress(0, 1);
-					updateMessage("Import failed");
+					updateMessage(e.getMessage());
 					
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (Exception e) {
+					updateProgress(0,1);
+					updateMessage("Import Failed!");
+					throw e;
 				}
 
 				return null;
 			}
 		};
 		
-		enrollmentImportProgress.progressProperty().bind(task.progressProperty());
-		enrollmentImportFeedback.textProperty().bind(task.messageProperty());
+		enrollProgress.progressProperty().bind(task.progressProperty());
+		enrollFeedback.textProperty().bind(task.messageProperty());
 		
 		new Thread(task).start();
 		
-		enrollmentImportProgress.setVisible(true);
-		enrollmentImportFeedback.setVisible(true);
+		enrollProgress.setVisible(true);
+		enrollFeedback.setVisible(true);
 	}
 }
